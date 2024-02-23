@@ -9,7 +9,8 @@ REQUIREMENTS = {
     'install': [
         'cuvis-il == 3.2.1',
         'numpy',
-        'scikit-learn'
+        'scikit-learn',
+        'matplotlib'
     ],
 }
 

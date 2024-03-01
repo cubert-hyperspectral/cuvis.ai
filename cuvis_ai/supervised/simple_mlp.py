@@ -27,7 +27,9 @@ class MLP(BaseSupervised):
         n_pixels = X.shape[0] * X.shape[1]
         image_2d = X.reshape(n_pixels, -1)
 
-        self.mlp.fit(image_2d,Y)
+        labels_2d = Y.reshape(n_pixels)
+
+        self.mlp.fit(image_2d,labels_2d)
 
         self.input_size = X.shape[2] 
         self.initialized = True

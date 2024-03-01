@@ -92,7 +92,7 @@ class NumpyData(Dataset):
         else:
             raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in C_SUPPORTED_DTYPES]))
 
-    def random_split(self, train_percent, val_percent, test_percent) -> List[torch.utils.data.dataset.Subset]:
+    def random_split(self, train_percent, val_percent, test_percent) -> list[torch.utils.data.dataset.Subset]:
         gen = torch.torch.Generator().manual_seed(time.time_ns())
         return torch.utils.data.random_split(self, [train_percent, val_percent, test_percent], gen)
     

@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
 import typing
 from typing import Dict
@@ -7,7 +7,6 @@ class BaseUnsupervised(ABC):
     """
     Abstract class for data preprocessing.
     """
-    
     @abstractmethod
     def fit(self, X):
         """
@@ -22,7 +21,7 @@ class BaseUnsupervised(ABC):
         pass
     
     @abstractmethod
-    def predict(self, X):
+    def forward(self, X):
         """
         Predict labels based on the input labels.
 
@@ -59,12 +58,5 @@ class BaseUnsupervised(ABC):
     def load(self):
         """
         Load from serialized format into an object
-        """
-        pass
-
-    @abstractmethod
-    def visualize(self):
-        """
-        Visualize classified data
         """
         pass

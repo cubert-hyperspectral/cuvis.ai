@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
 import typing
 from typing import Dict
@@ -7,7 +7,10 @@ class Preprocessor(ABC):
     """
     Abstract class for data preprocessing.
     """
-    
+    def __init__(self):
+        self.input_size = None
+        self.output_size = None
+
     @abstractmethod
     def fit(self, X):
         """
@@ -22,7 +25,7 @@ class Preprocessor(ABC):
         pass
     
     @abstractmethod
-    def transform(self, X):
+    def forward(self, X):
         """
         Transform the input data.
 

@@ -8,8 +8,8 @@ import numpy as np
 import torch
 from torchvision.datasets import VisionDataset 
 from torchvision import tv_tensors
-from imantics import Dataset as Labelparser
 from pycocotools.coco import COCO
+from .Labels2TV import convert_COCO2TV
 
 from .Metadata import Metadata
 
@@ -63,14 +63,6 @@ class NumpyData(VisionDataset):
         self.data_map[path] = {}
         self.data_map[path]["data"] = self._NumpyLoader_(filepath)
         
-        if os.path.isfile(labelpath):
-#            lp = Labelparser(filepath)
-#            with open(labelpath, "r") as file:
-#                lp.from_coco(json.load(file))
-            coco = COCO(labelpath)
-            self.data_map[path]["labels"] = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))
-        else:
-            self.data_map[path]["labels"] = None
             
         if self.metadata_filepath:
             meta = Metadata(filepath, self.fileset_metadata)
@@ -82,6 +74,13 @@ class NumpyData(VisionDataset):
         meta.datatype = temp_data.dtype
         self.data_types.add(meta.datatype)
         self.data_map[path]["meta"] = meta
+
+        canvas_size = (meta.shape[0], meta.shape[1])
+        if os.path.isfile(labelpath):
+            coco = COCO(labelpath)
+            self.data_map[path]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
+        else:
+            self.data_map[path]["labels"] = None
         
 
     def __len__(self):
@@ -140,11 +139,14 @@ class NumpyData(VisionDataset):
                 return v["labels"]
             except KeyError:
                 return None
-        return [_get_labels(i) for i in self.data_map.values()]
+        return [self.get_labels(i) for i in self.data_map.values()]
 
     def get_labels(self, idx:int):
         try:
-            return list(self.data_map.values())[idx]["labels"]
+            l = list(self.data_map.values())[idx]["labels"]
+            if self.transforms is not None:
+                return self.transforms(l)
+            return l
         except KeyError:
             return None
 

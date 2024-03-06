@@ -10,8 +10,8 @@ from typing import Optional, Callable
 import torch
 from torchvision.datasets import VisionDataset
 from torchvision import tv_tensors
-from imantics import Dataset as Labelparser
 from pycocotools.coco import COCO
+from .Labels2TV import convert_COCO2TV
 
 from .Metadata import Metadata
 from .NumpyData import NumpyData
@@ -73,13 +73,6 @@ class CuvisData(NumpyData):
         cube_count = len(crt_session)
         print("Session file has", cube_count, "cubes")
 
-        lp:Labelparser = None
-        
-        #if os.path.isfile(labelpath):
-        #    lp = Labelparser(filepath)
-        #    with open(labelpath, "r") as file:
-        #        lp.from_coco(json.load(file))
-
         if self.metadata_filepath:
             sess_meta = Metadata(filepath, self.fileset_metadata)
         else:
@@ -87,6 +80,7 @@ class CuvisData(NumpyData):
         
         temp_mesu = crt_session.get_measurement(0)
         sess_meta.shape = (temp_mesu.data["cube"].width, temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
+        canvas_size = (sess_meta.shape[0], sess_meta.shape[1])
         sess_meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
         #sess_meta.framerate = crt_session.fps
         
@@ -112,35 +106,14 @@ class CuvisData(NumpyData):
             self.data_map[cube_path]["meta"] = meta
 
             if coco is not None:
-                self.data_map[cube_path]["labels"] = coco.loadAnns(coco.getAnnIds(ids[idx]))
+                self.data_map[cube_path]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(ids[idx]))[0], canvas_size)
                 
-            #if lp is not None:
-            #    mesu_lp = Labelparser(cube_path)
-            #    mesu_lp.name = cube_path
-            #    
-            #    mesu_lp.images[idx] = mesu_lp.images[idx]
-            #    for k, v in mesu_lp.images[idx].annotations.items():
-            #        mesu_lp.annotations[k] = v
-            #    self.data_map[cube_path]["labels"] = mesu_lp
-            #else:
-            #    self.data_map[cube_path]["labels"] = None
 
     def _load_legacy_file(self, filepath:str):
         print("Found file:", filepath)
         path, _ = os.path.splitext(filepath)
         labelpath = path + ".json"
         
-        #lp:Labelparser = None
-
-        if os.path.isfile(labelpath):
-            coco =  COCO(labelpath)
-            self.data_map[filepath]["labels"] = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))
-        #    self.data_map[path]["labels"] = Labelparser(filepath)
-        #    with open(labelpath, "r") as file:
-        #        self.data_map[path]["labels"].from_coco(json.load(file))
-        else:
-            self.data_map[filepath]["labels"] = None
-                
         if self.metadata_filepath:
             meta = Metadata(filepath, self.fileset_metadata)
         else:
@@ -150,6 +123,13 @@ class CuvisData(NumpyData):
         meta.shape = (temp_mesu.data["cube"].width, temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
         meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
         
+        canvas_size = (meta.shape[0], meta.shape[1])
+        if os.path.isfile(labelpath):
+            coco = COCO(labelpath)
+            self.data_map[filepath]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
+        else:
+            self.data_map[filepath]["labels"] = None
+            
         self.data_map[cube_path] = {}
         self.data_map[cube_path]["data"] = self._LegacyCubeLoader(filepath)
         

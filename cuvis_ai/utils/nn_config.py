@@ -3,15 +3,14 @@ from dataclasses import dataclass
 
 class Optimizer(ABC):
 
-
-    @abstractmethod
     @property
+    @abstractmethod
+
     def name(self):
         pass
 
-
-    @abstractmethod
     @property
+    @abstractmethod
     def args(self):
         pass
 
@@ -56,6 +55,6 @@ class SGD(Optimizer):
             'learning_rate_init' : self.lr,
             'alpha' : self.alpha,
             'power_t' : self.power_t,
-            'momentum' : self.momentum
+            'momentum' : self.momentum,
             'nesterov_momentum' : self.nesterov_momentum
          }

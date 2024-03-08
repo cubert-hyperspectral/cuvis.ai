@@ -10,7 +10,7 @@ class BaseSupervised(ABC):
         pass
 
     @abstractmethod
-    def predict(self, X):
+    def forward(self, X):
         pass
 
     @abstractmethod

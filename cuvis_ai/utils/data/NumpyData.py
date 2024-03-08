@@ -10,10 +10,21 @@ from torchvision.datasets import VisionDataset
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 from .Labels2TV import convert_COCO2TV
+from enum import Enum
 
 from .Metadata import Metadata
 
 debug_enabled = True
+
+class OutputFormat(Enum):
+    """"
+    Describes the output format that is return by the dataloader
+    """
+    Full = 0
+    BoundingBox = 1
+    SegmentationMask = 2
+    CustomFilter = 99
+
 
 class NumpyData(VisionDataset):
 
@@ -29,10 +40,14 @@ class NumpyData(VisionDataset):
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
+        output_format: OutputFormat = OutputFormat.Full,
+        output_lambda: Optional[Callable] = None,
     ):
         super().__init__(root, transforms, transform, target_transform)
         self._FILE_EXTENSION = ".npy"
-        
+        self.output_format = output_format
+        self.output_lambda = output_lambda
+
         self.fileset_metadata = {}
         self.metadata_filepath = os.path.join(self.root, "metadata.yaml")
         if os.path.isfile(self.metadata_filepath):
@@ -87,6 +102,7 @@ class NumpyData(VisionDataset):
         return len(self.data_map)
 
     def __getitem__(self, idx: int):
+        print(f'idx = {idx}')
         data = list(self.data_map.values())[idx]["data"](self.provide_datatype)
         labels = self.get_labels(idx)
         if self.transforms is not None:
@@ -94,16 +110,33 @@ class NumpyData(VisionDataset):
                 data, labels = self.transforms(data, labels)
             else:
                 data = self.transforms(data)
-        return data, self.get_metadata(idx), labels
+        return self._get_return_shape(data, self.get_metadata(idx), labels)
+    
+    def _get_return_shape(self, data, metadata, labels ):
+        if self.output_format == OutputFormat.Full:
+            return data, metadata, labels
+
+        elif self.output_format == OutputFormat.BoundingBox:
+            return data, labels['bbox']
+        
+        elif self.output_format == OutputFormat.SegmentationMask:
+            return data, labels['segmentation']
+        
+        elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
+            return self.output_lambda(data, metadata, labels)
+        
+        else:
+            raise NotImplementedError("Think about it.")
+
     
     def update(self, other_dataset):
         self.data_map.update(other_dataset.get_all_data())
 
     def set_datatype(self, dtype: np.dtype):
-        if dtype in C_SUPPORTED_DTYPES:
+        if dtype in NumpyData.C_SUPPORTED_DTYPES:
             self.provide_datatype = dtype
         else:
-            raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in C_SUPPORTED_DTYPES]))
+            raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in NumpyData.C_SUPPORTED_DTYPES]))
 
     def random_split(self, train_percent, val_percent, test_percent) -> list[torch.utils.data.dataset.Subset]:
         gen = torch.torch.Generator().manual_seed(time.time_ns())

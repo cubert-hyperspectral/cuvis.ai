@@ -35,7 +35,7 @@ class NumpyData(VisionDataset):
             self.path = path
         def __call__(self, to_dtype:np.dtype):
             return tv_tensors.Image(np.load(self.path).astype(to_dtype))
-    
+
     def __init__(self, root: str, 
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
@@ -58,7 +58,12 @@ class NumpyData(VisionDataset):
         self.data_types:set = set()
         self.provide_datatype:np.dtype = np.float32
         
-        self.data_map:dict = {}
+        # Actual data collection
+        self.paths = []
+        self.cubes = []
+        self.metas = []
+        self.labels = []
+
         self._load_directory(self.root)
 
     
@@ -73,10 +78,9 @@ class NumpyData(VisionDataset):
     def _load_file(self, filepath: str):
         if debug_enabled:
             print("Found file:", filepath)
-        path, _ = os.path.splitext(filepath)
-        labelpath = path + ".json"
-        self.data_map[path] = {}
-        self.data_map[path]["data"] = self._NumpyLoader_(filepath)
+
+        self.paths.append(filepath)
+        self.cubes.append(self._NumpyLoader_(filepath))
         
             
         if self.metadata_filepath:
@@ -88,49 +92,51 @@ class NumpyData(VisionDataset):
         meta.shape = temp_data.shape
         meta.datatype = temp_data.dtype
         self.data_types.add(meta.datatype)
-        self.data_map[path]["meta"] = meta
 
+        self.metas.append(meta)
+
+        labelpath = os.path.splitext(filepath)[0] + ".json"
         canvas_size = (meta.shape[0], meta.shape[1])
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
-            self.data_map[path]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
+            l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
         else:
-            self.data_map[path]["labels"] = None
-        
+            l = None
+        self.labels.append()
 
     def __len__(self):
-        return len(self.data_map)
+        return self.size
 
-    def __getitem__(self, idx: int):
-        print(f'idx = {idx}')
-        data = list(self.data_map.values())[idx]["data"](self.provide_datatype)
-        labels = self.get_labels(idx)
-        if self.transforms is not None:
-            if labels is not None:
-                data, labels = self.transforms(data, labels)
-            else:
-                data = self.transforms(data)
-        return self._get_return_shape(data, self.get_metadata(idx), labels)
+    def __getitem__(self, idx):
+        data = self.get_data(idx)
+        meta = self.get_metadata(idx)
+        label = self.get_labels(idx)
+        return self._get_return_shape(data, meta, label)
     
-    def _get_return_shape(self, data, metadata, labels ):
+    def _get_return_shape(self, data, metadata, labels):
         if self.output_format == OutputFormat.Full:
             return data, metadata, labels
 
         elif self.output_format == OutputFormat.BoundingBox:
-            return data, labels['bbox']
+            return data, [l['bbox'] for l in labels]
         
         elif self.output_format == OutputFormat.SegmentationMask:
-            return data, labels['segmentation']
+            return data, [l['segmentation'] for l in labels]
         
         elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
-            return self.output_lambda(data, metadata, labels)
+            return [self.output_lambda(d, m, l) for d, m, l in zip(data, metadata, labels)]
         
         else:
             raise NotImplementedError("Think about it.")
 
+    def _apply_transform(self, d):
+        return d if self.transforms is None else self.transforms(d)
     
-    def update(self, other_dataset):
-        self.data_map.update(other_dataset.get_all_data())
+    def merge(self, other_dataset):
+        self.paths.extend(other_dataset.paths)
+        self.cubes.extend(other_dataset.cubes)
+        self.metas.extend(other_dataset.metas)
+        self.labels.extend(other_dataset.labels)
 
     def set_datatype(self, dtype: np.dtype):
         if dtype in NumpyData.C_SUPPORTED_DTYPES:
@@ -148,38 +154,31 @@ class NumpyData(VisionDataset):
     def get_datatype(self):
         return self.provide_datatype
     
-    def get_all_data(self):
-        return self.data_map
+    def get_all_cubes(self):
+        return [cube(self.provide_datatype) for cube in self.cubes]
 
-    def get_data(self, idx:int):
-        return list(self.data_map.items())[idx]
+    def get_data(self, idx):
+        if isinstance(idx, int):
+            return self._apply_transform(self.cubes[idx](self.provide_datatype))
+        return [self._apply_transform(cube(self.provide_datatype)) for cube in self.cubes[idx]]
 
     def get_all_items(self):
-        return [i["data"](self.provide_datatype) for i in self.data_map.values()]
+        return self[:]
     
-    def get_item(self, idx:int):
-        return self.__getitem__(idx)
+    def get_item(self, idx):
+        return self[idx]
 
     def get_all_metadata(self):
-        return [i["meta"] for i in self.data_map.values()]
+        return self.metas
 
-    def get_metadata(self, idx:int):
-        return list(self.data_map.values())[idx]["meta"]
+    def get_metadata(self, idx):
+        return self.metas[idx]
 
     def get_all_labels(self):
-        def _get_labels(v):
-            try:
-                return v["labels"]
-            except KeyError:
-                return None
-        return [self.get_labels(i) for i in self.data_map.values()]
+        return [self.get_labels(idx) for idx in range(len(self.labels))]
 
-    def get_labels(self, idx:int):
-        try:
-            l = list(self.data_map.values())[idx]["labels"]
-            if self.transforms is not None:
-                return self.transforms(l)
-            return l
-        except KeyError:
-            return None
+    def get_labels(self, idx):
+        if isinstance(idx, int):
+            return self._apply_transform(self.labels[idx])
+        return [self._apply_transform(l) for l in self.labels[idx]]
 

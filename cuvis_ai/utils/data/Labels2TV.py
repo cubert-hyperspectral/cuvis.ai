@@ -7,7 +7,7 @@ def convert_COCO2TV(coco, size):
 
     for k, v in coco.items():
         if k == "bbox":
-            print(F"Canvas_size: {size} bbox COCO: {v}")
+            #print(F"Canvas_size: {size} bbox COCO: {v}")
             out["bbox"] = BoundingBoxes(v, format="XYXY", canvas_size=size)
         elif k == "segmentation":
             out["segmentation"] = Mask(polygon2mask(size, np.array(v[0]).reshape(-1, 2)).astype(np.uint8))

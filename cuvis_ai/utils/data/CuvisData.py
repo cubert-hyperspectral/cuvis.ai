@@ -14,9 +14,9 @@ from pycocotools.coco import COCO
 from .Labels2TV import convert_COCO2TV
 
 from .Metadata import Metadata
-from .NumpyData import NumpyData
+from .NumpyData import NumpyData, OutputFormat
 
-debug_enabled = True
+debug_enabled = False
 
 class CuvisData(NumpyData):
 
@@ -38,15 +38,15 @@ class CuvisData(NumpyData):
             return tv_tensors.Image(cube.astype(to_dtype))
     
     def __init__(self, root: str, 
-        output_format,
-        output_lambda: Optional[Callable] = None,
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
+        output_format: OutputFormat = OutputFormat.Full,
+        output_lambda: Optional[Callable] = None,
     ):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
-        super().__init__(root, transforms, transform, target_transform, output_format=output_format, output_lambda=output_lambda)
+        super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
         
 
     def _load_directory(self, dir_path:str):
@@ -64,8 +64,7 @@ class CuvisData(NumpyData):
     def _load_session_file(self, filepath: str):
         if debug_enabled:
             print("Found file:", filepath)
-        path, _ = os.path.splitext(filepath)
-        labelpath = path + ".json"
+        labelpath = os.path.splitext(filepath)[0] + ".json"
 
         crt_session = cuvis.SessionFile(filepath)
 
@@ -90,8 +89,8 @@ class CuvisData(NumpyData):
         
         for idx in range(cube_count):
             cube_path = F"{filepath}:{idx}"
-            self.data_map[cube_path] = {}
-            self.data_map[cube_path]["data"] = self._SessionCubeLoader(filepath, idx)
+            self.paths.append(cube_path)
+            self.cubes.append(CuvisData._SessionCubeLoader(filepath, idx))
             
             meta:Metadata = copy.deepcopy(sess_meta)
             # TODO: Add a way to SDK where only meta data is loaded or make the cube lazy-loadable
@@ -104,17 +103,18 @@ class CuvisData(NumpyData):
             #for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
             #    meta.references[key] = val
                 
-            self.data_map[cube_path]["meta"] = meta
+            self.metas.append(meta)
 
+            l = None
             if coco is not None:
-                self.data_map[cube_path]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(ids[idx]))[0], canvas_size)
-                
+                l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(ids[idx]))[0], canvas_size)
+            self.labels.append(l)
 
     def _load_legacy_file(self, filepath:str):
         if debug_enabled:
             print("Found file:", filepath)
-        path, _ = os.path.splitext(filepath)
-        labelpath = path + ".json"
+        self.paths.append(filepath)
+        labelpath = os.path.splitext(filepath)[0] + ".json"
         
         if self.metadata_filepath:
             meta = Metadata(filepath, self.fileset_metadata)
@@ -125,15 +125,14 @@ class CuvisData(NumpyData):
         meta.shape = (mesu.data["cube"].width, mesu.data["cube"].height, mesu.data["cube"].channels)
         meta.wavelengths_nm = mesu.data["cube"].wavelength
         
+        l = None
         canvas_size = (meta.shape[0], meta.shape[1])
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
-            self.data_map[filepath]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
-        else:
-            self.data_map[filepath]["labels"] = None
+            l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
+        self.labels.append(l)
             
-        self.data_map[filepath] = {}
-        self.data_map[filepath]["data"] = self._LegacyCubeLoader(filepath)
+        self.cubes.append(CuvisData._LegacyCubeLoader(filepath))
         
         meta.integration_time_us = int(temp_mesu.integration_time * 1000)
         meta.flags = {}
@@ -142,6 +141,7 @@ class CuvisData(NumpyData):
         meta.references = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
             meta.references[key] = val
-        self.data_map[filepath]["meta"] = meta
+            
+        self.metas.append(meta)
 
 

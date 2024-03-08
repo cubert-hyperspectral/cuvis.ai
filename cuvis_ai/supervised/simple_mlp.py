@@ -13,6 +13,7 @@ def unflatten_arrays(data: np.ndarray, orig_shape):
 class MLP(BaseSupervised):
     epochs: int = 10
     optimizer: Optimizer = None
+    verbose: bool = False
 
 
 
@@ -23,7 +24,7 @@ class MLP(BaseSupervised):
         if self.optimizer is not None:
             args.update(self.optimizer.args)
 
-        self.mlp = sk_mlp(max_iter=self.epochs,**args)
+        self.mlp = sk_mlp(max_iter=self.epochs,verbose=self.verbose,**args)
 
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
@@ -42,9 +43,9 @@ class MLP(BaseSupervised):
     def forward(self, X: np.ndarray):
         flatten_image, _ = flatten_arrays(X)
 
-        flatten_labels, label_shape = flatten_labels(Y)
+        flatten_l, label_shape = flatten_l(Y)
 
-        predictions = self.mlp.predict(flatten_image,flatten_labels)
+        predictions = self.mlp.predict(flatten_image,flatten_l)
         predictions = unflatten_arrays(predictions,label_shape)
         return predictions
 

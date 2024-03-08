@@ -10,7 +10,7 @@ REQUIREMENTS = {
         'cuvis-il == 3.2.1',
         'numpy',
         'scikit-learn',
-        'matplotlib'
+        'matplotlib',
     ],
 }
 

@@ -40,7 +40,7 @@ class KMeans(BaseUnsupervised):
     def check_input_dim(self, X: np.ndarray):
         assert(X.shape[2] == self.input_size)
     
-    def predict(self, X: np.ndarray):
+    def forward(self, X: np.ndarray):
         """
         Transform the input data.
 
@@ -65,29 +65,21 @@ class KMeans(BaseUnsupervised):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_kmeans, open(os.path.join(serial_dir,"kmeans.pkl"),"wb"))
+        pk.dump(self.fit_kmeans, open(os.path.join(serial_dir,f"{hash(self.fit_kmeans)}_kmeans.pkl"),"wb"))
         data = {
             'type': type(self).__name__,
             'n_clusters': self.n_clusters,
             'input_size': self.input_size,
-            'kmeans_object': os.path.join(serial_dir,"kmeans.pkl")
+            'kmeans_object': f"{hash(self.fit_kmeans)}_kmeans.pkl"
         }
         # Dump to a string
         return yaml.dump(data, default_flow_style=False)
 
-    def load(self, params: Dict):
+    def load(self, params: Dict, filepath: str):
         '''
         Load dumped parameters to recreate the K-Means object
         '''
         self.input_size = params.get('input_size')
         self.n_clusters = params.get('n_clusters')
-        self.fit_kmeans = pk.load(open(params.get('kmeans_object'),'rb'))
+        self.fit_kmeans = pk.load(open(os.path.join(filepath, params.get('kmeans_object')),'rb'))
         self.initialized = True
-
-    def visualize(self, preds: np.ndarray):
-        plt.imshow(preds, cmap='viridis')  # You can choose any colormap you like
-        plt.colorbar()
-        plt.title('K-Means Classified Image')
-        plt.axis('off')
-        plt.show()
-

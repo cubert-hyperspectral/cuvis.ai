@@ -38,13 +38,15 @@ class CuvisData(NumpyData):
             return tv_tensors.Image(cube.astype(to_dtype))
     
     def __init__(self, root: str, 
+        output_format,
+        output_lambda: Optional[Callable] = None,
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
     ):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
-        super().__init__(root, transforms, transform, target_transform)
+        super().__init__(root, transforms, transform, target_transform, output_format=output_format, output_lambda=output_lambda)
         
 
     def _load_directory(self, dir_path:str):
@@ -133,7 +135,7 @@ class CuvisData(NumpyData):
         self.data_map[filepath] = {}
         self.data_map[filepath]["data"] = self._LegacyCubeLoader(filepath)
         
-        meta.integration_time_us = int(mesu.integration_time * 1000)
+        meta.integration_time_us = int(temp_mesu.integration_time * 1000)
         meta.flags = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
             meta.flags[key] = val

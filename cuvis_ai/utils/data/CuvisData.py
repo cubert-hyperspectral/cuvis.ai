@@ -130,10 +130,10 @@ class CuvisData(NumpyData):
         else:
             self.data_map[filepath]["labels"] = None
             
-        self.data_map[cube_path] = {}
-        self.data_map[cube_path]["data"] = self._LegacyCubeLoader(filepath)
+        self.data_map[filepath] = {}
+        self.data_map[filepath]["data"] = self._LegacyCubeLoader(filepath)
         
-        meta.integration_time_us = int(mesu.integration_time * 1000)
+        meta.integration_time_us = int(temp_mesu.integration_time * 1000)
         meta.flags = {}
         for key, val in [(key, temp_mesu.data[key]) for key in temp_mesu.data.keys() if "Flag_" in key]:
             meta.flags[key] = val

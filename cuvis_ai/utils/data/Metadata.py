@@ -1,6 +1,28 @@
 class Metadata:
+    """Collection of meta-data for a data cube or dataset.
+    
+    This information can be extracted from cubes stored in the cu3s file format automatically.
+    
+    For all other data, a metadata.yaml file can be placed in the root data path to provide this meta data.
+    The yaml file can either contain any of the attributes of this class directly or contain one or multiple 'fileset' entries.
+    Each 'fileset' must contain a 'paths' entry, specifying a list of filepaths that this set of attributes is valid for.
+    
+    Attributes:
+        name: Name of the file that this object describes.
+        shape: Numpy shape describing the cube size as (columns, rows, channels)
+        wavelengths_nm: A list of wavelengths the cube contains.
+            In the same order as the channels.
+        bit_depth: Bit depth of the source data the cube was computed from.
+        references: A dictionary containing filenames or links to the data references.
+            e.g: white and dark cubes used to calculate reflectance data.
+        integration_time_us: The integration time (also exposure time) in microseconds used to record the data.
+        framerate: For video data. The number of measurements taken per second.
+        flags: Data dependend dictionary. Any additional flags associated with measurements.
+            e.g: Overillumination, dead pixels, missing references or data, bad references, key frames, etc.
+        processing_mode: The processing mode the data was calculated with.
+    """
 
-    C_ATTRIB_LIST = ["shape", "wavelengths_nm", "references", "bit_depth", "integration_time_us", "framerate", "flags"]
+    C_ATTRIB_LIST = ["shape", "wavelengths_nm", "references", "bit_depth", "integration_time_us", "framerate", "flags", "processing_mode"]
     
     def __init__(self, name:str, fileset_metadata: dict={}):
         self.name:str = name
@@ -11,6 +33,7 @@ class Metadata:
         self.integration_time_us:float = None
         self.framerate:float = None
         self.flags:dict = {}
+        self.processing_mode:str = "raw"
         if fileset_metadata:
             self._init_from_file(fileset_metadata)
 

@@ -3,6 +3,7 @@ from torchvision.tv_tensors import BoundingBoxes, Mask
 from skimage.draw import polygon2mask
 
 def convert_COCO2TV(coco, size):
+    """Helper function to convert bounding boxes and segmentation polygons to torchvision tensors."""
     out = {}
 
     for k, v in coco.items():

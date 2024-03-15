@@ -3,12 +3,8 @@ os.environ["CUVIS"] = "/usr/lib/cuvis/"
 import cuvis
 import numpy as np
 import glob
-import yaml
-import json
 import copy
 from typing import Optional, Callable
-import torch
-from torchvision.datasets import VisionDataset
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 from .Labels2TV import convert_COCO2TV
@@ -19,6 +15,21 @@ from .NumpyData import NumpyData, OutputFormat
 debug_enabled = False
 
 class CuvisData(NumpyData):
+    """Representation for a set of Cuvis data cubes, their meta-data and labels.
+    
+    See :class:`NumpyData` for more details.
+    
+    Args:
+        root (str): The absolute or relative path to the directory containing the HSI data.
+        transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
+        transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
+        target_transform (callable, optional): A function/transform that takes in the target and transforms it.
+        output_format (OutputFormat): Enum value that controls the output format of the dataset. See :class:`OutputFormat`
+        output_lambda (callable, optional): Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
+        
+    Note:
+        :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    """
 
     class _SessionCubeLoader:
         def __init__(self, path, idx):

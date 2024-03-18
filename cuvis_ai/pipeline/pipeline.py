@@ -8,6 +8,7 @@ from typing import Any, Dict, Tuple
 from cuvis_ai.preprocessor import *
 from cuvis_ai.pipeline import *
 from cuvis_ai.unsupervised import *
+from cuvis_ai.supervised import *
 
 class Pipeline():
     def __init__(self, name: str) -> None:
@@ -48,6 +49,36 @@ class Pipeline():
             data = stage.forward(data)
         return data
     
+    def train(self, train_dataloader, test_dataloader):
+
+        x, y = zip(*[train_dataloader[i] for i in range(0,10)])
+        x = np.array(x)
+        y = np.array(y)
+
+        # training stage
+        for stage in self.pipeline:
+
+            if isinstance(stage,BaseUnsupervised) or isinstance(stage,Preprocessor):
+                stage.fit(x)
+            elif isinstance(stage,BaseSupervised):
+                stage.fit(x,y)
+            else:
+                raise NotImplementedError("Invalid class type")
+
+            x = stage.forward(x)
+
+        # test stage
+        test_x, test_y = zip(*[train_dataloader[i] for i in range(10,20)])
+        test_x = np.array(test_x)
+        
+
+        for stage in self.pipeline:
+            test_x = stage.forward(test_x)
+
+        # do some metrics
+
+
+
     def serialize(self) -> None:
         output = {
             'stages': [],

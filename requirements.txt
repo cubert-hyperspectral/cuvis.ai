@@ -1,0 +1,11 @@
+numpy
+cuvis
+torch
+torchvision
+scikit-learn
+scikit-image
+pycocotools
+matplotlib
+pycocotools
+pyyaml
+pytorch-lightning

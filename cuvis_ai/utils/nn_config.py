@@ -13,6 +13,17 @@ class Optimizer(ABC):
     def args(self):
         pass
 
+    @property
+    @abstractmethod
+    def sklearn_args(self):
+        pass
+
+    @property
+    @abstractmethod
+    def pytorch_args(self):
+        pass
+
+
 
 @dataclass
 class Adam(Optimizer):
@@ -35,6 +46,32 @@ class Adam(Optimizer):
             'beta_2' : self.beta_2,
             'epsilon' : self.epsilon
         }
+    
+    @Optimizer.sklearn_args.getter
+    def sklearn_args(self):
+        return {
+            'learning_rate_init' : self.lr,
+            'alpha' : self.alpha,
+            'beta_1' : self.beta_1,
+            'beta_2' : self.beta_2,
+            'epsilon' : self.epsilon
+        }
+    
+    @Optimizer.pytorch_args.getter
+    def pytorch_args(self):
+        try:
+            import torch.optim
+        except ImportError as exc:
+            msg  = "This feature requires pytorch to be installed"
+            raise ImportError(msg) from exc
+
+        return {
+            'cls' : torch.optim.Adam,
+            'lr' : self.lr,
+            'weight_decay' : self.alpha,
+            'betas' : (self.beta_1,self.beta_2),
+            'eps' : self.epsilon
+        }
 
 @dataclass
 class SGD(Optimizer):
@@ -42,7 +79,7 @@ class SGD(Optimizer):
     alpha: float = 0.0001
     power_t: float = 0.5
     momentum: float = 0.9
-    nesterov_momentum: bool = True
+    nesterov: bool = True
 
     @Optimizer.name.getter
     def name(self):
@@ -55,5 +92,32 @@ class SGD(Optimizer):
             'alpha' : self.alpha,
             'power_t' : self.power_t,
             'momentum' : self.momentum,
-            'nesterov_momentum' : self.nesterov_momentum
+            'nesterov' : self.nesterov
          }
+    
+    @Optimizer.sklearn_args.getter
+    def sklearn_args(self):
+        return {
+            'learning_rate_init' : self.lr,
+            'alpha' : self.alpha,
+            'power_t' : self.power_t,
+            'momentum' : self.momentum,
+            'nesterov_momentum' : self.nesterov
+         }
+    
+    @Optimizer.pytorch_args.getter
+    def pytorch_args(self):
+        try:
+            import torch.optim
+        except ImportError as exc:
+            msg  = "This feature requires pytorch to be installed"
+            raise ImportError(msg) from exc
+
+        return {
+            'cls' : torch.optim.SGD,
+            'lr' : self.lr,
+            'weight_decay' : self.alpha,
+            'momentum' : self.momentum,
+            'nesterov' : self.nesterov,
+            'dampening'  : self.power_t
+        }

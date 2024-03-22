@@ -3,7 +3,7 @@ import glob
 import yaml
 import json
 import time
-from typing import Optional, Callable
+from typing import Optional, Callable, Dict
 import numpy as np
 import torch
 from torchvision.datasets import VisionDataset 
@@ -46,7 +46,7 @@ class NumpyData(VisionDataset):
     Labels for any data file are expected in a file of the same name but with the .json extension in COCO label format.
     
     Args:
-        root (str): The absolute or relative path to the directory containing the HSI data.
+        root (str, optional): The absolute or relative path to the directory containing the HSI data.
         transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
         transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
         target_transform (callable, optional): A function/transform that takes in the target and transforms it.
@@ -55,6 +55,9 @@ class NumpyData(VisionDataset):
         
     Note:
         :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    
+    Note:
+        If :attr:`root` is not passed in the constructor, the :py:meth:`~NumpyData.initialize` or :py:meth:`~NumpyData.load` method has to be called with a root path before the dataset can be used.
     """
     
     C_SUPPORTED_DTYPES = (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_)
@@ -63,9 +66,15 @@ class NumpyData(VisionDataset):
         def __init__(self, path):
             self.path = path
         def __call__(self, to_dtype:np.dtype):
-            return tv_tensors.Image(np.load(self.path).astype(to_dtype))
+            cube = np.load(self.path)
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
 
-    def __init__(self, root: str, 
+    def __init__(self, root: Optional[str] = None, 
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
@@ -73,29 +82,53 @@ class NumpyData(VisionDataset):
         output_lambda: Optional[Callable] = None,
     ):
         super().__init__(root, transforms, transform, target_transform)
-        self._FILE_EXTENSION = ".npy"
         self.output_format = output_format
         self.output_lambda = output_lambda
+        
+        self._FILE_EXTENSION = ".npy"
+        self.provide_datatype:np.dtype = np.float32
+        
+        self._clear()
+        
+        if root is not None:
+            self.initialize(root)
 
-        self.fileset_metadata = {}
+
+    def initialize(self, root:str, force:bool = False):
+        """ Initialize the dataset by scanning the provided directory for data.
+        Initialize will be called by the constructor if a root path is provided or by the load method.
+        
+        Args:
+            root: Path of the directory containing the data this dataset will represent.
+            force: If True, the dataset will clear all currently held data and re-initialize with the provided root path.
+        """
+        if self.initialized:
+            if force:
+                self._clear()
+            else:
+                raise RuntimeError("Cannot initialize an already initialized dataset. Use force=True if this was intended.")
+        self.root = root
+
         self.metadata_filepath = os.path.join(self.root, "metadata.yaml")
         if os.path.isfile(self.metadata_filepath):
             self.fileset_metadata = yaml.safe_load(open(self.metadata_filepath, "r"))
         else:
             self.metadata_filepath = ""
 
-        self.data_types:set = set()
-        self.provide_datatype:np.dtype = np.float32
-        
         # Actual data collection
+        self._load_directory(self.root)
+        self.initialized = True
+    
+    def _clear(self):
+        self.root = None
         self.paths = []
         self.cubes = []
         self.metas = []
         self.labels = []
-
-        self._load_directory(self.root)
-
-    
+        self.fileset_metadata = {}
+        self.data_types:set = set()
+        self.initialized = False
+        
     def _load_directory(self):
         if debug_enabled:
             print("Reading from directory:", self.root)
@@ -167,10 +200,13 @@ class NumpyData(VisionDataset):
     
     def merge(self, other_dataset):
         """Merge another NumpyData dataset into this dataset."""
-        self.paths.extend(other_dataset.paths)
-        self.cubes.extend(other_dataset.cubes)
-        self.metas.extend(other_dataset.metas)
-        self.labels.extend(other_dataset.labels)
+        if type(self) is type(other_dataset):
+            self.paths.extend(other_dataset.paths)
+            self.cubes.extend(other_dataset.cubes)
+            self.metas.extend(other_dataset.metas)
+            self.labels.extend(other_dataset.labels)
+        else:
+            raise TypeError(F"Cannot merge NumpyData with an object of type {type(other_dataset).__name__}")
 
     def set_datatype(self, dtype: np.dtype):
         """Specify a Numpy datatype to transform the cube into before returning it.
@@ -212,9 +248,10 @@ class NumpyData(VisionDataset):
 
     def get_data(self, idx):
         """Get the cube at 'idx'."""
+        # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
         if isinstance(idx, int):
-            return self._apply_transform(self.cubes[idx](self.provide_datatype))
-        return [self._apply_transform(cube(self.provide_datatype)) for cube in self.cubes[idx]]
+            return self._apply_transform(self.cubes[idx](self.provide_datatype).permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
+        return [self._apply_transform(cube(self.provide_datatype).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]) for cube in self.cubes[idx]]
 
     def get_all_items(self):
         """Get all items of this dataset in the selected :attr:`output_format`.
@@ -244,3 +281,26 @@ class NumpyData(VisionDataset):
             return self._apply_transform(self.labels[idx])
         return [self._apply_transform(l) for l in self.labels[idx]]
 
+    def serialize(self, serial_dir: str):
+        """Serialize the parameters of this dataset and store in 'serial_dir'."""
+        if not self.initialized:
+            print('Module not fully initialized, skipping output!')
+            return
+        
+        blobname = F"{hash(self.transforms)}_dataset_transforms.zip"
+        torch.save(self.transforms, os.path.join(serial_dir, blobname))
+        data = {
+            'dataset': type(self).__name__,
+            'root_dir': self.root,
+            'data_type': self.provide_datatype,
+            'transforms': blobname,
+        }
+        # Dump to a string
+        return yaml.dump(data, default_flow_style=False)
+
+    def load(self, params: Dict, filepath: str):
+        """Load dumped parameters to recreate the dataset."""
+        root = params["root_dir"]
+        self.provide_datatype = params["data_type"]
+        self.transforms = torch.load(os.path.join(filepath, params["transforms"]))
+        self.initialize(root)

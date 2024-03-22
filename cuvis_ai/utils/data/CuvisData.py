@@ -4,7 +4,8 @@ import cuvis
 import numpy as np
 import glob
 import copy
-from typing import Optional, Callable
+from typing import Optional, Callable, Dict
+import torch
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 from .Labels2TV import convert_COCO2TV
@@ -37,18 +38,26 @@ class CuvisData(NumpyData):
             self.idx = idx
         def __call__(self, to_dtype:np.dtype):
             cube = cuvis.SessionFile(self.path).get_measurement(self.idx).data["cube"].array
-            cube = np.moveaxis(cube, -1, 0)
-            return tv_tensors.Image(cube.astype(to_dtype))
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
     
     class _LegacyCubeLoader:
         def __init__(self, path):
             self.path = path
         def __call__(self, to_dtype:np.dtype):
             cube = cuvis.Measurement.load(self.path).data["cube"].array
-            cube = np.moveaxis(cube, -1, 0)
-            return tv_tensors.Image(cube.astype(to_dtype))
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
     
-    def __init__(self, root: str, 
+    def __init__(self, root: Optional[str] = None,
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
@@ -58,7 +67,6 @@ class CuvisData(NumpyData):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
         super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
-        
 
     def _load_directory(self, dir_path:str):
         if debug_enabled:
@@ -155,4 +163,9 @@ class CuvisData(NumpyData):
             
         self.metas.append(meta)
 
+    def serialize(self, serial_dir: str):
+        super().serialize(self, serial_dir)
+
+    def load(self, params: Dict, filepath: str):
+        super().load(self, params, filepath)
 

@@ -6,17 +6,18 @@ import numpy as np
 from torch import nn
 from torch.optim.optimizer import Optimizer as torch_optim
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 def unflatten_arrays(data: np.ndarray, orig_shape):
     return data.reshape(orig_shape)
 
 @dataclass
-class SkorchWrapper(BaseSupervised):
+class SkorchSupervised(BaseSupervised):
     epochs: int = 10
     optimizer: Optimizer | torch_optim = None
     verbose: bool = False
-    model: nn.Module
+    model: nn.Module = None
+    model_args: dict = field(default_factory=dict)
 
 
 
@@ -24,10 +25,12 @@ class SkorchWrapper(BaseSupervised):
         self.initialized = False
 
         args = dict()
-        if self.optimizer is not None:
-            args.update(self.optimizer.args)
+        #if self.optimizer is not None:
+        #    args.update(self.optimizer.args)
 
-        self.classifier = NeuralNetClassifier(self.model,**args)
+        model_args = {f'module__{k}' : v for k,v in self.model_args.items()}
+
+        self.classifier = NeuralNetClassifier(self.model,**args,**model_args)
 
 
     def fit(self, X: np.ndarray, Y: np.ndarray):

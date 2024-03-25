@@ -44,7 +44,7 @@ class NMF(Preprocessor):
     def check_output_dim(self, X: np.ndarray):
         assert(X.shape[2] == self.n_components)
     
-    def transform(self, X: np.ndarray):
+    def forward(self, X: np.ndarray):
         """
         Transform the input data.
 
@@ -69,24 +69,24 @@ class NMF(Preprocessor):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_nmf, open(os.path.join(serial_dir,"nmf.pkl"),"wb"))
+        pk.dump(self.fit_nmf, open(os.path.join(serial_dir,f"{hash(self.fit_nmf)}_nmf.pkl"),"wb"))
         data = {
             'type': type(self).__name__,
             'n_components': self.n_components,
             'input_size': self.input_size,
             'output_size': self.output_size,
-            'nmf_object': os.path.join(serial_dir,"nmf.pkl")
+            'nmf_object': f"{hash(self.fit_nmf)}_nmf.pkl"
         }
         # Dump to a string
         return yaml.dump(data, default_flow_style=False)
 
-    def load(self, params: Dict):
+    def load(self, params: Dict, filepath: str):
         '''
         Load dumped parameters to recreate the nmf object
         '''
         self.input_size = params.get('input_size')
         self.n_components = params.get('n_components')
         self.output_size = params.get('output_size')
-        self.fit_nmf = pk.load(open(params.get('nmf_object'),'rb'))
+        self.fit_nmf = pk.load(open(os.path.join(filepath,params.get('nmf_object')),'rb'))
         self.initialized = True
 

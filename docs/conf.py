@@ -23,18 +23,8 @@ extensions = [
 	'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.intersphinx',
+    'sphinx.ext.autosummary'
 ]
-
-
-intersphinx_mapping = {
-    'pytorch': ('https://pytorch.org/docs/stable/', None),
-    'sklearn': ('https://scikit-learn.org/stable/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'python': ('https://docs.python.org/3', None),
-    'torchvision': ('https://pytorch.org/vision/stable/', None),
-}
 
 
 # from https://stackoverflow.com/questions/2701998/automatically-document-all-modules-recursively-with-sphinx-autodoc
@@ -42,9 +32,6 @@ intersphinx_mapping = {
 autosummary_generate = True
 
 templates_path = ['_templates']
-
-source_suffix = '.rst'
-
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 

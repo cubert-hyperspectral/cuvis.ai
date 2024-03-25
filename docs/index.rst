@@ -19,3 +19,7 @@ Abstract Base Classes
 .. autoclass:: cuvis_ai.abc.ImageClassificationNode
     :members:
     :undoc-members:
+    
+.. autoclass:: cuvis_ai.utils.data.Metadata
+.. autoclass:: cuvis_ai.utils.data.NumpyData
+.. autoclass:: cuvis_ai.utils.data.CuvisData

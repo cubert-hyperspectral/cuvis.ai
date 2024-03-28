@@ -163,7 +163,7 @@ class CuvisData(NumpyData):
             
         self.cubes.append(CuvisData._LegacyCubeLoader(filepath))
         
-        meta.integration_time_us = int(temp_mesu.integration_time * 1000)
+        meta.integration_time_us = int(mesu.integration_time * 1000)
         meta.flags = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
             meta.flags[key] = val

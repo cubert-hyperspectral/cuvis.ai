@@ -1,3 +1,5 @@
+C_ATTRIB_LIST = ["shape", "wavelengths_nm", "references", "bit_depth", "integration_time_us", "framerate", "flags", "processing_mode"]
+
 class Metadata:
     """Collection of meta-data for a data cube or dataset.
     
@@ -22,8 +24,6 @@ class Metadata:
         processing_mode: The processing mode the data was calculated with.
     """
 
-    C_ATTRIB_LIST = ["shape", "wavelengths_nm", "references", "bit_depth", "integration_time_us", "framerate", "flags", "processing_mode"]
-    
     def __init__(self, name:str, fileset_metadata: dict={}):
         self.name:str = name
         self.shape:tuple = ()

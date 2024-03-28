@@ -18,6 +18,9 @@ from .Metadata import Metadata
 
 debug_enabled = True
 
+C_SUPPORTED_DTYPES = (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_)
+
+
 class OutputFormat(Enum):
     """"
     Describes the output format that is returned by NumpyData and CuvisData.
@@ -62,8 +65,6 @@ class NumpyData(VisionDataset):
         If :attr:`root` is not passed in the constructor, the :py:meth:`~NumpyData.initialize` or :py:meth:`~NumpyData.load` method has to be called with a root path before the dataset can be used.
     """
     
-    C_SUPPORTED_DTYPES = (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_)
-
     class _NumpyLoader_:
         def __init__(self, path):
             self.path = path

@@ -4,7 +4,7 @@ import typing
 import shutil
 from datetime import datetime
 from os.path import expanduser
-from typing import Any, Dict, Tuple
+from typing import Any
 from cuvis_ai.preprocessor import *
 from cuvis_ai.pipeline import *
 from cuvis_ai.unsupervised import *
@@ -117,7 +117,7 @@ class Pipeline():
         for stage in structure.get('stages'):
             self.add_stage(self.reconstruct_stage(stage, root_path))
 
-    def reconstruct_stage(self, data: Dict, filepath: str) -> Any:
+    def reconstruct_stage(self, data: dict, filepath: str) -> Any:
         stage = globals()[data.get('type')]()
         stage.load(data, filepath)
         return stage

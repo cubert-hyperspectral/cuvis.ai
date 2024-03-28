@@ -1,5 +1,4 @@
 import os
-os.environ["CUVIS"] = "/usr/lib/cuvis/"
 import cuvis
 import numpy as np
 import glob

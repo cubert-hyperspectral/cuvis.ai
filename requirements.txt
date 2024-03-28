@@ -9,3 +9,5 @@ matplotlib
 pycocotools
 pyyaml
 pytorch-lightning
+skorch
+imantics

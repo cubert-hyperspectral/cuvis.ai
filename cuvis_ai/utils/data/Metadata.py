@@ -27,7 +27,7 @@ class Metadata:
     def __init__(self, name:str, fileset_metadata: dict={}):
         self.name:str = name
         self.shape:tuple = ()
-        self.wavelengths_nm:list[int] = []
+        self.wavelengths_nm: list= []
         self.bit_depth:int = None
         self.references:dict = {}
         self.integration_time_us:float = None

@@ -43,10 +43,8 @@ class MLP(BaseSupervised):
     def forward(self, X: np.ndarray):
         flatten_image, _ = flatten_arrays(X)
 
-        flatten_l, label_shape = flatten_l(X)
-
-        predictions = self.mlp.predict(flatten_image,flatten_l)
-        predictions = unflatten_arrays(predictions,label_shape)
+        predictions = self.mlp.predict(flatten_image)
+        predictions = unflatten_arrays(predictions)
         return predictions
 
     def serialize(self):

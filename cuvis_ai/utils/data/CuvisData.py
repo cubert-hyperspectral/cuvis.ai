@@ -3,22 +3,34 @@ os.environ["CUVIS"] = "/usr/lib/cuvis/"
 import cuvis
 import numpy as np
 import glob
-import yaml
-import json
 import copy
-from typing import Optional, Callable
+from typing import Optional, Callable, Dict
 import torch
-from torchvision.datasets import VisionDataset
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 from .Labels2TV import convert_COCO2TV
 
 from .Metadata import Metadata
-from .NumpyData import NumpyData
+from .NumpyData import NumpyData, OutputFormat
 
-debug_enabled = True
+debug_enabled = False
 
 class CuvisData(NumpyData):
+    """Representation for a set of Cuvis data cubes, their meta-data and labels.
+    
+    See :class:`NumpyData` for more details.
+    
+    Args:
+        root (str): The absolute or relative path to the directory containing the HSI data.
+        transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
+        transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
+        target_transform (callable, optional): A function/transform that takes in the target and transforms it.
+        output_format (OutputFormat): Enum value that controls the output format of the dataset. See :class:`OutputFormat`
+        output_lambda (callable, optional): Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
+        
+    Note:
+        :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    """
 
     class _SessionCubeLoader:
         def __init__(self, path, idx):
@@ -26,32 +38,35 @@ class CuvisData(NumpyData):
             self.idx = idx
         def __call__(self, to_dtype:np.dtype):
             cube = cuvis.SessionFile(self.path).get_measurement(self.idx).data["cube"].array
-            print(cube.shape)
-            cube = np.moveaxis(cube, -1, 0)
-            print("After move axis:", cube.shape)
-            return tv_tensors.Image(cube.astype(to_dtype))
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
     
     class _LegacyCubeLoader:
         def __init__(self, path):
             self.path = path
         def __call__(self, to_dtype:np.dtype):
             cube = cuvis.Measurement.load(self.path).data["cube"].array
-            print(cube.shape)
-            cube = np.moveaxis(cube, -1, 0)
-            print("After move axis:", cube.shape)
-            return tv_tensors.Image(cube.astype(to_dtype))
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
     
-    def __init__(self, root: str, 
-        output_format,
-        output_lambda: Optional[Callable] = None,
+    def __init__(self, root: Optional[str] = None,
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
+        output_format: OutputFormat = OutputFormat.Full,
+        output_lambda: Optional[Callable] = None,
     ):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
-        super().__init__(root, transforms, transform, target_transform, output_format=output_format, output_lambda=output_lambda)
-        
+        super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
 
     def _load_directory(self, dir_path:str):
         if debug_enabled:
@@ -66,14 +81,15 @@ class CuvisData(NumpyData):
             self._load_legacy_file(cur_path)
             
     def _load_session_file(self, filepath: str):
-        print("Found file:", filepath)
-        path, _ = os.path.splitext(filepath)
-        labelpath = path + ".json"
+        if debug_enabled:
+            print("Found file:", filepath)
+        labelpath = os.path.splitext(filepath)[0] + ".json"
 
         crt_session = cuvis.SessionFile(filepath)
 
         cube_count = len(crt_session)
-        print("Session file has", cube_count, "cubes")
+        if debug_enabled:
+            print("Session file has", cube_count, "cubes")
 
         if self.metadata_filepath:
             sess_meta = Metadata(filepath, self.fileset_metadata)
@@ -84,7 +100,7 @@ class CuvisData(NumpyData):
         sess_meta.shape = (temp_mesu.data["cube"].width, temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
         canvas_size = (sess_meta.shape[0], sess_meta.shape[1])
         sess_meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
-        #sess_meta.framerate = crt_session.fps
+        #sess_meta.framerate = crt_session.fps  #TODO: Fix in SDK and reenable
         
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
@@ -92,12 +108,12 @@ class CuvisData(NumpyData):
         
         for idx in range(cube_count):
             cube_path = F"{filepath}:{idx}"
-            self.data_map[cube_path] = {}
-            self.data_map[cube_path]["data"] = self._SessionCubeLoader(filepath, idx)
-            
-            # mesu = crt_session.get_measurement(idx)
+            self.paths.append(cube_path)
+            self.cubes.append(CuvisData._SessionCubeLoader(filepath, idx))
             
             meta:Metadata = copy.deepcopy(sess_meta)
+            # TODO: Add a way to SDK where only meta data is loaded or make the cube lazy-loadable
+            #mesu = crt_session.get_measurement(idx)
             #meta.integration_time_us = int(mesu.integration_time * 1000)
             #meta.flags = {}
             #for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
@@ -105,43 +121,51 @@ class CuvisData(NumpyData):
             #meta.references = {}
             #for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
             #    meta.references[key] = val
-            self.data_map[cube_path]["meta"] = meta
-
-            if coco is not None:
-                self.data_map[cube_path]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(ids[idx]))[0], canvas_size)
                 
+            self.metas.append(meta)
+
+            l = None
+            if coco is not None:
+                l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(ids[idx]))[0], canvas_size)
+            self.labels.append(l)
 
     def _load_legacy_file(self, filepath:str):
-        print("Found file:", filepath)
-        path, _ = os.path.splitext(filepath)
-        labelpath = path + ".json"
+        if debug_enabled:
+            print("Found file:", filepath)
+        self.paths.append(filepath)
+        labelpath = os.path.splitext(filepath)[0] + ".json"
         
         if self.metadata_filepath:
             meta = Metadata(filepath, self.fileset_metadata)
         else:
             meta = Metadata(filepath)
         
-        temp_mesu = cuvis.Measurement(filepath)
-        meta.shape = (temp_mesu.data["cube"].width, temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
-        meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
+        mesu = cuvis.Measurement(filepath)
+        meta.shape = (mesu.data["cube"].width, mesu.data["cube"].height, mesu.data["cube"].channels)
+        meta.wavelengths_nm = mesu.data["cube"].wavelength
         
+        l = None
         canvas_size = (meta.shape[0], meta.shape[1])
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
-            self.data_map[filepath]["labels"] = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
-        else:
-            self.data_map[filepath]["labels"] = None
+            l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
+        self.labels.append(l)
             
-        self.data_map[filepath] = {}
-        self.data_map[filepath]["data"] = self._LegacyCubeLoader(filepath)
+        self.cubes.append(CuvisData._LegacyCubeLoader(filepath))
         
         meta.integration_time_us = int(temp_mesu.integration_time * 1000)
         meta.flags = {}
-        for key, val in [(key, temp_mesu.data[key]) for key in temp_mesu.data.keys() if "Flag_" in key]:
+        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
             meta.flags[key] = val
         meta.references = {}
-        for key, val in [(key, temp_mesu.data[key]) for key in temp_mesu.data.keys() if "_ref" in key]:
+        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
             meta.references[key] = val
-        self.data_map[filepath]["meta"] = meta
+            
+        self.metas.append(meta)
 
+    def serialize(self, serial_dir: str):
+        super().serialize(self, serial_dir)
+
+    def load(self, params: Dict, filepath: str):
+        super().load(self, params, filepath)
 

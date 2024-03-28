@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
 import typing
-from typing import Dict
+
 
 class Preprocessor(ABC):
     """

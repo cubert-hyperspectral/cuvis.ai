@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
-from typing import Dict
+
 
 class BaseSupervised(ABC):
 

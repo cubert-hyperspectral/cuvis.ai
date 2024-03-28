@@ -1,8 +1,7 @@
 import os
 import yaml
 import numpy as np
-import typing
-from typing import Dict
+
 import pickle as pk
 import matplotlib.pyplot as plt
 from .base_unsupervised import BaseUnsupervised
@@ -75,7 +74,7 @@ class KMeans(BaseUnsupervised):
         # Dump to a string
         return yaml.dump(data, default_flow_style=False)
 
-    def load(self, params: Dict, filepath: str):
+    def load(self, params: dict, filepath: str):
         '''
         Load dumped parameters to recreate the K-Means object
         '''

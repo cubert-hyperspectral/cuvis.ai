@@ -125,7 +125,12 @@ class CuvisData(NumpyData):
 
             l = None
             if coco is not None:
-                l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(ids[idx]))[0], canvas_size)
+                anns = coco.loadAnns(coco.getAnnIds(ids[idx]))[0]
+                try:
+                    anns["wavelength"] = coco.imgs[ids[idx]]["wavelength"]
+                except KeyError:
+                    pass
+                l = convert_COCO2TV(anns, canvas_size)
             self.labels.append(l)
 
     def _load_legacy_file(self, filepath:str):
@@ -147,7 +152,13 @@ class CuvisData(NumpyData):
         canvas_size = (meta.shape[0], meta.shape[1])
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
-            l = convert_COCO2TV(coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0])), canvas_size)
+            anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))[0]
+            try:
+                anns["wavelength"] = coco.imgs[0]["wavelength"]
+            except KeyError:
+                pass
+            
+            l = convert_COCO2TV(anns, canvas_size)
         self.labels.append(l)
             
         self.cubes.append(CuvisData._LegacyCubeLoader(filepath))
@@ -161,10 +172,3 @@ class CuvisData(NumpyData):
             meta.references[key] = val
             
         self.metas.append(meta)
-
-    def serialize(self, serial_dir: str):
-        super().serialize(self, serial_dir)
-
-    def load(self, params: Dict, filepath: str):
-        super().load(self, params, filepath)
-

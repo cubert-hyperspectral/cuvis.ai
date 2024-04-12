@@ -1,7 +1,7 @@
 from .base_supervised import BaseSupervised
 from sklearn.neural_network import MLPClassifier as sk_mlp
 from ..utils.nn_config import Optimizer
-from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
+from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial
 import numpy as np
 
 from dataclasses import dataclass
@@ -23,9 +23,9 @@ class MLP(BaseSupervised):
 
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        flatten_image = flatten_spatial(X)
+        flatten_image = flatten_batch_and_spatial(X)
 
-        flatten_l = flatten_labels(Y)
+        flatten_l = flatten_batch_and_labels(Y)
 
         print(f'shape image: {flatten_image.shape}')
         print(f'shape labels: {flatten_l.shape}')
@@ -36,10 +36,10 @@ class MLP(BaseSupervised):
         pass
     
     def forward(self, X: np.ndarray):
-        flatten_image = flatten_spatial(X)
+        flatten_image = flatten_batch_and_spatial(X)
 
         predictions = self.mlp.predict(flatten_image)
-        predictions = unflatten_spatial(predictions, X.shape)
+        predictions = unflatten_batch_and_spatial(predictions, X.shape)
         return predictions
 
     def serialize(self):

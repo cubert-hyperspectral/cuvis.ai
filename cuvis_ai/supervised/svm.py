@@ -1,6 +1,8 @@
 from .base_supervised import BaseSupervised
 from sklearn import svm as sk_svm
 
+from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial
+
 import numpy as np
 
 class SVM(BaseSupervised):
@@ -10,29 +12,25 @@ class SVM(BaseSupervised):
 
         self.svm = None
 
-
-
-
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
 
-        self.svm.fit(image_2d,Y)
+        flatten_image = flatten_batch_and_spatial(X)
+        flatten_l = flatten_batch_and_labels(Y)
+
+        self.svm.fit(flatten_image,flatten_l)
 
         self.input_size = X.shape[2] 
         self.initialized = True
 
-
-    
     def check_input_dim(self, X: np.ndarray):
         pass
     
-    def predict(self, X: np.ndarray):
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
-        data = self.svm.predict(image_2d)
-        cube_data = data.reshape((X.shape[0], X.shape[1]))
-        return cube_data
+    def forward(self, X: np.ndarray):
+        flatten_image = flatten_batch_and_spatial(X)
+
+        predictions = self.svm.predict(flatten_image)
+        predictions = unflatten_batch_and_spatial(predictions, X.shape)
+        return predictions
 
     def serialize(self):
         pass

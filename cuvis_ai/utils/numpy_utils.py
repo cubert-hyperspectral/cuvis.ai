@@ -12,8 +12,10 @@ def get_shape_without_batch(array: np.ndarray, ignore = []):
 
     
 def check_array_shape(array: np.ndarray, wanted_shape):
+    ret = True
     for v, w in zip(array.shape, wanted_shape):
-        assert(w == -1 or v == w)
+        ret &= w == -1 or v == w
+    return ret
 
 def flatten_spatial(array: np.ndarray):
     if array.ndim == 3:

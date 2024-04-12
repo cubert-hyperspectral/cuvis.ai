@@ -24,3 +24,6 @@ class BinaryDecider(BaseDecider):
     
     def load(self) -> None:
         return super().load()
+    
+
+# TODO: How would this functionality be integrated into Deep Learning Methods and Models

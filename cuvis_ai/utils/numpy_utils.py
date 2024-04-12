@@ -25,12 +25,16 @@ def flatten_batch_and_spatial(array: np.ndarray):
 def unflatten_batch_and_spatial(array: np.ndarray, orig_shape):
     if array.ndim != 2:
         raise ValueError("Input array must be 2D or 3D.")
-    return array.reshape(orig_shape)
+    if array.shape[0] != sum(orig_shape[:-1]):
+        raise ValueError("Input array and orig shape do not add up.")
+    return array.reshape(*orig_shape[:-1],-1)
 
 def unflatten_spatial(array: np.ndarray, orig_shape):
     if array.ndim != 3 and array.ndim != 2:
         raise ValueError("Input array must be 2D or 3D.")
-    return array.reshape(orig_shape)
+    if array.shape[0] != sum(orig_shape[:-1]):
+        raise ValueError("Input array and orig shape do not add up.")
+    return array.reshape(*orig_shape[:-1],-1)
 
 def flatten_labels(array: np.ndarray):
     if array.ndim == 2:
@@ -57,7 +61,7 @@ def flatten_batch_and_labels(array: np.ndarray):
     else:
         raise ValueError("Input array must be 2D or 3D.")
 
-def unflatten_labels(array: np.ndarray, orig_shape):
+def unflatten_batch_and_labels(array: np.ndarray, orig_shape):
     if array.ndim != 1:
         raise ValueError("Input array must be 1D.")
     return array.reshape(orig_shape)

@@ -24,10 +24,10 @@ class BaseSupervised(ABC):
         pass
 
     def check_input_dim(self,X):
-        check_array_shape(get_shape_without_batch(X), self.input_dim)
+        return check_array_shape(get_shape_without_batch(X), self.input_dim)
 
     def check_output_dim(self, X):
-        check_array_shape(get_shape_without_batch(X), self.output_dim)
+        return check_array_shape(get_shape_without_batch(X), self.output_dim)
 
     @abstractmethod
     def serialize(self):

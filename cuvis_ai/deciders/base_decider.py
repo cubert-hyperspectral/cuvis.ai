@@ -48,7 +48,7 @@ class BaseDecider(ABC):
         Returns:
         (Bool) Valid data 
         """
-        check_array_shape(get_shape_without_batch(X), self.input_dim)
+        return check_array_shape(get_shape_without_batch(X), self.input_dim)
 
     @abstractmethod
     def serialize(self):

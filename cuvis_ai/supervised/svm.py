@@ -17,7 +17,7 @@ class SVM(BaseSupervised):
         return self._input_dim
     
     @BaseSupervised.output_dim.getter
-    def input_dim(self):
+    def output_dim(self):
         return self._output_dim
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
@@ -28,7 +28,6 @@ class SVM(BaseSupervised):
 
         self.svm.fit(flatten_image,flatten_l)
 
-        self.input_size = X.shape[2] 
         self.initialized = True
 
     def check_input_dim(self, X: np.ndarray):

@@ -1,7 +1,7 @@
 import numpy as np
 from torchvision.tv_tensors import BoundingBoxes, Mask
 from skimage.draw import polygon2mask
-from ..transforms import WavelengthList
+from ..tv_transforms import WavelengthList
 
 def convert_COCO2TV(coco, size):
     """Helper function to convert bounding boxes and segmentation polygons to torchvision tensors."""

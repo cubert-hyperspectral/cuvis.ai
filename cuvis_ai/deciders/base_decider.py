@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
 class BaseDecider(ABC):
     """
@@ -36,7 +37,6 @@ class BaseDecider(ABC):
         pass
 
 
-    @abstractmethod
     def check_input_dim(self, X) -> bool:
         """
         Check that the parameters for the input data data match user
@@ -48,7 +48,7 @@ class BaseDecider(ABC):
         Returns:
         (Bool) Valid data 
         """
-        pass
+        check_array_shape(get_shape_without_batch(X), self.input_dim)
 
     @abstractmethod
     def serialize(self):

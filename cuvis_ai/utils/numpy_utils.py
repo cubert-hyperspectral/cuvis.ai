@@ -2,6 +2,19 @@
 import numpy as np
 
 
+def get_shape_without_batch(array: np.ndarray, ignore = []):
+    ndim = array.ndim
+    if ndim != 3 and ndim != 4:
+        raise ValueError("Input array must be 3D or 4D.")
+    shape =  array.shape if ndim == 3 else array.shape[1:]
+    shape = [-1 if i in ignore else shape[i] for i in [0,1,2]]
+    return shape
+
+    
+def check_array_shape(array: np.ndarray, wanted_shape):
+    for v, w in zip(array.shape, wanted_shape):
+        assert(w == -1 or v == w)
+
 def flatten_spatial(array: np.ndarray):
     if array.ndim == 3:
         # Array is of shape [width, height, channels]

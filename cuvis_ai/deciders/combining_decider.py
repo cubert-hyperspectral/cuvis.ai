@@ -26,11 +26,7 @@ class CombiningDecider(BaseDecider):
 
     @BaseDecider.input_dim.getter
     def input_dim(self):
-        return [-1,-1,self.n]
-
-    def check_input_dim(self, X) -> bool:
-        return super().check_input_dim(X)
-    
+        return [-1,-1,self.n]   
 
     def serialize(self):
         return super().serialize()

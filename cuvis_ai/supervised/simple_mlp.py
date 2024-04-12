@@ -1,7 +1,7 @@
 from .base_supervised import BaseSupervised
 from sklearn.neural_network import MLPClassifier as sk_mlp
 from ..utils.nn_config import Optimizer
-from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial
+from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch, check_array_shape
 import numpy as np
 
 from dataclasses import dataclass
@@ -21,8 +21,17 @@ class MLP(BaseSupervised):
 
         self.mlp = sk_mlp(max_iter=self.epochs,verbose=self.verbose,**args)
 
+    @BaseSupervised.output_dim.getter
+    def input_dim(self):
+        return self._input_dim
+    
+    @BaseSupervised.output_dim.getter
+    def input_dim(self):
+        return self._output_dim
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
+        self._input_dim = get_shape_without_batch(X, ignore=[0,1])
+
         flatten_image = flatten_batch_and_spatial(X)
 
         flatten_l = flatten_batch_and_labels(Y)
@@ -31,9 +40,6 @@ class MLP(BaseSupervised):
         print(f'shape labels: {flatten_l.shape}')
 
         self.mlp.fit(flatten_image,flatten_l)
-
-    def check_input_dim(self, X: np.ndarray):
-        pass
     
     def forward(self, X: np.ndarray):
         flatten_image = flatten_batch_and_spatial(X)

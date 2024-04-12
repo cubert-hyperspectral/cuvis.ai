@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
-
+from ..utils.numpy_utils import check_array_shape, get_shape_without_batch
 
 class BaseSupervised(ABC):
 
@@ -13,9 +13,21 @@ class BaseSupervised(ABC):
     def forward(self, X):
         pass
 
+    @property
     @abstractmethod
-    def check_input_dim(self,X):
+    def input_dim(self) -> tuple[int,int,int]:
         pass
+
+    @property
+    @abstractmethod
+    def output_dim(self) -> tuple[int,int,int]:
+        pass
+
+    def check_input_dim(self,X):
+        check_array_shape(get_shape_without_batch(X), self.input_dim)
+
+    def check_output_dim(self, X):
+        check_array_shape(get_shape_without_batch(X), self.output_dim)
 
     @abstractmethod
     def serialize(self):

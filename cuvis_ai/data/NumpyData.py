@@ -12,7 +12,6 @@ from torchvision import tv_tensors
 from pycocotools.coco import COCO
 from .Labels2TV import convert_COCO2TV
 from enum import Enum
-from ..transforms import Bandpass, MultiBandpass, WavelengthList
 
 from .Metadata import Metadata
 
@@ -92,12 +91,6 @@ class NumpyData(VisionDataset):
         self.provide_datatype:np.dtype = np.float32
         
         self._clear()
-
-        self.bandpass = [t for t in transforms.transforms if isinstance(t, Bandpass) or isinstance(t, MultiBandpass)]
-        if len(self.bandpass) > 0:
-            self.bandpass = torchvision.transforms.v2.Compose(self.bandpass)
-        else:
-            self.bandpass = None
         
         if root is not None:
             self.initialize(root)
@@ -293,21 +286,8 @@ class NumpyData(VisionDataset):
     def get_labels(self, idx):
         """Get the labels for the cube at 'idx' in this dataset."""
         if isinstance(idx, int):
-            ret = self._apply_transform(self.labels[idx])
-            if self.bandpass is not None:
-                try:
-                    ret["wavelength"] = self.bandpass(WavelengthList(ret["wavelength"])).numpy()
-                except KeyError:
-                    pass
-            return ret
-        ret = [self._apply_transform(l) for l in self.labels[idx]]
-        if self.bandpass is not None:
-            for r in ret:
-                try:
-                    r["wavelength"] = self.bandpass(WavelengthList(r["wavelength"])).to_numpy()
-                except KeyError:
-                    pass
-        return ret
+            return self._apply_transform(self.labels[idx])
+        return [self._apply_transform(l) for l in self.labels[idx]]
 
     def serialize(self, serial_dir: str):
         """Serialize the parameters of this dataset and store in 'serial_dir'."""

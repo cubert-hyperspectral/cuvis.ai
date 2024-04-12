@@ -19,13 +19,9 @@ class MultiBandpass(Transform):
         self.bandpasses = bandpasses
         
     def _transform(self, inpt: Any, params: Dict[str, Any]) -> Any:
-        
-        if (isinstance(inpt, torch.Tensor) and len(inpt.shape) >= 4) or isinstance(inpt, WavelengthList):
-            if isinstance(inpt, WavelengthList):
-                channel_dim = 0
-            else:
-                # Assuming [...]NCHW dimension ordering
-                channel_dim = len(inpt.shape) - 3
+        if (isinstance(inpt, torch.Tensor) and len(inpt.shape) >= 4):
+            # Assuming [...]NCHW dimension ordering
+            channel_dim = len(inpt.shape) - 3
             bands = [bp(inpt) for bp in self.bandpasses]
-            return torch.cat(bands, dim=channel_dim)
+            return torch.cat(bands, dim=channel_dim).as_subclass(type(inpt))
         return inpt

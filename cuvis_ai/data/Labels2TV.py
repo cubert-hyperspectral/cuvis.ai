@@ -13,6 +13,8 @@ def convert_COCO2TV(coco, size):
             out["bbox"] = BoundingBoxes(v, format="XYWH", canvas_size=size)
         elif k == "segmentation":
             out["segmentation"] = Mask(polygon2mask(size, np.array(v[0]).reshape(-1, 2)).astype(np.uint8))
+        elif k == "wavelength":
+            out["wavelength"] = WavelengthList(v)
         else:
             out[k] = v
     return out

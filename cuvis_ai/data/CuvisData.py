@@ -99,7 +99,10 @@ class CuvisData(NumpyData):
         sess_meta.shape = (temp_mesu.data["cube"].width, temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
         canvas_size = (sess_meta.shape[0], sess_meta.shape[1])
         sess_meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
-        #sess_meta.framerate = crt_session.fps  #TODO: Fix in SDK and reenable
+        try:
+            sess_meta.framerate = crt_session.fps
+        except cuvis.cuvis_aux.SDKException:
+            pass
         
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)

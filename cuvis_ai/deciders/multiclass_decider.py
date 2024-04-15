@@ -5,15 +5,15 @@ from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_s
 
 import numpy as np
 
-class BinaryDecider(BaseDecider):
+class MultiClassDecider(BaseDecider):
 
-    def __init__(self, threshold) -> None:
+    def __init__(self, ) -> None:
         super().__init__()
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         self._input_dim = get_shape_without_batch(X, ignore=[0,1])
         flatten_soft_output = flatten_batch_and_spatial(X)
-        decisions = flatten_soft_output >= self.threshold
+        decisions = np.argmax(flatten_soft_output,axis=1)
         return unflatten_batch_and_spatial(decisions, X.shape)
 
     @BaseDecider.input_dim.getter

@@ -3,10 +3,11 @@ import yaml
 import pickle as pk
 import numpy as np
 import uuid
+from ..node import Node
 from .base_preprocessor import Preprocessor
 from sklearn.decomposition import NMF as sk_nmf
 
-class NMF(Preprocessor):
+class NMF(Node, Preprocessor):
     """
     Non-Negative Matrix Factorization (NMF) preprocessor.
     """
@@ -72,6 +73,7 @@ class NMF(Preprocessor):
         pk.dump(self.fit_nmf, open(os.path.join(serial_dir,f"{hash(self.fit_nmf)}_nmf.pkl"),"wb"))
         data = {
             'type': type(self).__name__,
+            'id': self.id,
             'n_components': self.n_components,
             'input_size': self.input_size,
             'output_size': self.output_size,
@@ -84,6 +86,7 @@ class NMF(Preprocessor):
         '''
         Load dumped parameters to recreate the nmf object
         '''
+        self.id = params.get('id')
         self.input_size = params.get('input_size')
         self.n_components = params.get('n_components')
         self.output_size = params.get('output_size')

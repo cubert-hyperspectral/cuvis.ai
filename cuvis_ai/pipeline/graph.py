@@ -1,6 +1,7 @@
 import os
 import yaml
 import typing
+from typing import List, Dict, Any
 import shutil
 from datetime import datetime
 from os.path import expanduser
@@ -33,7 +34,6 @@ class Graph():
         '''
         Adds sequential nodes to create a directed edge
         '''
-        # TODO this needs a method to verify if the edge is validly constructed
         self.graph.add_edge(node.id, node2.id)
         self.nodes[node.id] = node
         self.nodes[node2.id] = node2
@@ -44,6 +44,14 @@ class Graph():
             # Remove the nodes from the graph as a whole
             self.graph.remove_nodes_from([node.id, node2.id])
 
+    def _verify_input_outputs(self) -> bool:
+        all_edges = list(self.graph.edges)
+        for edge in all_edges:
+            if self.nodes[edge[0]].output_size != self.nodes[edge[1]].input_size:
+                print('Unsatisfied dimensionality constraint!')
+                return False
+        # If we succeed in reaching this stage, all constraints are satisfied
+        return True
 
     def _verify(self) -> bool:
         if len(self.nodes.keys()) == 0:
@@ -55,14 +63,10 @@ class Graph():
         # Check that no cycles exist
         if len(list(nx.simple_cycles(self.graph))) > 0:
             return False
-        # Check that all the edges maintain correct constraints
-        # Non-empty stage, check all connections are satisfiable
-        #for stage in range(len(self.pipeline)-1):
-        #    # Check if adjacent elements work
-        #    start_elem = self.pipeline[stage]
-        #    end_elem = self.pipeline[stage+1]
-        #    if start_elem.output_size != end_elem.input_size:
-        #        return False
+        # Get all edges in the graph
+        if not self._verify_input_outputs():
+            return False
+        
         return True
     
     def delete_node(self, id) -> None:
@@ -83,10 +87,6 @@ class Graph():
         return self.forward_helper(list(self.sorted_graph), data)
 
     def forward_helper(self, sorted_nodes, data):
-        # If we don't have a start point, assume it is the global graph entry point
-
-        # Mark all the vertices as not visited
-        # visited = defaultdict(lambda: False)
         intermediary_products = {}
         # Calculate the first forward pass
         start_node = sorted_nodes[0]
@@ -131,17 +131,20 @@ class Graph():
 
     def serialize(self) -> None:
         output = {
-            'stages': [],
+            'edges': [],
+            'nodes': [],
             'name': self.name
         }
         now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         working_dir = f'{expanduser("~")}/{self.name}_{now}'
         os.mkdir(working_dir)
         # Step through all the stages of the pipeline and serialize
-        for stage in self.pipeline:
-            output['stages'].append(
-                yaml.safe_load(stage.serialize(working_dir))
+        for node in self.nodes.values():
+            output['nodes'].append(
+                yaml.safe_load(node.serialize(working_dir))
             )
+        # Grab the connections and write as plain text
+        output['edges'] = [list(z) for z in list(self.graph.edges)]
         # Create main .yml file
         with open(f'{working_dir}/main.yml', 'w') as f:
             f.write(yaml.dump(output, default_flow_style=False))
@@ -162,10 +165,14 @@ class Graph():
             structure = yaml.safe_load(f)
         # We now have a dictionary defining the pipeline
         self.name = structure.get('name')
-        if not structure.get('stages'):
-            print('No pipeline information available!')
-        for stage in structure.get('stages'):
-            self.add_stage(self.reconstruct_stage(stage, root_path))
+        if not structure.get('nodes'):
+            print('No node information available!')
+        for stage in structure.get('nodes'):
+            t = self.reconstruct_stage(stage, root_path)
+            self.nodes[t.id] = t
+        # Create the graph instance
+        self.graph = nx.DiGraph()
+        self.graph.add_edges_from(structure.get('edges'))
 
     def reconstruct_stage(self, data: dict, filepath: str) -> Any:
         stage = globals()[data.get('type')]()

@@ -36,31 +36,3 @@ class BaseUnsupervised(ABC):
         Transformed data.
         """
         pass
-
-    @abstractmethod
-    def check_input_dim(self, X):
-        """
-        Check that the parameters for the input data data match user
-        expectations
-
-        Parameters:
-        X (array-like): Input data.
-
-        Returns:
-        (Bool) Valid data 
-        """
-        pass
-
-    @abstractmethod
-    def serialize(self):
-        """
-        Convert the class into a serialized representation
-        """
-        pass
-
-    @abstractmethod
-    def load(self):
-        """
-        Load from serialized format into an object
-        """
-        pass

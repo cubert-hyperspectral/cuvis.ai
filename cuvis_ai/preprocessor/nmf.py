@@ -2,7 +2,7 @@ import os
 import yaml
 import pickle as pk
 import numpy as np
-
+import uuid
 from .base_preprocessor import Preprocessor
 from sklearn.decomposition import NMF as sk_nmf
 
@@ -16,7 +16,8 @@ class NMF(Preprocessor):
         self.input_size = None
         self.output_size = None
         self.initialized = False
-        
+        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
+
     def fit(self, X: np.ndarray):
         """
         Fit NMF to the data.

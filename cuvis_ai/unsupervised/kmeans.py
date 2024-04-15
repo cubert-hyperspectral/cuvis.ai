@@ -1,7 +1,7 @@
 import os
 import yaml
 import numpy as np
-
+import uuid
 import pickle as pk
 import matplotlib.pyplot as plt
 from .base_unsupervised import BaseUnsupervised
@@ -16,7 +16,8 @@ class KMeans(BaseUnsupervised):
         self.n_clusters = n_clusters
         self.input_size = None
         self.initialized = False
-        
+        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
+
     def fit(self, X: np.ndarray):
         """
         Fit K-Means to the data.

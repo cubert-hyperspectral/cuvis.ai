@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
 import typing
-
+import uuid
 
 class Preprocessor(ABC):
     """
@@ -10,6 +10,7 @@ class Preprocessor(ABC):
     def __init__(self):
         self.input_size = None
         self.output_size = None
+        self.id =  str(uuid.uuid4())
 
     @abstractmethod
     def fit(self, X):

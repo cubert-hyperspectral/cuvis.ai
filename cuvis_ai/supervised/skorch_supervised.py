@@ -1,15 +1,12 @@
 from .base_supervised import BaseSupervised
 from skorch import NeuralNetClassifier
 from ..utils.nn_config import Optimizer
-from ..utils.numpy_utils import flatten_arrays, flatten_labels
+from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
 import numpy as np
 from torch import nn
 from torch.optim.optimizer import Optimizer as torch_optim
 
 from dataclasses import dataclass, field
-
-def unflatten_arrays(data: np.ndarray, orig_shape):
-    return data.reshape(orig_shape)
 
 @dataclass
 class SkorchSupervised(BaseSupervised):
@@ -34,23 +31,20 @@ class SkorchSupervised(BaseSupervised):
 
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        flatten_image, _ = flatten_arrays(X)
+        flatten_image = flatten_spatial(X)
 
-        flatten_l, _ = flatten_labels(Y)
+        flatten_l = flatten_labels(Y)
 
         print(f'shape image: {flatten_image.shape}')
         print(f'shape labels: {flatten_l.shape}')
 
         self.classifier.fit(flatten_image,flatten_l)
-
-    def check_input_dim(self, X: np.ndarray):
-        pass
     
     def forward(self, X: np.ndarray):
-        flatten_image, _ = flatten_arrays(X)
+        flatten_image = flatten_spatial(X)
 
         predictions = self.classifier.predict(flatten_image)
-        predictions = unflatten_arrays(predictions)
+        predictions = unflatten_spatial(predictions, X.shape)
         return predictions
 
     def serialize(self):

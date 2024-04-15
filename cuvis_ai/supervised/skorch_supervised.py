@@ -39,9 +39,6 @@ class SkorchSupervised(BaseSupervised):
         print(f'shape labels: {flatten_l.shape}')
 
         self.classifier.fit(flatten_image,flatten_l)
-
-    def check_input_dim(self, X: np.ndarray):
-        pass
     
     def forward(self, X: np.ndarray):
         flatten_image = flatten_spatial(X)

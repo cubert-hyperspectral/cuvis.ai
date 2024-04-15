@@ -12,7 +12,6 @@ from cuvis_ai.unsupervised import *
 import networkx as nx
 from collections import defaultdict
 import pkg_resources  # part of setuptools
-from . import __version__
 
 class Graph():
     def __init__(self, name: str) -> None:
@@ -136,7 +135,7 @@ class Graph():
             'edges': [],
             'nodes': [],
             'name': self.name,
-            'verson': pkg_resources.require('cuvis_ai')[0].version
+            'version': pkg_resources.require('cuvis_ai')[0].version
         }
         now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         working_dir = f'{expanduser("~")}/{self.name}_{now}'
@@ -169,10 +168,11 @@ class Graph():
         # We now have a dictionary defining the pipeline
         self.name = structure.get('name')
         # Check the version of serialization matches currently installed version
-        # if __version__ != structure.get('version'):
-            # print(structure.get('version'))
-            # print(pkg_resources.require('cuvis_ai')[0].version)
-            # raise Exception('Incorrect version of cuvis_ai package')
+        print(structure)
+        if pkg_resources.require('cuvis_ai')[0].version != structure.get('version'):
+            print(pkg_resources.require('cuvis_ai')[0].version)
+            print(structure.get('version'))
+            raise Exception('Incorrect version of cuvis_ai package')
         if not structure.get('nodes'):
             print('No node information available!')
         for stage in structure.get('nodes'):

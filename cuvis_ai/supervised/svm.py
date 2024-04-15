@@ -29,9 +29,6 @@ class SVM(BaseSupervised):
         self.svm.fit(flatten_image,flatten_l)
 
         self.initialized = True
-
-    def check_input_dim(self, X: np.ndarray):
-        pass
     
     def forward(self, X: np.ndarray):
         flatten_image = flatten_batch_and_spatial(X)

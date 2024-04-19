@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 import typing
+import uuid
 
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
@@ -9,7 +10,7 @@ class Node(ABC):
     Abstract class for data preprocessing.
     """
     def __init__(self):
-        self.id = None
+        self.id =  f'{type(self).__name__}-{str(uuid.uuid4())}'
 
     @abstractmethod
     def forward(self, X):

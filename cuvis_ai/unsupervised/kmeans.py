@@ -1,7 +1,6 @@
 import os
 import yaml
 import numpy as np
-import uuid
 import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
@@ -14,10 +13,10 @@ class KMeans(Node, BaseUnsupervised):
     """
     
     def __init__(self, n_clusters: int=None):
+        super().__init__()
         self.n_clusters = n_clusters
         self.input_size = None
         self.initialized = False
-        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
         self.input_size = (-1,-1,-1)
         self.output_size = (-1,-1,-1)
 

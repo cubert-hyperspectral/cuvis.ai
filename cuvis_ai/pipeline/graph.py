@@ -157,6 +157,20 @@ class Graph():
         return all([succs in intermediary for succs in self.graph.successors(id)]) and \
             len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
 
+    def fit(self, X: np.ndarray, Y: Optional[np.ndarray] = None):
+        # training stage
+        self.sorted_graph = list(nx.topological_sort(self.graph))
+        assert(self.sorted_graph[0] == self.entry_point)
+
+        intermediary = {}
+        intermediary_labels = {}
+        intermediary[self.entry_point], intermediary_labels[self.entry_point] = self._fit_node(self.nodes[self.entry_point], X,Y)
+
+        for node in self.sorted_graph[1:]:
+            self._fit_helper(node, intermediary, intermediary_labels)
+        # do some metrics
+
+
         
     def train(self, train_dataloader, test_dataloader):
 
@@ -164,16 +178,7 @@ class Graph():
         x = np.array(x)
         y = np.array(y)
 
-        # training stage
-        self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert(self.sorted_graph[0] == self.entry_point)
-
-        intermediary = {}
-        intermediary_labels = {}
-        intermediary[self.entry_point], intermediary_labels[self.entry_point] = self._train_node(self.entry_point, x,y)
-
-        for node in self.sorted_graph[1:]:
-            self._train_helper(node, intermediary, intermediary_labels)
+        self.fit(x,y)
 
         # test stage
         test_x, test_y = zip(*[train_dataloader[i] for i in range(10,20)])
@@ -182,21 +187,25 @@ class Graph():
         test_results = self.forward(test_x)
         # do some metrics
 
-    def _train_helper(self, current, intermediary, intermediary_labels):
-        p_nodes = self.graph.predecessors(current)
+    def _fit_helper(self, current, intermediary, intermediary_labels):
+        p_nodes = list(self.graph.predecessors(current))
 
+        no_labels = intermediary_labels[p_nodes[0]] is None
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
-        use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+        if not no_labels:
+            use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+        else:
+            use_labels = None
 
-        intermediary[current], intermediary_labels[current] = self._train_node(self.nodes[current], use_prods, use_labels)
+        intermediary[current], intermediary_labels[current] = self._fit_node(self.nodes[current], use_prods, use_labels)
         
         if self._not_needed_anymore(current, intermediary):
             # Free memory that is not needed for the current passthrough anymore
             del intermediary[current]
             del intermediary_labels[current]
 
-    def _train_node(self, node: Node, input, labels):
+    def _fit_node(self, node: Node, input, labels):
             if isinstance(node,BaseUnsupervised) or isinstance(node,Preprocessor):
                 node.fit(input)
             elif isinstance(node,BaseSupervised):

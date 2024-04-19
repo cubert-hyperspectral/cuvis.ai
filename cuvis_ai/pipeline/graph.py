@@ -1,11 +1,10 @@
 import os
 import yaml
 import typing
-from typing import List, Dict, Any
 import shutil
 from datetime import datetime
 from os.path import expanduser
-from typing import Any, Optional
+from typing import Optional
 from cuvis_ai.preprocessor import *
 from cuvis_ai.pipeline import *
 from cuvis_ai.unsupervised import *
@@ -14,12 +13,13 @@ import networkx as nx
 from collections import defaultdict
 import pkg_resources  # part of setuptools
 from ..node import Node
+from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
 class Graph():
     def __init__(self, name: str) -> None:
         self.graph = nx.DiGraph()
         self.sorted_graph = None
-        self.nodes = {}
+        self.nodes: dict[str,Node] = {}
         self.entry_point = None
         self.name = name
 
@@ -41,13 +41,22 @@ class Graph():
         # Check if operation is valid
         if not all([self.graph.has_node(p.id) for p in parent]):
             raise ValueError("Not all parents are part of the Graph")
+        
+        if not all([check_array_shape(p.output_dim, node.input_dim) for p in parent]):
+            raise ValueError('Unsatisfied dimensionality constraint!')
 
         self.graph.add_node(node.id)
 
         for p in parent:
             self.graph.add_edge(p.id, node.id)
 
-    def add_base_node(self, node: Any) -> None:
+        self.nodes[node.id] = node
+
+        # Remove if verify fails
+        if not self._verify():
+            self.delete_node(node)
+
+    def add_base_node(self, node: Node) -> None:
         '''
         Adds new node into the network
 
@@ -57,7 +66,7 @@ class Graph():
         self.nodes[node.id] = node
         self.entry_point = node.id
 
-    def add_edge(self, node: Any, node2: Any) -> None:
+    def add_edge(self, node: Node, node2: Node) -> None:
         '''
         Adds sequential nodes to create a directed edge
         '''
@@ -74,12 +83,11 @@ class Graph():
 
     def _verify_input_outputs(self) -> bool:
         all_edges = list(self.graph.edges)
-        for edge in all_edges:
+        for start, end in all_edges:
             # TODO: Issue what if multiple Nodes feed into the same sucessor Node, how would the shape look like
-            if self.nodes[edge[0]].output_size != self.nodes[edge[1]].input_size:
+            if not check_array_shape(self.nodes[start].output_dim, self.nodes[end].input_dim):
                 print('Unsatisfied dimensionality constraint!')
                 return False
-        # If we succeed in reaching this stage, all constraints are satisfied
         return True
 
     def _verify(self) -> bool:
@@ -100,7 +108,7 @@ class Graph():
     
     def delete_node(self, id: Node | str) -> None:
         '''
-        Remove node by its id
+        Removes a node by its id. To Sucessfully remove a node it need to have no sucessors.
         '''
         if isinstance(id, Node):
             id = id.id
@@ -115,23 +123,39 @@ class Graph():
         self.graph.remove_edges_from([id])
         del self.nodes[id]
 
-    def forward(self, data):
-        # This yields all the nodes in sorted topological order
-        self.sorted_graph = nx.topological_sort(self.graph)
-        return self.forward_helper(list(self.sorted_graph), data)
+    def forward(self, data: np.ndarray):
+        self.sorted_graph = list(nx.topological_sort(self.graph))
+        assert(self.sorted_graph[0] == self.entry_point)
 
-    def forward_helper(self, sorted_nodes, data):
-        intermediary_products = {}
-        # Calculate the first forward pass
-        start_node = sorted_nodes[0]
-        intermediary_products[start_node] = self.nodes[start_node].forward(data)
-        for node in sorted_nodes[1:]:
-            # Grab the intermediary products for the node
-            p_nodes = self.graph.predecessors(node)
-            # Take the intermediary results and pass forward
-            use_prods = [intermediary_products[p] for p in p_nodes]
-            intermediary_products[node] = self.nodes[node].forward(*use_prods)
-        return intermediary_products            
+        intermediary = {}
+        intermediary[self.entry_point] = self._forward_node(self.entry_point, data)
+
+        for node in self.sorted_graph[1:]:
+            self._forward_helper(node, intermediary)
+
+        return intermediary[self.sorted_graph[-1]]
+
+    def _forward_helper(self, current: str, intermediary):
+        p_nodes = self.graph.predecessors(current)
+
+        use_prods = [intermediary[p] for p in p_nodes]
+
+        intermediary[current] = self._forward_node(self.nodes[current], use_prods)
+        
+        if self._not_needed_anymore(current, intermediary):
+            # Free memory that is not needed for the current passthrough anymore
+            del intermediary[current]
+
+    def _forward_node(self, node: Node, data):
+        return node.forward(data)
+    
+    def _not_needed_anymore(self, id: str, intermediary) -> bool:
+        '''
+        Checks if the intermediary results of a node are needed again,
+        if all successors are already present in intermediary, it will return True
+        '''
+        return all([succs in intermediary for succs in self.graph.successors(id)])
+
         
     def train(self, train_dataloader, test_dataloader):
 
@@ -161,7 +185,17 @@ class Graph():
 
         # do some metrics
 
+    def _train_helper(self, current, intermediary):
+        p_nodes = self.graph.predecessors(current)
 
+        use_prods = [intermediary[p] for p in p_nodes]
+
+        intermediary[current] = self._forward_node(self.nodes[current], use_prods)
+        
+        # TODO how to free eventually memory that is not needed anymore
+
+    def _train_node(self, node: Node, data):
+        return node.forward(data)
 
     def serialize(self) -> None:
         output = {

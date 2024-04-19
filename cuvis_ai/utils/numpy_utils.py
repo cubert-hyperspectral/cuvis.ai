@@ -11,9 +11,14 @@ def get_shape_without_batch(array: np.ndarray, ignore = []):
     return shape
 
     
-def check_array_shape(array: np.ndarray, wanted_shape):
+def check_array_shape(array: np.ndarray | tuple[int,int,int], wanted_shape: tuple[int,int,int]):
+    if isinstance(array, np.ndarray):
+        array_shape = array.shape
+    else:
+        array_shape = array
+
     ret = True
-    for v, w in zip(array.shape, wanted_shape):
+    for v, w in zip(array_shape, wanted_shape):
         ret &= w == -1 or v == w
     return ret
 

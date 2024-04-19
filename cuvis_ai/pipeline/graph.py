@@ -164,38 +164,46 @@ class Graph():
         y = np.array(y)
 
         # training stage
-        for stage in self.pipeline:
+        self.sorted_graph = list(nx.topological_sort(self.graph))
+        assert(self.sorted_graph[0] == self.entry_point)
 
-            if isinstance(stage,BaseUnsupervised) or isinstance(stage,Preprocessor):
-                stage.fit(x)
-            elif isinstance(stage,BaseSupervised):
-                stage.fit(x,y)
-            else:
-                raise NotImplementedError("Invalid class type")
+        intermediary = {}
+        intermediary_labels = {}
+        intermediary[self.entry_point], intermediary_labels[self.entry_point] = self._train_node(self.entry_point, x,y)
 
-            x = stage.forward(x)
+        for node in self.sorted_graph[1:]:
+            self._train_helper(node, intermediary, intermediary_labels)
 
         # test stage
         test_x, test_y = zip(*[train_dataloader[i] for i in range(10,20)])
         test_x = np.array(test_x)
-        
 
-        for stage in self.pipeline:
-            test_x = stage.forward(test_x)
-
+        test_results = self.forward(test_x)
         # do some metrics
 
-    def _train_helper(self, current, intermediary):
+    def _train_helper(self, current, intermediary, intermediary_labels):
         p_nodes = self.graph.predecessors(current)
 
         use_prods = [intermediary[p] for p in p_nodes]
+        use_labels = [intermediary_labels[p] for p in p_nodes]
 
-        intermediary[current] = self._forward_node(self.nodes[current], use_prods)
+        intermediary[current], intermediary_labels[current] = self._train_node(self.nodes[current], use_prods, use_labels)
         
-        # TODO how to free eventually memory that is not needed anymore
+        if self._not_needed_anymore(current, intermediary):
+            # Free memory that is not needed for the current passthrough anymore
+            del intermediary[current]
+            del intermediary_labels[current]
 
-    def _train_node(self, node: Node, data):
-        return node.forward(data)
+    def _train_node(self, node: Node, input, labels):
+            if isinstance(node,BaseUnsupervised) or isinstance(node,Preprocessor):
+                node.fit(input)
+            elif isinstance(node,BaseSupervised):
+                node.fit(input,labels)
+            else:
+                raise NotImplementedError("Invalid class type")
+            
+            return node.forward(input), labels
+
 
     def serialize(self) -> None:
         output = {
@@ -249,7 +257,7 @@ class Graph():
         self.graph = nx.DiGraph()
         self.graph.add_edges_from(structure.get('edges'))
 
-    def reconstruct_stage(self, data: dict, filepath: str) -> Any:
+    def reconstruct_stage(self, data: dict, filepath: str) -> Node:
         stage = globals()[data.get('type')]()
         stage.load(data, filepath)
         return stage

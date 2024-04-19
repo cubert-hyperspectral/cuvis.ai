@@ -24,7 +24,6 @@ class Node(ABC):
         """
         pass
 
-    @abstractmethod
     def check_output_dim(self, X):
         """
         Check that the parameters for the output data data match user
@@ -38,7 +37,6 @@ class Node(ABC):
         """
         return check_array_shape(get_shape_without_batch(X), self.output_dim)
 
-    @abstractmethod
     def check_input_dim(self, X):
         """
         Check that the parameters for the input data data match user

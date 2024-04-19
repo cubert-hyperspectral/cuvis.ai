@@ -4,13 +4,17 @@ from sklearn import svm as sk_svm
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
+import uuid
 
 class SVM(BaseSupervised):
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.svm = None
+        self.svm = sk_svm.SVC()
+        self._input_dim = (-1,-1,-1)
+        self._output_dim = (-1,-1,-1)
+        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
 
     @BaseSupervised.output_dim.getter
     def input_dim(self):

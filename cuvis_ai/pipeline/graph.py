@@ -24,7 +24,7 @@ class Graph():
         self.name = name
 
 
-    def add_node(self, node: Node, parent: Optional[list[Node] | Node]):
+    def add_node(self, node: Node, parent: Optional[list[Node] | Node] = None):
         '''
         Alternative proposal to add Nodes to the Network
         '''
@@ -128,7 +128,7 @@ class Graph():
         assert(self.sorted_graph[0] == self.entry_point)
 
         intermediary = {}
-        intermediary[self.entry_point] = self._forward_node(self.entry_point, data)
+        intermediary[self.entry_point] = self._forward_node(self.nodes[self.entry_point], data)
 
         for node in self.sorted_graph[1:]:
             self._forward_helper(node, intermediary)
@@ -137,8 +137,8 @@ class Graph():
 
     def _forward_helper(self, current: str, intermediary):
         p_nodes = self.graph.predecessors(current)
-
-        use_prods = [intermediary[p] for p in p_nodes]
+        # TODO how to concat multiple input data from multiple nodes
+        use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
 
         intermediary[current] = self._forward_node(self.nodes[current], use_prods)
         
@@ -154,7 +154,8 @@ class Graph():
         Checks if the intermediary results of a node are needed again,
         if all successors are already present in intermediary, it will return True
         '''
-        return all([succs in intermediary for succs in self.graph.successors(id)])
+        return all([succs in intermediary for succs in self.graph.successors(id)]) and \
+            len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
 
         
     def train(self, train_dataloader, test_dataloader):
@@ -184,8 +185,9 @@ class Graph():
     def _train_helper(self, current, intermediary, intermediary_labels):
         p_nodes = self.graph.predecessors(current)
 
-        use_prods = [intermediary[p] for p in p_nodes]
-        use_labels = [intermediary_labels[p] for p in p_nodes]
+        # TODO how to concat multiple input data from multiple nodes
+        use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
+        use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
 
         intermediary[current], intermediary_labels[current] = self._train_node(self.nodes[current], use_prods, use_labels)
         

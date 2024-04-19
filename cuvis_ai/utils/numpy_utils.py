@@ -11,9 +11,14 @@ def get_shape_without_batch(array: np.ndarray, ignore = []):
     return shape
 
     
-def check_array_shape(array: np.ndarray, wanted_shape):
+def check_array_shape(array: np.ndarray | tuple[int,int,int], wanted_shape: tuple[int,int,int]):
+    if isinstance(array, np.ndarray):
+        array_shape = array.shape
+    else:
+        array_shape = array
+
     ret = True
-    for v, w in zip(array.shape, wanted_shape):
+    for v, w in zip(array_shape, wanted_shape):
         ret &= w == -1 or v == w
     return ret
 
@@ -40,14 +45,14 @@ def flatten_batch_and_spatial(array: np.ndarray):
 def unflatten_batch_and_spatial(array: np.ndarray, orig_shape):
     if array.ndim != 2:
         raise ValueError("Input array must be 2D or 3D.")
-    if array.shape[0] != sum(orig_shape[:-1]):
+    if array.shape[0] != np.prod(orig_shape[:-1]):
         raise ValueError("Input array and orig shape do not add up.")
     return array.reshape(*orig_shape[:-1],-1)
 
 def unflatten_spatial(array: np.ndarray, orig_shape):
     if array.ndim != 3 and array.ndim != 2:
         raise ValueError("Input array must be 2D or 3D.")
-    if array.shape[0] != sum(orig_shape[:-1]):
+    if array.shape[0] != np.prod(orig_shape[:-1]):
         raise ValueError("Input array and orig shape do not add up.")
     return array.reshape(*orig_shape[:-1],-1)
 

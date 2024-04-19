@@ -1,7 +1,6 @@
 import os
 import yaml
 import numpy as np
-import uuid
 import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
@@ -14,10 +13,12 @@ class KMeans(Node, BaseUnsupervised):
     """
     
     def __init__(self, n_clusters: int=None):
+        super().__init__()
         self.n_clusters = n_clusters
         self.input_size = None
         self.initialized = False
-        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
+        self.input_size = (-1,-1,-1)
+        self.output_size = (-1,-1,-1)
 
     def fit(self, X: np.ndarray):
         """
@@ -34,15 +35,18 @@ class KMeans(Node, BaseUnsupervised):
         self.fit_kmeans = sk_kmeans(n_clusters=self.n_clusters)
         self.fit_kmeans.fit(image_2d)
         # Set the dimensions for a later check
-        self.input_size = X.shape[2] # Constrain the number of wavelengths or input features
+        self.input_size = (-1,-1,X.shape[2]) # Constrain the number of wavelengths or input features
+        self.output_size = (-1,-1,1)
         # Initialization is complete
         self.initialized = True
 
-    def check_input_dim(self, X: np.ndarray):
-        assert(X.shape[2] == self.input_size)
-
-    def check_output_dim(self, X):
-        return super().check_output_dim(X)
+    @Node.input_dim.getter
+    def input_dim(self):
+        return self.input_size
+    
+    @Node.output_dim.getter
+    def output_dim(self):
+        return self.output_size
     
     def forward(self, X: np.ndarray):
         """

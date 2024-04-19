@@ -13,6 +13,7 @@ class NMF(Node, Preprocessor):
     """
     
     def __init__(self, n_components: int=None):
+        super().__init__()
         self.n_components = n_components
         self.input_size = None
         self.output_size = None

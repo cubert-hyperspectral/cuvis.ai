@@ -18,7 +18,7 @@ class MultiClassDecider(BaseDecider):
 
     @BaseDecider.input_dim.getter
     def input_dim(self):
-        return self.input_dim
+        return self._input_dim
 
     def serialize(self):
         return super().serialize()

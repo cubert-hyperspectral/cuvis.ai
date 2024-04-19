@@ -5,13 +5,15 @@ from typing import List, Dict, Any
 import shutil
 from datetime import datetime
 from os.path import expanduser
-from typing import Any
+from typing import Any, Optional
 from cuvis_ai.preprocessor import *
 from cuvis_ai.pipeline import *
 from cuvis_ai.unsupervised import *
+from cuvis_ai.supervised import *
 import networkx as nx
 from collections import defaultdict
 import pkg_resources  # part of setuptools
+from ..node import Node
 
 class Graph():
     def __init__(self, name: str) -> None:
@@ -20,6 +22,30 @@ class Graph():
         self.nodes = {}
         self.entry_point = None
         self.name = name
+
+
+    def add_node(self, node: Node, parent: Optional[list[Node] | Node]):
+        '''
+        Alternative proposal to add Nodes to the Network
+        '''
+        if parent is None:
+            # this is the first Node of the graph
+            if self.entry_point is not None:
+                raise ValueError("Graph already has base node")
+            self.entry_point = node.id
+            parent = []
+
+        if isinstance(parent, Node):
+            parent = [parent]
+
+        # Check if operation is valid
+        if not all([self.graph.has_node(p.id) for p in parent]):
+            raise ValueError("Not all parents are part of the Graph")
+
+        self.graph.add_node(node.id)
+
+        for p in parent:
+            self.graph.add_edge(p.id, node.id)
 
     def add_base_node(self, node: Any) -> None:
         '''
@@ -39,6 +65,7 @@ class Graph():
         self.nodes[node.id] = node
         self.nodes[node2.id] = node2
         if not self._verify():
+            # TODO Issue: This could potentially leave the graph in an invalid state 
             # Delete nodes and connection
             del self.nodes[node.id]
             del self.nodes[node2.id]
@@ -48,6 +75,7 @@ class Graph():
     def _verify_input_outputs(self) -> bool:
         all_edges = list(self.graph.edges)
         for edge in all_edges:
+            # TODO: Issue what if multiple Nodes feed into the same sucessor Node, how would the shape look like
             if self.nodes[edge[0]].output_size != self.nodes[edge[1]].input_size:
                 print('Unsatisfied dimensionality constraint!')
                 return False
@@ -70,17 +98,22 @@ class Graph():
         
         return True
     
-    def delete_node(self, id) -> None:
+    def delete_node(self, id: Node | str) -> None:
         '''
         Remove node by its id
         '''
-        if self.nodes[id]:
-            # Delete the node
-            del self.nodes[id]
-            # Delete any edges from go to/from that node
-            self.graph.remove_edges_from([id])
-        else:
-            print('Cannot remove node, it no longer exists')
+        if isinstance(id, Node):
+            id = id.id
+
+        # Check if operation is valid
+        if not len(list(self.graph.successors(id))) == 0:
+            raise ValueError("The node does have successors, removing it would invalidate the Graph structure")
+
+        if not id in self.nodes:
+            raise ValueError("Cannot remove node, it no longer exists")
+        
+        self.graph.remove_edges_from([id])
+        del self.nodes[id]
 
     def forward(self, data):
         # This yields all the nodes in sorted topological order

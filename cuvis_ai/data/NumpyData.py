@@ -298,7 +298,7 @@ class NumpyData(VisionDataset):
         blobname = F"{hash(self.transforms)}_dataset_transforms.zip"
         torch.save(self.transforms, os.path.join(serial_dir, blobname))
         data = {
-            'dataset': type(self).__name__,
+            'type': type(self).__name__,
             'root_dir': self.root,
             'data_type': self.provide_datatype,
             'transforms': blobname,

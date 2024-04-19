@@ -10,3 +10,4 @@ pyyaml
 pytorch-lightning
 skorch
 imantics
+networkx

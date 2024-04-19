@@ -1,13 +1,14 @@
 import os
 import yaml
 import numpy as np
-
+import uuid
 import pickle as pk
 import matplotlib.pyplot as plt
+from ..node import Node
 from .base_unsupervised import BaseUnsupervised
 from sklearn.cluster import KMeans as sk_kmeans
 
-class KMeans(BaseUnsupervised):
+class KMeans(Node, BaseUnsupervised):
     """
     K-Means based unsupervised classifier
     """
@@ -16,7 +17,8 @@ class KMeans(BaseUnsupervised):
         self.n_clusters = n_clusters
         self.input_size = None
         self.initialized = False
-        
+        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
+
     def fit(self, X: np.ndarray):
         """
         Fit K-Means to the data.
@@ -38,6 +40,9 @@ class KMeans(BaseUnsupervised):
 
     def check_input_dim(self, X: np.ndarray):
         assert(X.shape[2] == self.input_size)
+
+    def check_output_dim(self, X):
+        return super().check_output_dim(X)
     
     def forward(self, X: np.ndarray):
         """
@@ -67,6 +72,7 @@ class KMeans(BaseUnsupervised):
         pk.dump(self.fit_kmeans, open(os.path.join(serial_dir,f"{hash(self.fit_kmeans)}_kmeans.pkl"),"wb"))
         data = {
             'type': type(self).__name__,
+            'id': self.id,
             'n_clusters': self.n_clusters,
             'input_size': self.input_size,
             'kmeans_object': f"{hash(self.fit_kmeans)}_kmeans.pkl"
@@ -78,6 +84,7 @@ class KMeans(BaseUnsupervised):
         '''
         Load dumped parameters to recreate the K-Means object
         '''
+        self.id = params.get('id')
         self.input_size = params.get('input_size')
         self.n_clusters = params.get('n_clusters')
         self.fit_kmeans = pk.load(open(os.path.join(filepath, params.get('kmeans_object')),'rb'))

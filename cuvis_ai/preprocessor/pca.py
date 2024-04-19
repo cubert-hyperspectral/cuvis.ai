@@ -2,13 +2,14 @@ import os
 import yaml
 import pickle as pk
 import numpy as np
-
+import uuid
+from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 
 from .base_preprocessor import Preprocessor
 from sklearn.decomposition import PCA as sk_pca
 
-class PCA(Preprocessor):
+class PCA(Node, Preprocessor):
     """
     Principal Component Analysis (PCA) preprocessor.
     """
@@ -18,7 +19,8 @@ class PCA(Preprocessor):
         self.input_size = None
         self.output_size = None
         self.initialized = False
-        
+        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
+
     def fit(self, X: np.ndarray):
         """
         Fit PCA to the data.
@@ -70,6 +72,7 @@ class PCA(Preprocessor):
         pk.dump(self.fit_pca, open(os.path.join(serial_dir,f"{hash(self.fit_pca)}_pca.pkl"),"wb"))
         data = {
             'type': type(self).__name__,
+            'id': self.id,
             'n_components': self.n_components,
             'input_size': self.input_size,
             'output_size': self.output_size,
@@ -82,6 +85,7 @@ class PCA(Preprocessor):
         '''
         Load dumped parameters to recreate the pca object
         '''
+        self.id = params.get('id')
         self.input_size = params.get('input_size')
         self.n_components = params.get('n_components')
         self.output_size = params.get('output_size')

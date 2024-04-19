@@ -2,38 +2,81 @@
 import numpy as np
 
 
+def get_shape_without_batch(array: np.ndarray, ignore = []):
+    ndim = array.ndim
+    if ndim != 3 and ndim != 4:
+        raise ValueError("Input array must be 3D or 4D.")
+    shape =  array.shape if ndim == 3 else array.shape[1:]
+    shape = [-1 if i in ignore else shape[i] for i in [0,1,2]]
+    return shape
 
-
-def flatten_arrays(data: np.ndarray):
-    dims = len(data.shape)
-    orig_shape = data.shape
-    if dims  == 2:
-        # list of channels
-        return data
-    if dims == 3:
-        n_pixels = data.shape[1] * data.shape[2]
-        spectra_list = data.reshape((data.shape[0],n_pixels))
-        return spectra_list, orig_shape
-
-    if dims == 4:
-        #flatten_data = data.reshape(-1, *data.shape[-2:])
-        n_pixels = data.shape[0] * data.shape[2] * data.shape[3]
-        spectra_list = data.reshape((n_pixels, data.shape[1]))
-        # TODO the data is most likely falsely rearranged
-        return spectra_list, orig_shape
     
-def unflatten_arrays(data: np.ndarray, orig_shape):
-    return data.reshape(orig_shape)
+def check_array_shape(array: np.ndarray, wanted_shape):
+    ret = True
+    for v, w in zip(array.shape, wanted_shape):
+        ret &= w == -1 or v == w
+    return ret
 
+def flatten_spatial(array: np.ndarray):
+    if array.ndim == 3:
+        # Array is of shape [width, height, channels]
+        return array.reshape(-1, array.shape[2])
+    elif array.ndim == 4:
+        # Array is of shape [batch, width, height, channels]
+        return array.reshape(array.shape[0], -1, array.shape[3])
+    else:
+        raise ValueError("Input array must be 3D or 4D.")
+    
+def flatten_batch_and_spatial(array: np.ndarray):
+    if array.ndim == 3:
+        # Array is of shape [width, height, channels]
+        return array.reshape(-1, array.shape[2])
+    elif array.ndim == 4:
+        # Array is of shape [batch, width, height, channels]
+        return array.reshape(-1, array.shape[3])
+    else:
+        raise ValueError("Input array must be 3D or 4D.")
+    
+def unflatten_batch_and_spatial(array: np.ndarray, orig_shape):
+    if array.ndim != 2:
+        raise ValueError("Input array must be 2D or 3D.")
+    if array.shape[0] != sum(orig_shape[:-1]):
+        raise ValueError("Input array and orig shape do not add up.")
+    return array.reshape(*orig_shape[:-1],-1)
 
-def flatten_labels(data: np.ndarray):
-    dims = len(data.shape)
-    orig_shape = data.shape
-    if dims  == 2:
-        n_pixels = data.shape[0] * data.shape[1]
-        label_list = data.reshape(n_pixels)
-        return label_list, orig_shape
-    if dims == 3:
-        n_pixels = data.shape[0] * data.shape[1] * data.shape[2]
-        label_list = data.reshape(n_pixels)
-        return label_list, orig_shape
+def unflatten_spatial(array: np.ndarray, orig_shape):
+    if array.ndim != 3 and array.ndim != 2:
+        raise ValueError("Input array must be 2D or 3D.")
+    if array.shape[0] != sum(orig_shape[:-1]):
+        raise ValueError("Input array and orig shape do not add up.")
+    return array.reshape(*orig_shape[:-1],-1)
+
+def flatten_labels(array: np.ndarray):
+    if array.ndim == 2:
+        # Array is of shape [width, height]
+        return array.reshape(-1)
+    elif array.ndim == 3:
+        # Array is of shape [batch, width, height]
+        return array.reshape(array.shape[0], -1)
+    else:
+        raise ValueError("Input array must be 2D or 3D.")
+
+def unflatten_labels(array: np.ndarray, orig_shape):
+    if array.ndim != 1 and array.ndim != 2:
+        raise ValueError("Input array must be 1D or 2D.")
+    return array.reshape(orig_shape)
+
+def flatten_batch_and_labels(array: np.ndarray):
+    if array.ndim == 2:
+        # Array is of shape [width, height]
+        return array.reshape(-1)
+    elif array.ndim == 3:
+        # Array is of shape [batch, width, height]
+        return array.reshape(-1)
+    else:
+        raise ValueError("Input array must be 2D or 3D.")
+
+def unflatten_batch_and_labels(array: np.ndarray, orig_shape):
+    if array.ndim != 1:
+        raise ValueError("Input array must be 1D.")
+    return array.reshape(orig_shape)

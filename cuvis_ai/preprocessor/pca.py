@@ -4,6 +4,8 @@ import pickle as pk
 import numpy as np
 import uuid
 from ..node import Node
+from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
+
 from .base_preprocessor import Preprocessor
 from sklearn.decomposition import PCA as sk_pca
 
@@ -29,8 +31,7 @@ class PCA(Node, Preprocessor):
         Returns:
         self
         """
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         self.fit_pca = sk_pca(n_components=self.n_components)
         self.fit_pca.fit(image_2d)
         # Set the dimensions for a later check
@@ -56,11 +57,9 @@ class PCA(Node, Preprocessor):
         Transformed data.
         """
         # Transform data using precomputed PCA components
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         data = self.fit_pca.transform(image_2d)
-        cube_data = data.reshape((X.shape[0], X.shape[1], self.n_components))
-        return cube_data
+        return unflatten_batch_and_spatial(data, X.shape)
 
     def serialize(self, serial_dir: str):
         '''

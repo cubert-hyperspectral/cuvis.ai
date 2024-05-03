@@ -9,6 +9,8 @@ import time
 from torchvision import tv_tensors
 from torchvision.datasets import VisionDataset
 
+from cuvis.General import SDKException
+
 from .NumpyData import OutputFormat, NumpyData
 from .Metadata import Metadata
 from ..tv_transforms import WavelengthList
@@ -43,6 +45,7 @@ class LiveCuvisData(VisionDataset):
         "distancecalib_ref": cuvis.ReferenceType.Distance,
         "spradcalib_ref": cuvis.ReferenceType.SpRad,
     }
+    _cuvis_non_cube_references = (cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
     
     def __init__(self, path:Optional[Union[str, Path]] = None, 
         simulate:Optional[bool] = False, 
@@ -143,7 +146,7 @@ class LiveCuvisData(VisionDataset):
                     mesu = self.camera.get_next_measurement(self.capture_timeout_ms)
                 else:
                     mesu = self.camera.capture_at(self.capture_timeout_ms)
-            except cuvis.General.SDKException:
+            except SDKException:
                 raise RuntimeError("Could not fetch a measurement from the device - Timeout")
         return mesu
     
@@ -164,7 +167,7 @@ class LiveCuvisData(VisionDataset):
     def set_reference(self, mesu: cuvis.Measurement, reftype: cuvis.ReferenceType):
         #print(F"Adding reference mesu: [{reftype.name} -> {mesu.name} ({list(mesu.data.keys())})]")
         self.processing_context.set_reference(mesu, reftype)
-        if reftype != cuvis.ReferenceType.SpRad:
+        if reftype not in self._cuvis_non_cube_references:
             self._refcache[reftype.name] = mesu
 
     def record_dark(self, averaging_count:int = 5):
@@ -183,6 +186,7 @@ class LiveCuvisData(VisionDataset):
         try:
             cube = mesu.data["cube"].array
         except KeyError:
+            print(list(mesu.data.keys()))
             raise ValueError(F"No HSI cube in measurement {mesu.name}!")
         
         if cube.dtype != astype:
@@ -226,20 +230,19 @@ class LiveCuvisData(VisionDataset):
         
         meta = Metadata(mesu.name)
         meta.integration_time_us = int(mesu.integration_time * 1000)
-        meta.flags = {}
-        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
-            meta.flags[key] = val
-        meta.references = {}
-        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            meta.references[key] = val
         meta.shape = cube.shape
         meta.wavelengths_nm = wl
         meta.processing_mode = mesu.processing_mode
         
-        labels = {"wavelength": WavelengthList(wl), "references": {}}
+        meta.flags = {}
+        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
+            meta.flags[key] = val
         
+        meta.references = {}
         for reftype, refmesu in self._refcache.items():
-            labels["references"][reftype] = self._mesu_to_tensor(refmesu, self.provide_datatype)
+            meta.references[reftype] = self._mesu_to_tensor(refmesu, self.provide_datatype)
+        
+        labels = {"wavelength": WavelengthList(wl)}
         
         return (cube, meta, labels)
     

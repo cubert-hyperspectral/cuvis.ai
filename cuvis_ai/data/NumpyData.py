@@ -5,6 +5,8 @@ import json
 import time
 from typing import Optional, Callable, Dict
 import numpy as np
+import cv2
+from copy import deepcopy
 import torch
 import torchvision
 from torchvision.datasets import VisionDataset 
@@ -69,6 +71,18 @@ class NumpyData(VisionDataset):
             self.path = path
         def __call__(self, to_dtype:np.dtype):
             cube = np.load(self.path)
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
+
+    class _CVLoader_:
+        def __init__(self, path):
+            self.path = path
+        def __call__(self, to_dtype:np.dtype):
+            cube = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -157,6 +171,13 @@ class NumpyData(VisionDataset):
         meta.datatype = temp_data.dtype
         self.data_types.add(meta.datatype)
 
+        if meta.references is not None:
+            for t, v in meta.references.items():
+                if isinstance(v, str) and os.path.exists(v):
+                    if os.path.splitext(v)[-1] == ".npy":
+                        meta.references[t] = _NumpyLoader_(v)
+                    else:
+                        meta.references[t] = _CVLoader_(v)
         self.metas.append(meta)
 
         labelpath = os.path.splitext(filepath)[0] + ".json"
@@ -172,7 +193,8 @@ class NumpyData(VisionDataset):
             l = convert_COCO2TV(anns, canvas_size)
         else:
             l = None
-        self.labels.append()
+        
+        self.labels.append(l)
 
     def __len__(self):
         """The number of data elements this data set holds."""
@@ -186,6 +208,10 @@ class NumpyData(VisionDataset):
         meta = self.get_metadata(idx)
         label = self.get_labels(idx)
         return self._get_return_shape(data, meta, label)
+    
+    def __next__(self):
+        for idx in range(len(self)):
+            yield self[idx]
     
     def _get_return_shape(self, data, metadata, labels):
         if self.output_format == OutputFormat.Full:
@@ -273,11 +299,24 @@ class NumpyData(VisionDataset):
 
     def get_all_metadata(self):
         """Get the meta-data for every cube in this dataset."""
-        return self.metas
+        return [self.get_metadata(idx) for idx in range(len(self.metas))]
 
     def get_metadata(self, idx):
         """Get the meta-data for the cube at 'idx' in this dataset."""
-        return self.metas[idx]
+        def transform_meta(m):
+            m_out = deepcopy(m)
+            for t, v in m.references.items():
+                try:
+                    refdata = v(self.provide_datatype)
+                except:
+                    refdata = v
+                if isinstance(refdata, torch.Tensor):
+                    refdata = self._apply_transform(refdata.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
+                m_out.references[t] = refdata
+            return m_out
+        if isinstance(idx, int):
+            return transform_meta(self.metas[idx])
+        return list(map(transform_meta, self.metas[idx]))
 
     def get_all_labels(self):
         """Get the labels for every cube in this dataset."""

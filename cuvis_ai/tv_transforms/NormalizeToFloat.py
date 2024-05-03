@@ -28,7 +28,7 @@ class NormalizeToFloat(Transform):
             mins, maxs = map(list, zip(*((torch.min(ch), torch.max(ch)) for ch in torch.split(inpt, 1, dim=len(inpt.shape) - 3))))
         else:
             mins, maxs = [torch.min(inpt)], [torch.max(inpt)]
-        maxs = (np.array(maxs) - np.array(mins))
+        maxs = np.array(maxs) - np.array(mins)
         return Normalize(mins, np.array(maxs), inplace=False)(inpt)
     
     

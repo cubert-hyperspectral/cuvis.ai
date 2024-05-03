@@ -20,6 +20,7 @@ class LiveCuvisData(VisionDataset):
     This class is a subclass of torchvisions VisionDataset which is a subclass
     of torch.utils.data.Dataset.
     Using the attribute :attr:`camera` you have full access to the :class:`cuvis.AcquisitionContext` wrapped in this class.
+    Additionally, using the attribute :attr:`processing_context` you have full access to the :class:`cuvis.ProcessingContext` used to process the raw data from the (simulated) camera.
     LiveCuvisData acts as a generator.
     
     Args:
@@ -35,7 +36,13 @@ class LiveCuvisData(VisionDataset):
         :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
     """
     
-    
+    _cuvis_refmap = {
+        "dark_ref": cuvis.ReferenceType.Dark,
+        "whitedark_ref": cuvis.ReferenceType.WhiteDark,
+        "white_ref": cuvis.ReferenceType.White,
+        "distancecalib_ref": cuvis.ReferenceType.Distance,
+        "spradcalib_ref": cuvis.ReferenceType.SpRad,
+    }
     
     def __init__(self, path:Optional[Union[str, Path]] = None, 
         simulate:Optional[bool] = False, 
@@ -62,6 +69,9 @@ class LiveCuvisData(VisionDataset):
         self.camera = None
         self.simulate = False
         self.continuous = False
+        self.processing_context = None
+        self.sess = None
+        self._refcache = {}
         
     def initialize(self, path:Union[str, Path], simulate:bool=False, force:bool=False) -> bool:
         """Try to connect to the camera of the factory file in :attr:`path` or load the Sessionfile :attr:`path`.
@@ -78,12 +88,18 @@ class LiveCuvisData(VisionDataset):
                 raise RuntimeError("Cannot initialize an already initialized LiveCuvisData. Use force=True if this was intended.")
         self.root = path
         self.simulate = simulate
+        
         if os.path.splitext(path)[-1] == ".cu3s":
-            sess = cuvis.SessionFile(path)
-        if sess is not None:
-            self.camera = cuvis.AcquisitionContext(sess, simulate=simulate)
+            self.sess = cuvis.SessionFile(path)
+        if self.sess is not None:
+            self.camera = cuvis.AcquisitionContext(self.sess, simulate=simulate)
+            self.processing_context = cuvis.ProcessingContext(self.sess)
         else:
-            self.camera = cuvis.AcquisitionContext(cuvis.Calibration(path))
+            calib = cuvis.Calibration(path)
+            self.camera = cuvis.AcquisitionContext(calib)
+            self.processing_context = cuvis.ProcessingContext(calib)
+        
+        self.processing_context.processing_mode = cuvis.ProcessingMode.Raw
         
         timeout = 20.0
         while self.camera.state != cuvis.HardwareState.Online:
@@ -110,8 +126,16 @@ class LiveCuvisData(VisionDataset):
             if self._camera_recording:
                 self.camera.operation_mode = cuvis.OperationMode.Software
             self._camera_recording = val
+
+    @property
+    def processing_mode(self) -> cuvis.ProcessingMode:
+        return self.processing_context.processing_mode
     
-    def _capture(self):
+    @processing_mode.setter
+    def processing_mode(self, val:cuvis.ProcessingMode):
+        self.processing_context.processing_mode = val
+    
+    def _fetch_mesu(self) -> cuvis.Measurement:
         mesu = None
         while mesu is None:
             try:
@@ -121,10 +145,84 @@ class LiveCuvisData(VisionDataset):
                     mesu = self.camera.capture_at(self.capture_timeout_ms)
             except cuvis.General.SDKException:
                 raise RuntimeError("Could not fetch a measurement from the device - Timeout")
-        cube = mesu.data["cube"].array
+        return mesu
+    
+    def _fetch_averaged_mesu(self, averaging_count:int) -> cuvis.Measurement:
+        avg_prev = self.camera.average
+        timeout_prev = self.capture_timeout_ms
+
+        self.camera.average = averaging_count
+        self.capture_timeout_ms = timeout_prev * averaging_count + 1000
+        
+        mesu = self._fetch_mesu()
+        
+        self.camera.average = avg_prev
+        self.capture_timeout_ms = timeout_prev
+
+        return mesu
+
+    def set_reference(self, mesu: cuvis.Measurement, reftype: cuvis.ReferenceType):
+        #print(F"Adding reference mesu: [{reftype.name} -> {mesu.name} ({list(mesu.data.keys())})]")
+        self.processing_context.set_reference(mesu, reftype)
+        if reftype != cuvis.ReferenceType.SpRad:
+            self._refcache[reftype.name] = mesu
+
+    def record_dark(self, averaging_count:int = 5):
+        avg = max(1, averaging_count)
+        self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.Dark)
+    
+    def record_white(self, averaging_count:int = 5):
+        avg = max(1, averaging_count)
+        self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.White)
+    
+    def record_distance(self):
+        self.set_reference(self._fetch_mesu(), cuvis.ReferenceType.Distance)
+    
+    @staticmethod
+    def _mesu_to_tensor(mesu:cuvis.Measurement, astype:np.dtype) -> tv_tensors.Image:
+        try:
+            cube = mesu.data["cube"].array
+        except KeyError:
+            raise ValueError(F"No HSI cube in measurement {mesu.name}!")
+        
+        if cube.dtype != astype:
+            cube = cube.astype(astype)
+        cube = tv_tensors.Image(cube)
+        while len(cube.shape) < 4:
+            cube = cube.unsqueeze(0)
+        cube = (cube.to(memory_format=torch.channels_last))
+        return cube
+    
+    def _capture(self):
+        mesu = self._fetch_mesu()
+        
+        # Load references from session file
+        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
+            reftype = LiveCuvisData._cuvis_refmap[key]
+            hasref = self.processing_context.has_reference(reftype)
+            if (self.sess is not None) and (not hasref):
+                
+                refcount = 0
+                while True:
+                    try:
+                        refmesu = self.sess.get_reference(refcount, reftype)
+                    except SDKException:
+                        refmesu = None
+                        break
+                    if refmesu is not None and refmesu.name in val:
+                        break
+                    refcount += 1
+                if refmesu is not None:
+                    self.set_reference(refmesu, reftype)
+        reprocessed = False
+        if mesu.processing_mode != self.processing_mode:
+            mesu = self.processing_context.apply(mesu)
+            reprocessed = True
+            mesu.refresh()
+        
         wl = mesu.data["cube"].wavelength
-        if cube.dtype != self.provide_datatype:
-            cube = cube.astype(self.provide_datatype)
+        
+        cube = self._mesu_to_tensor(mesu, self.provide_datatype)
         
         meta = Metadata(mesu.name)
         meta.integration_time_us = int(mesu.integration_time * 1000)
@@ -138,12 +236,11 @@ class LiveCuvisData(VisionDataset):
         meta.wavelengths_nm = wl
         meta.processing_mode = mesu.processing_mode
         
-        cube = tv_tensors.Image(cube)
-        while len(cube.shape) < 4:
-            cube = cube.unsqueeze(0)
-        cube = (cube.to(memory_format=torch.channels_last))
+        labels = {"wavelength": WavelengthList(wl), "references": {}}
         
-        labels = {"wavelength": WavelengthList(wl)}
+        for reftype, refmesu in self._refcache.items():
+            labels["references"][reftype] = self._mesu_to_tensor(refmesu, self.provide_datatype)
+        
         return (cube, meta, labels)
     
     def __getitem__(self, idx):
@@ -172,22 +269,21 @@ class LiveCuvisData(VisionDataset):
         else:
             raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in NumpyData.C_SUPPORTED_DTYPES]))
 
+    def get_references(self) -> Dict[cuvis.ReferenceType, cuvis.Measurement]:
+        return self._refcache
+
     def _apply_transform(self, d):
         return d if self.transforms is None else self.transforms(d)
     
     def _get_return_shape(self, data, metadata, labels):
         if self.output_format == OutputFormat.Full:
             return data, metadata, labels
-
         elif self.output_format == OutputFormat.BoundingBox:
             return data, [l['bbox'] for l in labels]
-        
         elif self.output_format == OutputFormat.SegmentationMask:
             return data, [l['segmentation'] for l in labels]
-        
         elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
             return [self.output_lambda(d, m, l) for d, m, l in zip(data, metadata, labels)]
-        
         else:
             raise NotImplementedError("Think about it.")
 
@@ -203,6 +299,7 @@ class LiveCuvisData(VisionDataset):
             'type': type(self).__name__,
             'root_dir': self.root,
             'data_type': self.provide_datatype,
+            'processing_mode': self.processing_contextessing_mode.value,
             'simulate': self.simulate,
             'transforms': blobname,
         }
@@ -216,3 +313,4 @@ class LiveCuvisData(VisionDataset):
         self.provide_datatype = params["data_type"]
         self.transforms = torch.load(os.path.join(filepath, params["transforms"]))
         self.initialize(root, simulate)
+        self.processing_contextessing_mode = cuvis.ProcessingMode(params["processing_mode"])

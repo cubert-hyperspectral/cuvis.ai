@@ -8,8 +8,9 @@ import numpy as np
 
 class MultiClassDecider(BaseDecider):
 
-    def __init__(self, ) -> None:
+    def __init__(self, n) -> None:
         super().__init__()
+        self.n = n
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         self._input_dim = get_shape_without_batch(X, ignore=[0,1])
@@ -19,7 +20,7 @@ class MultiClassDecider(BaseDecider):
 
     @BaseDecider.input_dim.getter
     def input_dim(self):
-        return self._input_dim
+        return [-1,-1, self.n]
 
     def serialize(self):
         return super().serialize()

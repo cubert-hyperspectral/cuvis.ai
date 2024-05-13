@@ -18,7 +18,7 @@ class QDA(BaseSupervised):
 
         self.qda = sk_qda(solver=self.solver, n_components=self.n_components)
 
-    @BaseSupervised.output_dim.getter
+    @BaseSupervised.input_dim.getter
     def input_dim(self):
         return self._input_dim
     

@@ -7,8 +7,10 @@ from typing import Optional, Callable, Dict
 import torch
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
-from .Labels2TV import convert_COCO2TV
 
+from cuvis.General import SDKException
+
+from .Labels2TV import convert_COCO2TV
 from .Metadata import Metadata
 from .NumpyData import NumpyData, OutputFormat
 
@@ -30,6 +32,7 @@ class CuvisData(NumpyData):
     Note:
         :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
     """
+    _cuvis_non_cube_references = (cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
 
     class _SessionCubeLoader:
         def __init__(self, path, idx):
@@ -37,6 +40,19 @@ class CuvisData(NumpyData):
             self.idx = idx
         def __call__(self, to_dtype:np.dtype):
             cube = cuvis.SessionFile(self.path).get_measurement(self.idx).data["cube"].array
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
+        
+    class _SessionReferenceLoader:
+        def __init__(self, path, reftype):
+            self.path = path
+            self.reftype = reftype
+        def __call__(self, to_dtype:np.dtype):
+            cube = cuvis.SessionFile(self.path).get_reference(0, self.reftype).data["cube"].array
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -101,9 +117,21 @@ class CuvisData(NumpyData):
         sess_meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
         try:
             sess_meta.framerate = crt_session.fps
-        except cuvis.cuvis_aux.SDKException:
+        except SDKException:
             pass
         
+        for reftype in cuvis.ReferenceType:
+            try:
+                sess_meta.references[reftype]
+            except KeyError:
+                try:
+                    refmesu = crt_session.get_reference(0, reftype)
+                except SDKException:
+                    refmesu = None
+                if refmesu is not None and reftype not in self._cuvis_non_cube_references:
+                    sess_meta.references[reftype.name] = self._SessionReferenceLoader(filepath, reftype)
+                
+        coco = None
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
             ids = list(sorted(coco.imgs.keys()))
@@ -123,7 +151,13 @@ class CuvisData(NumpyData):
             #meta.references = {}
             #for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
             #    meta.references[key] = val
-                
+            for _, v in meta.references.items():
+                if isinstance(v, str):
+                    if os.path.splitext(v)[-1] == ".cu3s":
+                        v = CuvisData._SessionCubeLoader(v)
+                    elif os.path.splitext(v)[-1] == ".cu3":
+                        v = CuvisData._LegacyCubeLoader(v)
+            
             self.metas.append(meta)
 
             l = None
@@ -172,6 +206,6 @@ class CuvisData(NumpyData):
             meta.flags[key] = val
         meta.references = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            meta.references[key] = val
+            meta.references[key] = CuvisData._LegacyCubeLoader(val)
             
         self.metas.append(meta)

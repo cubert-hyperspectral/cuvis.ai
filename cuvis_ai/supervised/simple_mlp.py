@@ -21,7 +21,7 @@ class MLP(BaseSupervised):
 
         self.mlp = sk_mlp(max_iter=self.epochs,verbose=self.verbose,**args)
 
-    @BaseSupervised.output_dim.getter
+    @BaseSupervised.input_dim.getter
     def input_dim(self):
         return self._input_dim
     

@@ -48,7 +48,7 @@ class Metadata:
             except KeyError:
                 meta = fileset_metadata
         if meta is not None:
-            for attrib_name in self.C_ATTRIB_LIST:
+            for attrib_name in C_ATTRIB_LIST:
                 try:
                     setattr(self, attrib_name, meta[attrib_name])
                 except:
@@ -56,7 +56,7 @@ class Metadata:
     
     def __str__(self) -> str:
         out_str:str = F"name: {self.name}"
-        for attrib_name in self.C_ATTRIB_LIST:
+        for attrib_name in C_ATTRIB_LIST:
             out_str += F", {attrib_name}: {getattr(self, attrib_name)}"
         return out_str
 

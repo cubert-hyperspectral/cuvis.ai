@@ -6,6 +6,7 @@ class Cascaded(BaseDecider):
 
     def __init__(self) -> None:
         super().__init__()
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         pass

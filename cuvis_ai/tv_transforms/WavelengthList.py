@@ -1,13 +1,27 @@
 from torchvision.tv_tensors import TVTensor
 import torch
 import numpy as np
-from typing import Union, Optional, Any
+from typing import Union, Optional, Any, List, Union
 from torchvision.transforms.v2 import functional as F
 
 class WavelengthList(TVTensor):
+    """A torchvision transforms data type which represents a list of wavelengths.
+    Is used in conjunction with a HSI data cube to describe the physical wavelengths that the channels of the cube represent.
+    
+    Parameters
+    ----------
+    data : List(float) or np.ndarray
+        The wavelength list
+    dtype : torch.dtype, optional
+        The data type of :arg:`data`
+    device : torch.device or str or int, optional
+        Where the list should be stored
+    requires_grad : bool, optional
+        Whether autograd should record operations.
+    """
     def __new__(
         cls,
-        data: Any,
+        data: Union[List[float], np.ndarray],
         *,
         dtype: Optional[torch.dtype] = None,
         device: Optional[Union[torch.device, str, int]] = None,

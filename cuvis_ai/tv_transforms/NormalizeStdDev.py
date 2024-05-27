@@ -8,9 +8,12 @@ class NormalizeStdDev(Transform):
     Assumes the input data is in NCHW memory format.
     If the input is not floating point, will convert the input to float32.
         
-    Args:
-        normalize_by_channel: Apply the normalization for each channel individually. Default: False
-        normalize_by_image: Apply the normalization for each image individually. Default: True
+    Parameters
+    ----------
+    normalize_by_channel : bool, optional
+        Apply the normalization for each channel individually. Default: False
+    normalize_by_image : bool, optional
+        Apply the normalization for each image individually. Default: True
     """
     
     def __init__(self, *, normalize_by_channel:bool=False, normalize_by_image:bool=True):

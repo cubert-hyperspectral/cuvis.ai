@@ -1,6 +1,6 @@
 from torchvision.transforms.v2 import Transform
 import torch
-from typing import Dict, Any
+from typing import Dict, Any, List
 from .WavelengthList import WavelengthList
 from .Bandpass import Bandpass
 
@@ -9,12 +9,14 @@ class MultiBandpass(Transform):
     """Apply multiple bandpasses in parallel to the input data.
     Selectively extract non-consecutive channels from the input data.
     This preprocessor node describes operations such as:
-    Exctract channels 4 to 10 and 30 to 39 and concatenate them.
+    Extract channels 4 to 10 and 30 to 39 and concatenate them.
 
-    Args:
-        bandpasses: A list of :cls:`Bandpass` transformations, the output of which will be concatenated.
+    Parameters
+    ----------
+    bandpasses : List(Bandpass)
+        A list of :cls:`Bandpass` transformations, the output of which will be concatenated.
     """
-    def __init__(self, bandpasses:list):
+    def __init__(self, bandpasses:List[Bandpass]):
         super().__init__()
         self.bandpasses = bandpasses
         

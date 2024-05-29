@@ -6,6 +6,7 @@ from typing import Optional, Callable, Union, Dict
 import yaml
 import torch
 import time
+import uuid
 from torchvision import tv_tensors
 from torchvision.datasets import VisionDataset
 
@@ -25,17 +26,26 @@ class LiveCuvisData(VisionDataset):
     Additionally, using the attribute :attr:`processing_context` you have full access to the :class:`cuvis.ProcessingContext` used to process the raw data from the (simulated) camera.
     LiveCuvisData acts as a generator.
     
-    Args:
-        path (str, optional): Path to either a SessionFile or the directory containing a factory file.
-        simulate (bool, optional): Only applicable when a SessionFile is passed as :attr:`path`. Will simulate having the camera that recorded the file connected. Loops the contents of the SessionFile.
-        transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
-        transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
-        target_transform (callable, optional): A function/transform that takes in the target and transforms it.
-        output_format (OutputFormat): Enum value that controls the output format of the dataset. See :class:`OutputFormat`
-        output_lambda (callable, optional): Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
+    Parameters
+    ----------
+    path : str, optional
+        Path to either a SessionFile or the directory containing a factory file.
+    transforms : callable, optional
+        A function/transforms that takes in an image and a label and returns the transformed versions of both.
+    transform : callable, optional
+        A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
+    target_transform : callable, optional
+        A function/transform that takes in the target and transforms it.
+    output_format : OutputFormat
+        Enum value that controls the output format of the dataset. See :class:`OutputFormat`
+    output_lambda : callable, optional
+        Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
         
-    Note:
-        :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    Notes
+    -----
+    :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    
+    If :attr:`path` is not passed in the constructor, the :py:meth:`~LiveCuvisData.initialize` or :py:meth:`~LiveCuvisData.load` method has to be called with a path before the object can be used.
     """
     
     _cuvis_refmap = {
@@ -56,6 +66,7 @@ class LiveCuvisData(VisionDataset):
         output_lambda: Optional[Callable] = None
     ):
         super().__init__(path, transforms, transform, target_transform)
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.output_format = output_format
         self.output_lambda = output_lambda
         self.provide_datatype:np.dtype = np.float32
@@ -76,13 +87,23 @@ class LiveCuvisData(VisionDataset):
         self.sess = None
         self._refcache = {}
         
-    def initialize(self, path:Union[str, Path], simulate:bool=False, force:bool=False) -> bool:
+    def initialize(self, path:Union[str, Path], simulate:bool=False, force:bool=False, timeout_s:int=20) -> bool:
         """Try to connect to the camera of the factory file in :attr:`path` or load the Sessionfile :attr:`path`.
         
-        Args:
-            path (str, optional): Path to either a SessionFile or the directory containing a factory file.
-            simulate (bool, optional): Only applicable when a SessionFile is passed as :attr:`path`. Will simulate having the camera that recorded the file connected. Loops the contents of the SessionFile.
-            force (bool, optional): Force reload. 
+        Parameters
+        ----------
+        path : str, optional
+            Path to either a SessionFile or the directory containing a factory file.
+        simulate : bool, optional
+            Only applicable when a SessionFile is passed as :attr:`path`. Will simulate having the camera that recorded the file connected. Loops the contents of the SessionFile.
+        force : bool, optional
+            Force reload.
+        timeout_s : int, optional
+            Duration in seconds to wait for the device to establish a connection before returning. Default is 20 seconds
+        
+        Returns
+        -------
+        False if the device does not come online before the timeout specified by :attr:`timeout_s`, True otherwise.
         """
         if self.initialized:
             if force:
@@ -104,7 +125,7 @@ class LiveCuvisData(VisionDataset):
         
         self.processing_context.processing_mode = cuvis.ProcessingMode.Raw
         
-        timeout = 20.0
+        timeout = timeout_s
         while self.camera.state != cuvis.HardwareState.Online:
             time.sleep(0.2)
             timeout -= 0.2
@@ -114,6 +135,7 @@ class LiveCuvisData(VisionDataset):
         self.camera.operation_mode = cuvis.OperationMode.Software
         self.capture_timeout_ms = 1000
         self.initialized = True
+        return True
     
     @property
     def continuous(self) -> bool:
@@ -121,7 +143,12 @@ class LiveCuvisData(VisionDataset):
     
     @continuous.setter
     def continuous(self, val:bool):
-        """Start continuous recording"""
+        """Start or stop continuous recording.
+        Parameters
+        ----------
+        val : bool
+            Pass `True` to start recording. Pass `False` to stop recording.
+        """
         if self._camera_recording != val:
             if not self._camera_recording:
                 self.camera.operation_mode = cuvis.OperationMode.Internal
@@ -136,6 +163,14 @@ class LiveCuvisData(VisionDataset):
     
     @processing_mode.setter
     def processing_mode(self, val:cuvis.ProcessingMode):
+        """Set the processing mode for preprocessing of the data.
+        Parameters
+        ----------
+        val : cuvis.ProcessingMode
+            Valid modes are `Raw`, `DarkSubtract`, `Reflectance` and `SpectralRadiance`.
+            All modes except for `Raw` require a dark reference to be set using :meth:`set_reference` or :meth:`record_dark`.
+            The mode `Reflectance` additionally requires a white reference to be set using :meth:`set_reference` or :meth:`record_white`.
+        """
         self.processing_context.processing_mode = val
     
     def _fetch_mesu(self) -> cuvis.Measurement:
@@ -165,20 +200,44 @@ class LiveCuvisData(VisionDataset):
         return mesu
 
     def set_reference(self, mesu: cuvis.Measurement, reftype: cuvis.ReferenceType):
+        """Associate a reference measurement with this acquisition session.
+        Parameters
+        ----------
+        mesu : cuvis.Measurement
+            The existing measurement to use as the reference.
+        reftype : cuvis.ReferenceType
+            The type of reference to use this measurement as.
+        """
         #print(F"Adding reference mesu: [{reftype.name} -> {mesu.name} ({list(mesu.data.keys())})]")
         self.processing_context.set_reference(mesu, reftype)
         if reftype not in self._cuvis_non_cube_references:
             self._refcache[reftype.name] = mesu
 
     def record_dark(self, averaging_count:int = 5):
+        """Record a dark reference measurement using this acquisition session.
+        Parameters
+        ----------
+        averaging_count : int
+            The number of measurements to record and average into one measurement. This can improve the quality of reference measurement by reducing the impact of noise. Default is 5.
+        """
         avg = max(1, averaging_count)
         self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.Dark)
     
     def record_white(self, averaging_count:int = 5):
+        """Record a white reference measurement using this acquisition session.
+        Parameters
+        ----------
+        averaging_count : int
+            The number of measurements to record and average into one measurement. This can improve the quality of reference measurement by reducing the impact of noise. Default is 5.
+        """
         avg = max(1, averaging_count)
         self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.White)
     
     def record_distance(self):
+        """Record a distance reference measurement using this acquisition session.
+        The camera should be pointed at a scene with high contrast at the distance that you want to observe.
+        Cuvis will attempt to reduce the parallax effect present in the HSI camera by live-tuning on the captured image.
+        """
         self.set_reference(self._fetch_mesu(), cuvis.ReferenceType.Distance)
     
     @staticmethod

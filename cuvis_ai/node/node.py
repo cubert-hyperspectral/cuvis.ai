@@ -14,77 +14,81 @@ class Node(ABC):
 
     @abstractmethod
     def forward(self, X):
-        """
-        Transform the input data.
+        """Forwards the data through the Node
 
-        Parameters:
-        X (array-like): Input data.
-
-        Returns:
-        Transformed data.
+        Parameters
+        ----------
+        X : array-like
+            Input data
         """
         pass
 
-    def check_output_dim(self, X):
-        """
-        Check that the parameters for the output data data match user
-        expectations
+    def check_output_dim(self, X) -> bool:
+        """Check that the parameters for the output data data match user
+        expectations.
 
-        Parameters:
-        X (array-like): Input data.
+        Parameters
+        ----------
+        X : array-like
+            Output data
 
-        Returns:
-        (Bool) Valid data 
+        Returns
+        -------
+        bool
+            Returns if the data fits the expected dimensionality
         """
         return check_array_shape(get_shape_without_batch(X), self.output_dim)
 
     def check_input_dim(self, X):
-        """
-        Check that the parameters for the input data data match user
-        expectations
+        """Check that the parameters for the input data data match user
+        expectations.
 
-        Parameters:
-        X (array-like): Input data.
+        Parameters
+        ----------
+        X : array-like
+            Input data
 
-        Returns:
-        (Bool) Valid data 
+        Returns
+        -------
+        bool
+            Returns if the data fits the expected dimensionality
         """
         return check_array_shape(get_shape_without_batch(X), self.input_dim)
 
     @property
     @abstractmethod
     def input_dim(self) -> tuple[int,int,int]:
-        """
-        Returns the needed shape for the input data.
+        """Returns the needed shape for the input data.
         If a dimension is not important, it will return -1 in the specific position.
 
-        Returns:
-        (tuple) needed shape for data
+        Returns
+        -------
+        tuple[int,int,int]
+            The shape of the data that is expected
         """
         pass
 
     @property
     @abstractmethod
     def output_dim(self) -> tuple[int,int,int]:
-        """
-        Returns the shape for the output data.
+        """Returns the shape for the output data.
         If a dimension is dependent on the input, it will return -1 in the specific position.
 
-        Returns:
-        (tuple) expected output shape for data
+        Returns
+        -------
+        tuple[int,int,int]
+            The shape of the data that is expected
         """
         pass
 
     @abstractmethod
     def serialize(self):
-        """
-        Convert the class into a serialized representation
+        """Convert the class into a serialized representation
         """
         pass
 
     @abstractmethod
     def load(self):
-        """
-        Load from serialized format into an object
+        """Load from serialized format into an object
         """
         pass

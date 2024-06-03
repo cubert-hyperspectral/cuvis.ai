@@ -18,7 +18,6 @@ class NMF(Node, Preprocessor):
         self.input_size = None
         self.output_size = None
         self.initialized = False
-        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
 
     def fit(self, X: np.ndarray):
         """

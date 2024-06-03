@@ -18,7 +18,6 @@ class PCA(Node, Preprocessor):
         super().__init__()
         self.n_components = n_components
         self.initialized = False
-        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
         self.input_size = (-1,-1,-1)
         self.output_size = (-1,-1,-1)
 

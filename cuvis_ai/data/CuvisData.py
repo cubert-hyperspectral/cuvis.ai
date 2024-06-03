@@ -5,6 +5,7 @@ import glob
 import copy
 from typing import Optional, Callable, Dict
 import torch
+import uuid
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 

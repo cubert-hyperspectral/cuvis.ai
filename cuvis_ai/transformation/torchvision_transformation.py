@@ -1,4 +1,4 @@
-from typing import Optional, Any, Dict, Callable, Iterable
+from typing import Optional, Any, Dict, Callable, Tuple
 import yaml
 import torch
 import os
@@ -6,13 +6,18 @@ from . import BaseTransformation
 
 class TorchVisionTransformation(BaseTransformation):
     """ Node for applying a torchvision transform within the pipeline.
-    In general, these transformation should be added to the dataloader for optimal performance.
+    For proper functionality, these transformations should be added to the dataloader.
     Any transform present in torchvision.transforms.v2 should be compatible.
-
+    
     Parameters
     ----------
     tv_transform : Callable,optional
         The transform that this node should represent. Can also be a composition.
+
+    Notes
+    -----
+    Torchvision Transformations added to the graph using this node only apply the HSI data (the cube)!
+    Only transformations added to the dataloader apply to labels and metadata as well.
     """
     
     def __init__(self, tv_transform: Optional[Callable]=None):
@@ -21,36 +26,29 @@ class TorchVisionTransformation(BaseTransformation):
         self.tv_transform = tv_transform
         self.initialized = self.tv_transform is not None
 
-    def forward(self, X: Iterable) -> Iterable:
+    def forward(self, X: Union[Tuple, np.ndarray]) -> Any:
         """ Transform data and labels according to the torchvision transform this node represents.
         Parameters
         ----------
-        X : Any,Iterable
-            Expects either a tuple (data, metadata, labels) as returned by dataloaders or just data as a list of tensors or a single tensor.
+        X : Tuple
+            Expects a tuple (data, [labels, [metadata]]) as returned by dataloaders or just a single tensor.
         Returns
         -------
-        Any, Tuple
+        Tuple
             The transformed data including any labels and meta-data passed in, if any.
         """
-        if isinstance(X, tuple) and len(X) == 3:
-            d, m, l = X
-            if isinstance(d, torch.Tensor):
-                d = self.tv_transform(d.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-            elif isinstance(d, list):
-                d = [self.tv_transform(i.permute([0, 3, 1, 2])).permute([0, 2, 3, 1]) for i in d]
-            else:
-                raise ValueError(F"TorchVisionTransformation expected list or tensor but got {type(d)}!")
-            l = self.tv_transform(l)
-            m = self.tv_transform(m)
-            return (d, m, l)
-        if isinstance(X, torch.Tensor):
-            return self.tv_transform(X.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-        elif isinstance(X, list):
-            return [self.tv_transform(i.permute([0, 3, 1, 2])).permute([0, 2, 3, 1]) for i in X]
+        
+        if isinstance(X, tuple):
+            cube = self.tv_transform(torch.as_tensor(X[0]).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
+            if len(X) > 1:
+                return (cube, X[1:])
+            return cube
+        elif isinstance(X, np.ndarray):
+            return self.tv_transform(torch.as_tensor(X).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
         else:
-            raise ValueError(F"TorchVisionTransformation expected list or tensor but got {type(X)}!")
+            raise ValueError(F"TorchVisionTransformation expected tuple or numpy array but got {type(X)}!")
 
-    def fit(self, X: Iterable):
+    def fit(self, X: Union[Tuple, np.ndarray]):
         pass
         
     def check_output_dim(self, X: Iterable):

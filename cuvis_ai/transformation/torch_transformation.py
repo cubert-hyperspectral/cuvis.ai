@@ -33,15 +33,15 @@ class TorchTransformation(BaseTransformation):
             self.fun = None
             self.initialized = False
 
-    def forward(self, X: Iterable, Y: Optional[Iterable]=None):
+    def forward(self, X: Tuple, Y: Optional[Tuple]=None):
         """Apply the pytorch method :arg:`function_name` on :arg:`X`.
         This node basically runs `torch.<function_name>(X, Y)`.
         
         Parameters
         ----------
-        X : Iterable
+        X : Tuple
             The first operand for the pytorch method.
-        Y : Iterable, optional
+        Y : Tuple, optional
             The second operand for the pytorch method.
         
         Returns
@@ -53,29 +53,35 @@ class TorchTransformation(BaseTransformation):
             raise ValueError(F"TorchTransformation with operation '{self.op_name}' was given a constant value and a second operand!" \
                              "\nTorchTransformation can have none or one of either, but must not have both.")
         x_supplemental = None
-        if isinstance(X, torch.Tensor):
-            x_data = X
+        if isinstance(X, np.ndarray):
+            x_data = torch.as_tensor(X)
         else:
-            x_data = X[0]
+            x_data = torch.as_tensor(X[0])
             x_supplemental = X[1:]
             
-        if isinstance(Y, torch.Tensor):
-            y_data = Y
+        if isinstance(Y, np.ndarray):
+            y_data = torch.as_tensor(Y)
         else:
-            y_data = Y[0]
+            y_data = torch.as_tensor(Y[0])
         
         try:
             if Y is not None:
-                res = self.fun(x_data, y_data, **self.fun_kwargs)
+                res = self.fun(x_data, y_data, **self.fun_kwargs).numpy()
             elif self.b is not None:
-                res = self.fun(x_data, self.b, **self.fun_kwargs)
+                res = self.fun(x_data, self.b, **self.fun_kwargs).numpy()
             else:
-                res = self.fun(x_data, **self.fun_kwargs)
+                res = self.fun(x_data, **self.fun_kwargs).numpy()
         except RuntimeError as re:
             raise RuntimeError(F"TorchTransformation with operation '{self.op_name}' was called with non-matching input and " \
                              F"{'constant ' if self.b is not None else ''}second operand shapes!\nPyTorch reports: '{re}'")
         
         return res if (x_supplemental is None) else (res, *x_supplemental)
+
+    def fit(self, X: Any, Y: Optional[Any]=None):
+        pass
+        
+    def check_output_dim(self, X: Any, Y: Optional[Any]=None):
+        pass
 
     def fit(self, X: Iterable, Y: Optional[Iterable]=None):
         pass

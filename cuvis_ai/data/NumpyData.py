@@ -3,7 +3,7 @@ import glob
 import yaml
 import json
 import time
-from typing import Optional, Callable, Dict
+from typing import Optional, Callable, Dict, Union
 import numpy as np
 import cv2
 from copy import deepcopy
@@ -212,45 +212,53 @@ class NumpyData(VisionDataset):
         """The number of data elements this data set holds."""
         return len(self.cubes)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx:Union[int, slice]):
         """Return data element number 'idx' in the selected :attr:`OutputFormat`.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels):
         """
         data = self.get_data(idx)
-        meta = self.get_metadata(idx)
         label = self.get_labels(idx)
-        return self._get_return_shape(data, meta, label)
+        meta = self.get_metadata(idx)
+        return self._get_return_shape(data, label, meta)
     
     def __next__(self):
         for idx in range(len(self)):
             yield self[idx]
     
-    def _get_return_shape(self, data, metadata, labels):
+    def _get_return_shape(self, data, labels, metadata):
         if self.output_format == OutputFormat.Full:
-            return data, metadata, labels
+            return (data, labels, metadata)
 
         elif self.output_format == OutputFormat.BoundingBox:
-            return data, [l['bbox'] for l in labels]
+            return (data, [l['bbox'] for l in labels])
         
         elif self.output_format == OutputFormat.SegmentationMask:
-            return data, [l['segmentation'] for l in labels]
+            return (data, [l['segmentation'] for l in labels])
         
         elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
-            return [self.output_lambda(d, m, l) for d, m, l in zip(data, metadata, labels)]
+            return self.output_lambda(data, labels, metadata)
         
         else:
             raise NotImplementedError("Think about it.")
 
     def _apply_transform(self, d):
-        return d if self.transforms is None else self.transforms(d)
+        def unTensorify(source):
+            if isinstance(source, dict):
+                for k, v in source.items():
+                    if isinstance(v, torch.Tensor):
+                        source[k] = v.numpy()
+                    elif isinstance(v, dict):
+                        unTensorify(source[k])
+            return source
+        return d if self.transforms is None else unTensorify(self.transforms(d))
     
     def merge(self, other_dataset):
         """Merge another NumpyData dataset into this dataset."""
         if type(self) is type(other_dataset):
             self.paths.extend(other_dataset.paths)
             self.cubes.extend(other_dataset.cubes)
-            self.metas.extend(other_dataset.metas)
             self.labels.extend(other_dataset.labels)
+            self.metas.extend(other_dataset.metas)
         else:
             raise TypeError(F"Cannot merge NumpyData with an object of type {type(other_dataset).__name__}")
 
@@ -298,12 +306,11 @@ class NumpyData(VisionDataset):
         """
         return [cube(self.provide_datatype) for cube in self.cubes]
 
-    def get_data(self, idx):
+    def get_data(self, idx:Union[int, slice]):
         """Get the cube at 'idx'."""
+        loaded_cubes = list(map(lambda c: c(self.provide_datatype), [self.cubes[idx]] if isinstance(idx, int) else self.cubes[idx]))
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
-        if isinstance(idx, int):
-            return self._apply_transform(self.cubes[idx](self.provide_datatype).permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-        return [self._apply_transform(cube(self.provide_datatype).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]) for cube in self.cubes[idx]]
+        return self._apply_transform(torch.concatenate(loaded_cubes, dim=0).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
 
     def get_all_items(self):
         """Get all items of this dataset in the selected :attr:`output_format`.
@@ -312,7 +319,7 @@ class NumpyData(VisionDataset):
         Not recommended for large sets. All data will be read into RAM!"""
         return self[:]
     
-    def get_item(self, idx):
+    def get_item(self, idx:Union[int, slice]):
         """Get item at 'idx' of this dataset in the selected :attr:`output_format`."""
         return self[idx]
 
@@ -320,7 +327,7 @@ class NumpyData(VisionDataset):
         """Get the meta-data for every cube in this dataset."""
         return [self.get_metadata(idx) for idx in range(len(self.metas))]
 
-    def get_metadata(self, idx):
+    def get_metadata(self, idx:Union[int, slice]):
         """Get the meta-data for the cube at 'idx' in this dataset."""
         def transform_meta(m):
             m_out = deepcopy(m)
@@ -333,19 +340,15 @@ class NumpyData(VisionDataset):
                     refdata = self._apply_transform(refdata.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
                 m_out.references[t] = refdata
             return m_out
-        if isinstance(idx, int):
-            return transform_meta(self.metas[idx])
-        return list(map(transform_meta, self.metas[idx]))
+        return list(map(transform_meta, [self.metas[idx]] if isinstance(idx, int) else self.metas[idx]))
 
     def get_all_labels(self):
         """Get the labels for every cube in this dataset."""
-        return [self.get_labels(idx) for idx in range(len(self.labels))]
+        return self.get_labels(slice(":"))
 
-    def get_labels(self, idx):
+    def get_labels(self, idx:Union[int, slice]):
         """Get the labels for the cube at 'idx' in this dataset."""
-        if isinstance(idx, int):
-            return self._apply_transform(self.labels[idx])
-        return [self._apply_transform(l) for l in self.labels[idx]]
+        return list(map(self._apply_transform, [self.labels[idx]] if isinstance(idx, int) else self.labels[idx]))
 
     def serialize(self, serial_dir: str):
         """Serialize the parameters of this dataset and store in 'serial_dir'."""

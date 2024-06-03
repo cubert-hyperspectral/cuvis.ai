@@ -303,9 +303,9 @@ class LiveCuvisData(VisionDataset):
         
         labels = {"wavelength": WavelengthList(wl)}
         
-        return (cube, meta, labels)
+        return (cube, labels, meta)
     
-    def __getitem__(self, idx):
+    def __getitem__(self, idx:int):
         """Return next data element in the selected :attr:`OutputFormat`. idx is ignored.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels)
         """
@@ -319,7 +319,7 @@ class LiveCuvisData(VisionDataset):
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
         cube = self._apply_transform(cube.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
         labels = self._apply_transform(labels)
-        return self._get_return_shape(cube, meta, labels)
+        return self._get_return_shape(cube, [labels], [meta])
     
     def set_datatype(self, dtype: np.dtype):
         """Specify a Numpy datatype to transform the cube into before returning it.
@@ -334,20 +334,32 @@ class LiveCuvisData(VisionDataset):
     def get_references(self) -> Dict[cuvis.ReferenceType, cuvis.Measurement]:
         return self._refcache
 
-    def _apply_transform(self, d):
-        return d if self.transforms is None else self.transforms(d)
-    
-    def _get_return_shape(self, data, metadata, labels):
+    def _get_return_shape(self, data, labels, metadata):
         if self.output_format == OutputFormat.Full:
-            return data, metadata, labels
+            return (data, labels, metadata)
+
         elif self.output_format == OutputFormat.BoundingBox:
-            return data, [l['bbox'] for l in labels]
+            return (data, [l['bbox'] for l in labels])
+        
         elif self.output_format == OutputFormat.SegmentationMask:
-            return data, [l['segmentation'] for l in labels]
+            return (data, [l['segmentation'] for l in labels])
+        
         elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
-            return [self.output_lambda(d, m, l) for d, m, l in zip(data, metadata, labels)]
+            return self.output_lambda(data, labels, metadata)
+        
         else:
             raise NotImplementedError("Think about it.")
+
+    def _apply_transform(self, d):
+        def unTensorify(source):
+            if isinstance(source, dict):
+                for k, v in source.items():
+                    if isinstance(v, torch.Tensor):
+                        source[k] = v.numpy()
+                    elif isinstance(v, dict):
+                        unTensorify(source[k])
+            return source
+        return d if self.transforms is None else unTensorify(self.transforms(d))
 
     def serialize(self, serial_dir: str):
         """Serialize the parameters of this dataset and store in 'serial_dir'."""

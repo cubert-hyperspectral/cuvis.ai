@@ -14,6 +14,7 @@ from collections import defaultdict
 import pkg_resources  # part of setuptools
 from ..node import Node
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
+from ..utils.doc import deprecated
 
 class Graph():
     def __init__(self, name: str) -> None:
@@ -25,9 +26,21 @@ class Graph():
 
 
     def add_node(self, node: Node, parent: Optional[list[Node] | Node] = None):
-        '''
-        Alternative proposal to add Nodes to the Network
-        '''
+        """Alternative proposal for adding a node the the graph structure.
+        Adds a node to the graph structure. 
+
+        Parameters
+        ----------
+        node : Node
+            The node that is going to be added to the graph structure
+        parent : Optional[list[Node]  |  Node], optional
+            The parent node(s) of the node that is going to be added, if no parent is supplied it will be used as the base node
+
+        Raises
+        ------
+        ValueError
+            Indicates that the Node could not be added to the graph structure
+        """
         if parent is None:
             # this is the first Node of the graph
             if self.entry_point is not None:
@@ -56,6 +69,7 @@ class Graph():
         if not self._verify():
             self.delete_node(node)
 
+    @deprecated
     def add_base_node(self, node: Node) -> None:
         '''
         Adds new node into the network
@@ -66,6 +80,7 @@ class Graph():
         self.nodes[node.id] = node
         self.entry_point = node.id
 
+    @deprecated
     def add_edge(self, node: Node, node2: Node) -> None:
         '''
         Adds sequential nodes to create a directed edge
@@ -107,9 +122,18 @@ class Graph():
         return True
     
     def delete_node(self, id: Node | str) -> None:
-        '''
-        Removes a node by its id. To Sucessfully remove a node it need to have no sucessors.
-        '''
+        """Removes a node by its id. To Sucessfully remove a node it need to have no sucessors.
+
+        Parameters
+        ----------
+        id : Node | str
+            The node or the id of the node that is going to be remvoed
+
+        Raises
+        ------
+        ValueError
+            Indicates that the node could not be removed
+        """
         if isinstance(id, Node):
             id = id.id
 
@@ -123,7 +147,19 @@ class Graph():
         self.graph.remove_edges_from([id])
         del self.nodes[id]
 
-    def forward(self, data: np.ndarray):
+    def forward(self, data: np.ndarray) -> np.ndarray:
+        """Forwards data through the pipeline.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data that is going to be forwarded through the pipeline
+
+        Returns
+        -------
+        np.ndarray
+            The output data of the pipeline
+        """
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
 
@@ -150,14 +186,34 @@ class Graph():
         return node.forward(data)
     
     def _not_needed_anymore(self, id: str, intermediary) -> bool:
-        '''
-        Checks if the intermediary results of a node are needed again,
+        """Checks if the intermediary results of a node are needed again,
         if all successors are already present in intermediary, it will return True
-        '''
+
+        Parameters
+        ----------
+        id : str
+            The id of the node to check
+        intermediary : _type_
+            the intermediary data that is currently available
+
+        Returns
+        -------
+        bool
+            The result of the node is not needed anymore
+        """
         return all([succs in intermediary for succs in self.graph.successors(id)]) and \
             len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
 
     def fit(self, X: np.ndarray, Y: Optional[np.ndarray] = None):
+        """Fits the pipeline to the given data.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            The training data that is going to be used
+        Y : Optional[np.ndarray], optional
+            The labeled data corresponding to the training data
+        """
         # training stage
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
@@ -173,7 +229,15 @@ class Graph():
 
         
     def train(self, train_dataloader, test_dataloader):
+        """Trains the pipeline using a dataloader
 
+        Parameters
+        ----------
+        train_dataloader : _type_
+            The training dataloader
+        test_dataloader : _type_
+            The testing dataloader
+        """
         x, y = zip(*[train_dataloader[i] for i in range(0,10)])
         x = np.array(x)
         y = np.array(y)
@@ -217,6 +281,8 @@ class Graph():
 
 
     def serialize(self) -> None:
+        """Serializes the pipeline to the disk
+        """
         output = {
             'edges': [],
             'nodes': [],
@@ -241,6 +307,13 @@ class Graph():
         print(f'Project saved to ~/{self.name}_{now}.zip')
     
     def load(self, filepath: str) -> None:
+        """Loads the pipeline from the disk
+
+        Parameters
+        ----------
+        filepath : str
+            The path to load the pipeline from
+        """
         self.now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         shutil.unpack_archive(filepath, f'/tmp/cuvis_{self.now}')
         # Read the pipeline structure from the location

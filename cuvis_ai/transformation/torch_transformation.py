@@ -1,4 +1,4 @@
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Iterable
 import yaml
 import pickle as pk
 import torch
@@ -6,16 +6,21 @@ import os
 from . import BaseTransformation
 
 class TorchTransformation(BaseTransformation):
-    """Node representing a simple mathematical transformation of data using a pytorch function.
+    """Node representing a transformation of data using a pytorch function.
 
-    Args:
-        function_name: The name of the pytorch function to use. Almost any function available from the torch module should work.
-        operand_b: A constant value to pass into the function alongside the regular input data.
-        kwargs: Any additional keyword arguments will be passed to the pytorch function anytime it is called.
+    Parameters
+    ---------
+    function_name : str,optional
+        The name of the pytorch function to use. Almost any function available from the torch module can be used.
+    operand_b : Any,optional
+        A constant value to pass into the function alongside the regular input data.
+    kwargs : Dict
+        Any additional keyword arguments will be passed to the pytorch function anytime it is called.
     """
         
     def __init__(self, function_name: Optional[str]=None, *, operand_b: Optional[Any]=None, **kwargs):
         super().__init__()
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.op_name = function_name
         self.b = operand_b
         self.input_size_y = None
@@ -28,42 +33,64 @@ class TorchTransformation(BaseTransformation):
             self.fun = None
             self.initialized = False
 
-    def forward(self, X: Any, Y: Optional[Any]=None):
-        try:
-            if Y is not None:
-                return self.fun(X, Y, **self.fun_kwargs)
-            elif self.b is not None:
-                return self.fun(X, self.b, **self.fun_kwargs)
-            else:
-                return self.fun(X, **self.fun_kwargs)
-        except RuntimeError as re:
-            raise RuntimeError(F"TorchTransformation with operation '{self.op_name}' was called with non-matching input and " \
-                             F"{'constant ' if self.b is not None else ''}second operand shapes!\nPyTorch reports: '{re}'")
-
-    def fit(self, X: Any, Y: Optional[Any]=None):
+    def forward(self, X: Iterable, Y: Optional[Iterable]=None):
+        """Apply the pytorch method :arg:`function_name` on :arg:`X`.
+        This node basically runs `torch.<function_name>(X, Y)`.
+        
+        Parameters
+        ----------
+        X : Iterable
+            The first operand for the pytorch method.
+        Y : Iterable, optional
+            The second operand for the pytorch method.
+        
+        Returns
+        -------
+        Any, Tuple
+            Returns the result of the pytorch method and any additional labels or metadata passed along with :arg:`X`
+        """
         if Y is not None and self.b is not None:
             raise ValueError(F"TorchTransformation with operation '{self.op_name}' was given a constant value and a second operand!" \
                              "\nTorchTransformation can have none or one of either, but must not have both.")
-        self.input_size = X.shape
-        if Y is not None:
-            self.input_size_y = Y.shape
+        x_supplemental = None
+        if isinstance(X, torch.Tensor):
+            x_data = X
+        else:
+            x_data = X[0]
+            x_supplemental = X[1:]
+            
+        if isinstance(Y, torch.Tensor):
+            y_data = Y
+        else:
+            y_data = Y[0]
+        
         try:
-            self.output_size = self.forward(X, Y if Y is not None else self.b).shape
+            if Y is not None:
+                res = self.fun(x_data, y_data, **self.fun_kwargs)
+            elif self.b is not None:
+                res = self.fun(x_data, self.b, **self.fun_kwargs)
+            else:
+                res = self.fun(x_data, **self.fun_kwargs)
         except RuntimeError as re:
-            raise ValueError(F"TorchTransformation with operation '{self.op_name}' has non-matching input and " \
+            raise RuntimeError(F"TorchTransformation with operation '{self.op_name}' was called with non-matching input and " \
                              F"{'constant ' if self.b is not None else ''}second operand shapes!\nPyTorch reports: '{re}'")
         
-    def check_output_dim(self, X: Any, Y: Optional[Any]=None):
-        out_size = self.forward(X, Y)
-        assert(out_size == self.output_size)
+        return res if (x_supplemental is None) else (res, *x_supplemental)
 
-    def check_input_dim(self, X: Any, Y: Optional[Any]=None):
+    def fit(self, X: Iterable, Y: Optional[Iterable]=None):
+        pass
+        
+    def check_output_dim(self, X: Iterable, Y: Optional[Iterable]=None):
+        pass
+
+    def check_input_dim(self, X: Iterable, Y: Optional[Iterable]=None):
         try:
             self.forward(X, Y)
         except RuntimeError:
             assert(False)
 
     def serialize(self, serial_dir: str):
+        """Serialize this node and save to :arg:`serial_dir`."""
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
@@ -83,6 +110,7 @@ class TorchTransformation(BaseTransformation):
         return yaml.dump(data, default_flow_style=False)
 
     def load(self, filepath:str, params:Dict):
+        """Load this node from a serialized graph."""
         blobfile_path = os.path.join(filepath, params.get("transformation_blob"))
         with open(blobfile_path, "rb") as blobfile:
             self.b, self.fun_kwargs = pk.load(blobfile)

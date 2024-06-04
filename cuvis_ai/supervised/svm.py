@@ -14,7 +14,7 @@ class SVM(BaseSupervised):
         self._input_dim = (-1,-1,-1)
         self._output_dim = (-1,-1,-1)
 
-    @BaseSupervised.output_dim.getter
+    @BaseSupervised.input_dim.getter
     def input_dim(self):
         return self._input_dim
     

@@ -10,17 +10,20 @@ class Preprocessor(ABC):
     def __init__(self):
         self.input_size = None
         self.output_size = None
-        self.id =  str(uuid.uuid4())
+        self.id = str(uuid.uuid4())
 
     @abstractmethod
     def fit(self, X):
         """
         Fit the preprocessor to the data.
 
-        Parameters:
-        X (array-like): Input data.
+        Parameters
+        ----------
+        X : array-like
+            Input data.
 
-        Returns:
+        Returns
+        -------
         self
         """
         pass

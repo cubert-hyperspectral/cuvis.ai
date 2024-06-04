@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import uuid
 import numpy as np
+import uuid
 from typing import Tuple
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
@@ -14,16 +15,25 @@ class BaseDecider(ABC):
     def __init__(self, ref_spectra=[]):
         self.id =  f'{type(self).__name__}-{str(uuid.uuid4())}'
         
+    def __init__(self):
+        self.input_size = None
+        self.output_size = None
+        self.id = str(uuid.uuid4())
+        
     @abstractmethod
     def forward(self, X):
         """
         Predict labels based on the input labels.
 
-        Parameters:
-        X (array-like): Input data.
+        Parameters
+        ----------
+        X : array-like
+            Input data.
 
-        Returns:
-        Transformed data.
+        Returns
+        -------
+        Any
+            Transformed data.
         """
         pass
 
@@ -35,8 +45,10 @@ class BaseDecider(ABC):
         Returns the needed shape for the input data.
         If a dimension is not important it will return -1 in the specific position.
 
-        Returns:
-        (tuple) needed shape for data
+        Returns
+        -------
+        tuple
+            Needed shape for data
         """
         pass
 
@@ -46,11 +58,15 @@ class BaseDecider(ABC):
         Check that the parameters for the input data data match user
         expectations
 
-        Parameters:
-        X (array-like): Input data.
+        Parameters
+        ----------
+        X : array-like
+            Input data.
 
-        Returns:
-        (Bool) Valid data 
+        Returns
+        -------
+        Bool
+            Valid data 
         """
         return check_array_shape(get_shape_without_batch(X), self.input_dim)
 

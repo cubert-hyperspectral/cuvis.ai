@@ -9,19 +9,26 @@ class Metadata:
     The yaml file can either contain any of the attributes of this class directly or contain one or multiple 'fileset' entries.
     Each 'fileset' must contain a 'paths' entry, specifying a list of filepaths that this set of attributes is valid for.
     
-    Attributes:
-        name: Name of the file that this object describes.
-        shape: Numpy shape describing the cube size as (columns, rows, channels)
-        wavelengths_nm: A list of wavelengths the cube contains.
-            In the same order as the channels.
-        bit_depth: Bit depth of the source data the cube was computed from.
-        references: A dictionary containing filenames or links to the data references.
-            e.g: white and dark cubes used to calculate reflectance data.
-        integration_time_us: The integration time (also exposure time) in microseconds used to record the data.
-        framerate: For video data. The number of measurements taken per second.
-        flags: Data dependend dictionary. Any additional flags associated with measurements.
-            e.g: Overillumination, dead pixels, missing references or data, bad references, key frames, etc.
-        processing_mode: The processing mode the data was calculated with.
+    Parameters
+    ----------
+    name : str
+        Name of the file that this object describes.
+    shape : tuple
+        Numpy shape describing the cube size as (columns, rows, channels)
+    wavelengths_nm : list
+        A list of wavelengths the cube contains. In the same order as the channels.
+    bit_depth : int
+        Bit depth of the source data the cube was computed from.
+    references : Dict
+        A dictionary containing filenames or links to the data references. e.g: white and dark cubes used to calculate reflectance data.
+    integration_time_us : float
+        The integration time (also exposure time) in microseconds used to record the data.
+    framerate : float
+        For video data. The number of measurements taken per second.
+    flags : Dict
+        Data dependend dictionary. Any additional flags associated with measurements. e.g: Overillumination, dead pixels, missing references or data, bad references, key frames, etc.
+    processing_mode : str
+        The processing mode the data was calculated with.
     """
 
     def __init__(self, name:str, fileset_metadata: dict={}):
@@ -48,7 +55,7 @@ class Metadata:
             except KeyError:
                 meta = fileset_metadata
         if meta is not None:
-            for attrib_name in self.C_ATTRIB_LIST:
+            for attrib_name in C_ATTRIB_LIST:
                 try:
                     setattr(self, attrib_name, meta[attrib_name])
                 except:
@@ -56,7 +63,7 @@ class Metadata:
     
     def __str__(self) -> str:
         out_str:str = F"name: {self.name}"
-        for attrib_name in self.C_ATTRIB_LIST:
+        for attrib_name in C_ATTRIB_LIST:
             out_str += F", {attrib_name}: {getattr(self, attrib_name)}"
         return out_str
 

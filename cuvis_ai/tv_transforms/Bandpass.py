@@ -9,9 +9,12 @@ class Bandpass(Transform):
     Selectively extract channels from the input data.
     Assumes the input data is in NCHW memory format.
     
-    Args:
-        from_channel: First channel to extract.
-        to_channel (optional): Last channel to extract. If ommited, only the first channel is extracted.
+    Parameters
+    ----------
+    from_channel : int
+        First channel to extract.
+    to_channel : int, optional
+        Last channel to extract. If ommited, only the first channel is extracted.
     """
     
     def __init__(self, from_channel:int, to_channel:int=None):

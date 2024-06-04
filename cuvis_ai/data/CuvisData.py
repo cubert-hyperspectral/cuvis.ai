@@ -7,8 +7,10 @@ from typing import Optional, Callable, Dict
 import torch
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
-from .Labels2TV import convert_COCO2TV
 
+from cuvis.General import SDKException
+
+from .Labels2TV import convert_COCO2TV
 from .Metadata import Metadata
 from .NumpyData import NumpyData, OutputFormat
 
@@ -19,17 +21,29 @@ class CuvisData(NumpyData):
     
     See :class:`NumpyData` for more details.
     
-    Args:
-        root (str): The absolute or relative path to the directory containing the HSI data.
-        transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
-        transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
-        target_transform (callable, optional): A function/transform that takes in the target and transforms it.
-        output_format (OutputFormat): Enum value that controls the output format of the dataset. See :class:`OutputFormat`
-        output_lambda (callable, optional): Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
+    
+    Parameters
+    ----------
+    root : str, optional
+        The absolute or relative path to the directory containing the HSI data.
+    transforms : callable, optional
+        A function/transforms that takes in an image and a label and returns the transformed versions of both.
+    transform : callable, optional
+        A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
+    target_transform : callable, optional
+        A function/transform that takes in the target and transforms it.
+    output_format : OutputFormat
+        Enum value that controls the output format of the dataset. See :class:`OutputFormat`
+    output_lambda : callable, optional
+        Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
         
-    Note:
-        :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    Notes
+    -----
+    :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    
+    If :attr:`root` is not passed in the constructor, the :py:meth:`~CuvisData.initialize` or :py:meth:`~CuvisData.load` method has to be called with a root path before the dataset can be used.
     """
+    _cuvis_non_cube_references = (cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
 
     class _SessionCubeLoader:
         def __init__(self, path, idx):
@@ -37,6 +51,19 @@ class CuvisData(NumpyData):
             self.idx = idx
         def __call__(self, to_dtype:np.dtype):
             cube = cuvis.SessionFile(self.path).get_measurement(self.idx).data["cube"].array
+            if cube.dtype != to_dtype:
+                cube = cube.astype(to_dtype)
+            cube = tv_tensors.Image(cube)
+            while len(cube.shape) < 4:
+                cube = cube.unsqueeze(0)
+            return cube.to(memory_format=torch.channels_last)
+        
+    class _SessionReferenceLoader:
+        def __init__(self, path, reftype):
+            self.path = path
+            self.reftype = reftype
+        def __call__(self, to_dtype:np.dtype):
+            cube = cuvis.SessionFile(self.path).get_reference(0, self.reftype).data["cube"].array
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -65,6 +92,7 @@ class CuvisData(NumpyData):
     ):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
 
     def _load_directory(self, dir_path:str):
@@ -101,9 +129,21 @@ class CuvisData(NumpyData):
         sess_meta.wavelengths_nm = temp_mesu.data["cube"].wavelength
         try:
             sess_meta.framerate = crt_session.fps
-        except cuvis.cuvis_aux.SDKException:
+        except SDKException:
             pass
         
+        for reftype in cuvis.ReferenceType:
+            try:
+                sess_meta.references[reftype]
+            except KeyError:
+                try:
+                    refmesu = crt_session.get_reference(0, reftype)
+                except SDKException:
+                    refmesu = None
+                if refmesu is not None and reftype not in self._cuvis_non_cube_references:
+                    sess_meta.references[reftype.name] = self._SessionReferenceLoader(filepath, reftype)
+                
+        coco = None
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
             ids = list(sorted(coco.imgs.keys()))
@@ -123,7 +163,13 @@ class CuvisData(NumpyData):
             #meta.references = {}
             #for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
             #    meta.references[key] = val
-                
+            for _, v in meta.references.items():
+                if isinstance(v, str):
+                    if os.path.splitext(v)[-1] == ".cu3s":
+                        v = CuvisData._SessionCubeLoader(v)
+                    elif os.path.splitext(v)[-1] == ".cu3":
+                        v = CuvisData._LegacyCubeLoader(v)
+            
             self.metas.append(meta)
 
             l = None
@@ -172,6 +218,6 @@ class CuvisData(NumpyData):
             meta.flags[key] = val
         meta.references = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            meta.references[key] = val
+            meta.references[key] = CuvisData._LegacyCubeLoader(val)
             
         self.metas.append(meta)

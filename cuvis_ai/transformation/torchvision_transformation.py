@@ -1,4 +1,4 @@
-from typing import Optional, Any, Dict, Callable
+from typing import Optional, Any, Dict, Callable, Iterable
 import yaml
 import torch
 import os
@@ -9,19 +9,28 @@ class TorchVisionTransformation(BaseTransformation):
     In general, these transformation should be added to the dataloader for optimal performance.
     Any transform present in torchvision.transforms.v2 should be compatible.
 
-    Args:
-        tv_transform: The transform that this node should represent. Can also be a composition.
+    Parameters
+    ----------
+    tv_transform : Callable,optional
+        The transform that this node should represent. Can also be a composition.
     """
     
     def __init__(self, tv_transform: Optional[Callable]=None):
         super().__init__()
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.tv_transform = tv_transform
         self.initialized = self.tv_transform is not None
 
-    def forward(self, X: Any):
+    def forward(self, X: Iterable) -> Iterable:
         """ Transform data and labels according to the torchvision transform this node represents.
-        Args:
-            X: Expects either a tuple (data, metadata, labels) as returned by dataloaders or just data as a list of tensors or a single tensor.
+        Parameters
+        ----------
+        X : Any,Iterable
+            Expects either a tuple (data, metadata, labels) as returned by dataloaders or just data as a list of tensors or a single tensor.
+        Returns
+        -------
+        Any, Tuple
+            The transformed data including any labels and meta-data passed in, if any.
         """
         if isinstance(X, tuple) and len(X) == 3:
             d, m, l = X
@@ -41,16 +50,17 @@ class TorchVisionTransformation(BaseTransformation):
         else:
             raise ValueError(F"TorchVisionTransformation expected list or tensor but got {type(X)}!")
 
-    def fit(self, X: Any):
+    def fit(self, X: Iterable):
         pass
         
-    def check_output_dim(self, X: Any):
+    def check_output_dim(self, X: Iterable):
         pass
 
-    def check_input_dim(self, X: Any):
+    def check_input_dim(self, X: Iterable):
         pass
 
     def serialize(self, serial_dir: str):
+        """Serialize this node."""
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
@@ -65,6 +75,7 @@ class TorchVisionTransformation(BaseTransformation):
         return yaml.dump(data, default_flow_style=False)
 
     def load(self, filepath:str, params:Dict):
+        """Load this node from a serialized graph."""
         blobfile_path = os.path.join(filepath, params.get("tv_transform"))
         self.tv_transform = torch.load(blobfile_path)
         self.initialized = True

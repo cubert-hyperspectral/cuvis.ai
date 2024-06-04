@@ -7,12 +7,27 @@ from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_s
 import numpy as np
 
 class MultiClassDecider(BaseDecider):
+    """Simple multi-class maximum decider.
+    Given a matrix with N channels, chooses the channel with the highest value per spatial location.
+    The result will be a single channel matrix with the indices of the chosen channels as values."""
 
+    def __init__(self, ) -> None:
     def __init__(self, n) -> None:
         super().__init__()
+        self.id = f"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.n = n
 
     def forward(self, X: np.ndarray) -> np.ndarray:
+        """Apply the maximum classification on the data.
+        Parameters
+        ----------
+        X : np.ndarray
+            Data to apply the classification on.
+        Returns
+        -------
+        np.ndarray
+            Classified data. Single channel matrix comprised of the channel indices of the chosen classes.
+        """
         self._input_dim = get_shape_without_batch(X, ignore=[0,1])
         flatten_soft_output = flatten_batch_and_spatial(X)
         decisions = np.argmax(flatten_soft_output,axis=1)

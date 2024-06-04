@@ -1,6 +1,6 @@
 
 import numpy as np
-
+from typing import Tuple, Union
 
 def get_shape_without_batch(array: np.ndarray, ignore = []):
     ndim = array.ndim
@@ -11,7 +11,7 @@ def get_shape_without_batch(array: np.ndarray, ignore = []):
     return shape
 
     
-def check_array_shape(array: np.ndarray | tuple[int,int,int], wanted_shape: tuple[int,int,int]):
+def check_array_shape(array: Union[np.ndarray, Tuple[int,int,int]], wanted_shape: Tuple[int,int,int]):
     if isinstance(array, np.ndarray):
         array_shape = array.shape
     else:

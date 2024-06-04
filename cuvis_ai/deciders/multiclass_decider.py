@@ -1,5 +1,6 @@
 
 from .base_decider import BaseDecider
+from ..node import Node
 
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial, get_shape_without_batch
 
@@ -10,9 +11,11 @@ class MultiClassDecider(BaseDecider):
     Given a matrix with N channels, chooses the channel with the highest value per spatial location.
     The result will be a single channel matrix with the indices of the chosen channels as values."""
 
-    def __init__(self) -> None:
+    def __init__(self, ) -> None:
+    def __init__(self, n) -> None:
         super().__init__()
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
+        self.id = f"{self.__class__.__name__}-{str(uuid.uuid4())}"
+        self.n = n
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         """Apply the maximum classification on the data.
@@ -32,7 +35,7 @@ class MultiClassDecider(BaseDecider):
 
     @BaseDecider.input_dim.getter
     def input_dim(self):
-        return self._input_dim
+        return [-1,-1, self.n]
 
     def serialize(self):
         return super().serialize()

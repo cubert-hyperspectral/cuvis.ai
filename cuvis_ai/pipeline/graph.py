@@ -9,7 +9,10 @@ from cuvis_ai.preprocessor import *
 from cuvis_ai.pipeline import *
 from cuvis_ai.unsupervised import *
 from cuvis_ai.supervised import *
+from cuvis_ai.distance import *
+from cuvis_ai.deciders import *
 import networkx as nx
+from typing import List, Union
 from collections import defaultdict
 import pkg_resources  # part of setuptools
 from ..node import Node
@@ -24,7 +27,7 @@ class Graph():
         self.name = name
 
 
-    def add_node(self, node: Node, parent: Optional[list[Node] | Node] = None):
+    def add_node(self, node: Node, parent: Optional[Union[List[Node], Node]] = None):
         '''
         Alternative proposal to add Nodes to the Network
         '''
@@ -84,7 +87,7 @@ class Graph():
     def _verify_input_outputs(self) -> bool:
         all_edges = list(self.graph.edges)
         for start, end in all_edges:
-            # TODO: Issue what if multiple Nodes feed into the same sucessor Node, how would the shape look like
+            # TODO: Issue what if multiple Nodes feed into the same successor Node, how would the shape look like?
             if not check_array_shape(self.nodes[start].output_dim, self.nodes[end].input_dim):
                 print('Unsatisfied dimensionality constraint!')
                 return False
@@ -106,7 +109,7 @@ class Graph():
         
         return True
     
-    def delete_node(self, id: Node | str) -> None:
+    def delete_node(self, id: Union[Node, str]) -> None:
         '''
         Removes a node by its id. To Sucessfully remove a node it need to have no sucessors.
         '''
@@ -221,6 +224,7 @@ class Graph():
             'edges': [],
             'nodes': [],
             'name': self.name,
+            'entry_point': self.entry_point,
             'version': pkg_resources.require('cuvis_ai')[0].version
         }
         now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
@@ -264,9 +268,17 @@ class Graph():
         for stage in structure.get('nodes'):
             t = self.reconstruct_stage(stage, root_path)
             self.nodes[t.id] = t
+        # Set the entry point
+        self.entry_point = structure.get('entry_point')
         # Create the graph instance
         self.graph = nx.DiGraph()
-        self.graph.add_edges_from(structure.get('edges'))
+        # Handle base case where there is only one node
+        if len(structure.get('nodes')) > 1:
+            # Graph has at least one valid edge
+            self.graph.add_edges_from(structure.get('edges'))
+        else:
+            # Only single node exists, add it into the graph
+            self.add_base_node(list(self.nodes.values())[0])
 
     def reconstruct_stage(self, data: dict, filepath: str) -> Node:
         stage = globals()[data.get('type')]()

@@ -1,23 +1,25 @@
 import os
 import cuvis
-import numpy as np
-from pathlib import Path
-from typing import Optional, Callable, Union, Dict
-import yaml
-import torch
+import math
 import time
+import torch
 import uuid
-from torchvision import tv_tensors
-from torchvision.datasets import VisionDataset
+import yaml
 
+import numpy as np
+
+from pathlib import Path
+from typing import Optional, Callable, Union, Dict, Tuple, List, Any
+from torchvision import tv_tensors
 from cuvis.General import SDKException
 
-from .NumpyData import OutputFormat, NumpyData
-from .Metadata import Metadata
+from .BaseDataSet import BaseDataSet
+from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
 
 
-class LiveCuvisData(VisionDataset):
+
+class LiveCuvisDataLoader(BaseDataSet):
     """Representation of a live source of HSI data cubes in the form of a real or simulated Cubert camera.
     
     This class is a subclass of torchvisions VisionDataset which is a subclass
@@ -58,6 +60,8 @@ class LiveCuvisData(VisionDataset):
     _cuvis_non_cube_references = (cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
     
     def __init__(self, path:Optional[Union[str, Path]] = None, 
+        *,
+        batch_size:Optional[int] = 1,
         simulate:Optional[bool] = False, 
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
@@ -65,13 +69,10 @@ class LiveCuvisData(VisionDataset):
         output_format: OutputFormat = OutputFormat.Full,
         output_lambda: Optional[Callable] = None
     ):
-        super().__init__(path, transforms, transform, target_transform)
+        super().__init__(path, transforms, transform, target_transform, output_format, output_lambda)
         self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
-        self.output_format = output_format
-        self.output_lambda = output_lambda
-        self.provide_datatype:np.dtype = np.float32
         self._clear()
-        
+        self.batch_size = batch_size
         if path is not None:
             self.initialize(path, simulate)
     
@@ -240,8 +241,7 @@ class LiveCuvisData(VisionDataset):
         """
         self.set_reference(self._fetch_mesu(), cuvis.ReferenceType.Distance)
     
-    @staticmethod
-    def _mesu_to_tensor(mesu:cuvis.Measurement, astype:np.dtype) -> tv_tensors.Image:
+    def _mesu2TensorAndTransform(self, mesu:cuvis.Measurement, astype:np.dtype) -> tv_tensors.Image:
         try:
             cube = mesu.data["cube"].array
         except KeyError:
@@ -254,14 +254,26 @@ class LiveCuvisData(VisionDataset):
         while len(cube.shape) < 4:
             cube = cube.unsqueeze(0)
         cube = (cube.to(memory_format=torch.channels_last))
+        
+        cube = self._apply_transform(cube.permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
         return cube
     
     def _capture(self):
-        mesu = self._fetch_mesu()
+        label_list = []
+        metas = []
+        mesus = []
+        cubes = []
         
+        for m_idx in range(self.batch_size):
+            mesu = self._fetch_mesu()
+            if mesu.processing_mode != self.processing_mode:
+                mesu = self.processing_context.apply(mesu)
+                mesu.refresh()
+            mesus.append(mesu)
+            
         # Load references from session file
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            reftype = LiveCuvisData._cuvis_refmap[key]
+            reftype = self._cuvis_refmap[key]
             hasref = self.processing_context.has_reference(reftype)
             if (self.sess is not None) and (not hasref):
                 
@@ -277,89 +289,60 @@ class LiveCuvisData(VisionDataset):
                     refcount += 1
                 if refmesu is not None:
                     self.set_reference(refmesu, reftype)
-        reprocessed = False
-        if mesu.processing_mode != self.processing_mode:
-            mesu = self.processing_context.apply(mesu)
-            reprocessed = True
-            mesu.refresh()
         
-        wl = mesu.data["cube"].wavelength
+        for mesu in mesus:
+            wl = mesu.data["cube"].wavelength
+            cube = self._mesu2TensorAndTransform(mesu, self.provide_datatype)
+            
+            meta = {
+                "name": mesu.name, 
+                "integration_time_us": int(mesu.integration_time * 1000),
+                "shape": cube.shape,
+                "wavelengths_nm": self._apply_transform(WavelengthList(wl), True),
+                "processing_mode": mesu.processing_mode,
+                "flags": {},
+                "references": {},
+            }
+            
+            for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
+                meta["flags"][key] = val
+            
+            for reftype, refmesu in self._refcache.items():
+                meta["references"][reftype] = self._mesu2TensorAndTransform(refmesu, self.provide_datatype)
+            
+            labels = {"wavelength": WavelengthList(wl)}
+            
+            cubes.append(cube)
+            label_list.append(labels)
+            metas.append(meta)
         
-        cube = self._mesu_to_tensor(mesu, self.provide_datatype)
-        
-        meta = Metadata(mesu.name)
-        meta.integration_time_us = int(mesu.integration_time * 1000)
-        meta.shape = cube.shape
-        meta.wavelengths_nm = wl
-        meta.processing_mode = mesu.processing_mode
-        
-        meta.flags = {}
-        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
-            meta.flags[key] = val
-        
-        meta.references = {}
-        for reftype, refmesu in self._refcache.items():
-            meta.references[reftype] = self._mesu_to_tensor(refmesu, self.provide_datatype)
-        
-        labels = {"wavelength": WavelengthList(wl)}
-        
-        return (cube, labels, meta)
+        if self.batch_size == 1:
+            cube = cubes[0]
+        else:
+            cube = np.stack(cubes, axis=0)
+            
+        return (cube, label_list, metas)
     
-    def __getitem__(self, idx:int):
+    def __getitem__(self, idx:Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Return next data element in the selected :attr:`OutputFormat`. idx is ignored.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels)
         """
         return self.__next__()
     
-    def __next__(self):
+    def __next__(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Return next data element in the selected :attr:`OutputFormat`.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels)
         """
-        cube, meta, labels = self._capture()
+        cube, labels, meta = self._capture()
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
-        cube = self._apply_transform(cube.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-        labels = self._apply_transform(labels)
+        labels = self._apply_transform(labels, True)
         return self._get_return_shape(cube, [labels], [meta])
     
-    def set_datatype(self, dtype: np.dtype):
-        """Specify a Numpy datatype to transform the cube into before returning it.
-        Valid data types are:
-        np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_
-        """
-        if dtype in NumpyData.C_SUPPORTED_DTYPES:
-            self.provide_datatype = dtype
-        else:
-            raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in NumpyData.C_SUPPORTED_DTYPES]))
-
+    def forward(self, X:Any) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
+        return next(self)
+    
     def get_references(self) -> Dict[cuvis.ReferenceType, cuvis.Measurement]:
         return self._refcache
-
-    def _get_return_shape(self, data, labels, metadata):
-        if self.output_format == OutputFormat.Full:
-            return (data, labels, metadata)
-
-        elif self.output_format == OutputFormat.BoundingBox:
-            return (data, [l['bbox'] for l in labels])
-        
-        elif self.output_format == OutputFormat.SegmentationMask:
-            return (data, [l['segmentation'] for l in labels])
-        
-        elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
-            return self.output_lambda(data, labels, metadata)
-        
-        else:
-            raise NotImplementedError("Think about it.")
-
-    def _apply_transform(self, d):
-        def unTensorify(source):
-            if isinstance(source, dict):
-                for k, v in source.items():
-                    if isinstance(v, torch.Tensor):
-                        source[k] = v.numpy()
-                    elif isinstance(v, dict):
-                        unTensorify(source[k])
-            return source
-        return d if self.transforms is None else unTensorify(self.transforms(d))
 
     def serialize(self, serial_dir: str):
         """Serialize the parameters of this dataset and store in 'serial_dir'."""
@@ -375,6 +358,7 @@ class LiveCuvisData(VisionDataset):
             'data_type': self.provide_datatype,
             'processing_mode': self.processing_contextessing_mode.value,
             'simulate': self.simulate,
+            'batch_size': self.batch_size,
             'transforms': blobname,
         }
         # Dump to a string
@@ -385,6 +369,7 @@ class LiveCuvisData(VisionDataset):
         root = params["root_dir"]
         simulate = params["simulate"]
         self.provide_datatype = params["data_type"]
+        self.batch_size = params["batch_size"]
         self.transforms = torch.load(os.path.join(filepath, params["transforms"]))
         self.initialize(root, simulate)
         self.processing_contextessing_mode = cuvis.ProcessingMode(params["processing_mode"])

@@ -1,4 +1,4 @@
-from .CuvisData import CuvisData
-from .Metadata import Metadata
-from .NumpyData import NumpyData, OutputFormat
-from .LiveCuvisData import LiveCuvisData
+from .OutputFormat import OutputFormat
+from .NumpyDataSet import NumpyDataSet
+from .CuvisDataSet import CuvisDataSet
+from .LiveCuvisDataLoader import LiveCuvisDataLoader

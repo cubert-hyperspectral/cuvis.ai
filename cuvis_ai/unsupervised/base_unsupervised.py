@@ -3,8 +3,9 @@ import numpy as np
 import uuid
 
 from ..utils.numpy_utils import check_array_shape, get_shape_without_batch
+from ..node import CubeConsumer
 
-class BaseUnsupervised(ABC):
+class BaseUnsupervised(ABC, CubeConsumer):
     """
     Abstract class for data preprocessing.
     """

@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod, abstractproperty
+from abc import abstractmethod
+from typing import Tuple
+from ..node import CubeConsumer, Node
 import uuid
 
-class BaseTransformation(ABC):
+class BaseTransformation(Node, CubeConsumer):
     def __init__(self):
         self.id = str(uuid.uuid4())
         self.input_size = None
@@ -23,6 +25,19 @@ class BaseTransformation(ABC):
     def check_input_dim(self, X):
         pass
 
+
+    @abstractmethod
+    def output_dim(self) -> Tuple[int, int, int]:
+        pass
+
+    @abstractmethod
+    def input_dim(self) -> Tuple[int, int, int]:
+        pass
+
+    @abstractmethod
+    def input_dim(self):
+        pass
+    
     @abstractmethod
     def serialize(self):
         pass

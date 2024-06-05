@@ -1,8 +1,11 @@
-from typing import Optional, Any, Dict, Callable, Tuple
 import yaml
 import torch
 import os
+import uuid
+import numpy as np
+from typing import Optional, Any, Dict, Callable, Tuple, Union, Iterable
 from . import BaseTransformation
+from ..node import Node
 
 class TorchVisionTransformation(BaseTransformation):
     """ Node for applying a torchvision transform within the pipeline.
@@ -26,27 +29,20 @@ class TorchVisionTransformation(BaseTransformation):
         self.tv_transform = tv_transform
         self.initialized = self.tv_transform is not None
 
-    def forward(self, X: Union[Tuple, np.ndarray]) -> Any:
+    def forward(self, X: np.ndarray) -> Any:
         """ Transform data and labels according to the torchvision transform this node represents.
         Parameters
         ----------
-        X : Tuple
-            Expects a tuple (data, [labels, [metadata]]) as returned by dataloaders or just a single tensor.
+        X : np.ndarray
+            Expects a numpy array or torch tensor (data, [labels, [metadata]]) as returned by dataloaders or just a single tensor.
         Returns
         -------
         Tuple
             The transformed data including any labels and meta-data passed in, if any.
         """
         
-        if isinstance(X, tuple):
-            cube = self.tv_transform(torch.as_tensor(X[0]).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
-            if len(X) > 1:
-                return (cube, X[1:])
-            return cube
-        elif isinstance(X, np.ndarray):
+        if isinstance(X, np.ndarray):
             return self.tv_transform(torch.as_tensor(X).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
-        else:
-            raise ValueError(F"TorchVisionTransformation expected tuple or numpy array but got {type(X)}!")
 
     def fit(self, X: Union[Tuple, np.ndarray]):
         pass
@@ -57,6 +53,14 @@ class TorchVisionTransformation(BaseTransformation):
     def check_input_dim(self, X: Iterable):
         pass
 
+    @Node.output_dim.getter
+    def output_dim(self) -> Tuple[int, int, int]:
+        return (-1, -1, -1)
+
+    @Node.input_dim.getter
+    def input_dim(self) -> Tuple[int, int, int]:
+        return (-1, -1, -1)
+    
     def serialize(self, serial_dir: str):
         """Serialize this node."""
         if not self.initialized:

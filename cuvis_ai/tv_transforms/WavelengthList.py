@@ -4,6 +4,7 @@ import numpy as np
 from typing import Union, Optional, Any, List, Union
 from torchvision.transforms.v2 import functional as F
 
+
 class WavelengthList(TVTensor):
     """A torchvision transforms data type which represents a list of wavelengths.
     Is used in conjunction with a HSI data cube to describe the physical wavelengths that the channels of the cube represent.
@@ -30,12 +31,9 @@ class WavelengthList(TVTensor):
         if not isinstance(data, list):
             raise ValueError("WavelengthList got invalid input data!")
         #data = np.array([float(wl) for wl in data]).reshape((len(data), 1, 1))
-        #print("WLL init data:", data)
         data = np.array(data).reshape((1, len(data), 1, 1))
         tensor = cls._to_tensor(data, dtype=dtype, device=device, requires_grad=requires_grad).float()
-        #cls.        
-        #print("WLL init tensor:", data)
-        return tensor.float().as_subclass(cls)
+        return tensor.as_subclass(cls)
 
     
     def __repr__(self, *, tensor_contents: Any = None) -> str:  # type: ignore[override]

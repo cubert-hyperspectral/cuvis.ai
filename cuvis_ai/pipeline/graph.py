@@ -130,16 +130,40 @@ class Graph():
     def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
+        
+        xs = self._flatten_to_4dim(X)
+        xs = np.split(xs, indices_or_sections=xs.shape[0], axis=0)
+        ys = None
+        if Y is not None:
+            if (isinstance(Y, List) and isinstance(Y[0], np.ndarray)) or isinstance(Y, np.ndarray):
+                ys = self._flatten_to_4dim(Y)
+                ys = np.split(ys, indices_or_sections=ys.shape[0], axis=0)
+            else:
+                ys = Y
+        
+        results = []
+        for x, y, m in zip(xs, ys, M):
+            
+            intermediary = {}
+            intermediary_labels = {}
+            intermediary_metas = {}
+            intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(self.nodes[self.entry_point], x, y, m)
 
-        intermediary = {}
-        intermediary_labels = {}
-        intermediary_metas = {}
-        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(self.nodes[self.entry_point], X, Y, M)
+            for node in self.sorted_graph[1:]:
+                self._forward_helper(node, intermediary, intermediary_labels, intermediary_metas)
 
-        for node in self.sorted_graph[1:]:
-            self._forward_helper(node, intermediary, intermediary_labels, intermediary_metas)
+            results.append((intermediary[self.sorted_graph[-1]], intermediary_labels[self.sorted_graph[-1]], intermediary_metas[self.sorted_graph[-1]]))
+        zr = tuple(zip(*results))
+        rxs = zr[0]
+        rys = zr[1]
+        rms = zr[2]
+        
+        rxs = np.concatenate(rxs, axis=0)
+        if isinstance(rys[0], np.ndarray):
+            rys = np.concatenate(rys, axis=0)
 
-        return intermediary[self.sorted_graph[-1]]
+        return (rxs, rys, rms)
+        
 
     def _forward_helper(self, current, intermediary, intermediary_labels, intermediary_metas):
         p_nodes = list(self.graph.predecessors(current))
@@ -149,15 +173,18 @@ class Graph():
         
         no_labels = intermediary_labels[p_nodes[0]] is None
         if not no_labels:
-            use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+            if isinstance(intermediary_labels[p_nodes[0]], np.ndarray):
+                use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+            else:
+                use_labels = [intermediary_labels[p] for p in p_nodes]
         else:
-            use_labels = None
+            use_labels = []
         
         no_metas = intermediary_metas[p_nodes[0]] is None
         if not no_metas:
-            use_metas = np.concatenate([intermediary_metas[p] for p in p_nodes], axis=-1)
+            use_metas = [intermediary_metas[p] for p in p_nodes]
         else:
-            use_metas = None
+            use_metas = []
 
         intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._forward_node(self.nodes[current], use_prods, use_labels, use_metas)
         
@@ -205,15 +232,10 @@ class Graph():
             ys.append(y)
             ms.append(m)
         
-        if len(xs[0].shape) == 5:
-            xs = np.concatenate(xs, axis=0)
-        else:
-            xs = np.stack(xs, axis=0)
+        xs = self._flatten_to_4dim(xs)
+
         if isinstance(ys[0], np.ndarray):
-            if len(ys[0].shape) == 5:
-                ys = np.concatenate(ys, axis=0)
-            else:
-                ys = np.stack(ys, axis=0)
+            ys = self._flatten_to_4dim(ys)
         
         self.fit(xs, ys, ms)
 
@@ -341,3 +363,14 @@ class Graph():
         stage = globals()[data.get('type')]()
         stage.load(data, filepath)
         return stage
+
+    @staticmethod
+    def _flatten_to_4dim(x):
+        if isinstance(x, List):
+            if len(x[0].shape) == 5:
+                x = np.concatenate(x, axis=0)
+            else:
+                x = np.stack(x, axis=0)
+        while len(x.shape) >= 5:
+            x = x.reshape((x.shape[0] * x.shape[1], *x.shape[2:]))
+        return x

@@ -196,16 +196,31 @@ class Graph():
     def train(self, train_dataloader:torch.utils.data.DataLoader, test_dataloader:torch.utils.data.DataLoader):
         if not isinstance(train_dataloader, torch.utils.data.DataLoader) or not isinstance(test_dataloader, torch.utils.data.DataLoader):
             raise TypeError("train or test dataloader argument is not a pytorch DataLoader!")
-
-        x, y, m = next(iter(train_dataloader))
         
-        self.fit(x, y, m)
+        xs = []
+        ys = []
+        ms = []
+        for x, y, m in iter(train_dataloader):
+            xs.append(x)
+            ys.append(y)
+            ms.append(m)
+        
+        if len(xs[0].shape) == 5:
+            xs = np.concatenate(xs, axis=0)
+        else:
+            xs = np.stack(xs, axis=0)
+        if isinstance(ys[0], np.ndarray):
+            if len(ys[0].shape) == 5:
+                ys = np.concatenate(ys, axis=0)
+            else:
+                ys = np.stack(ys, axis=0)
+        
+        self.fit(xs, ys, ms)
 
         # test stage
-        x, y, m = next(iter(train_dataloader))
-
-        test_results = self.forward(x, y, m)
-        # do some metrics
+        for x, y, m in iter(test_dataloader):
+            test_results = self.forward(x, y, m)
+            # do some metrics
 
     def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
         # training stage

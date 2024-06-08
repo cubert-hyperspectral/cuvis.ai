@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+import uuid
 import numpy as np
 import uuid
+from typing import Tuple
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
 class BaseDecider(ABC):
@@ -10,7 +12,9 @@ class BaseDecider(ABC):
     The decider nodes transform a prediction state into a final prediction
     based on the task that needs to be accomplished.
     """
-    
+    def __init__(self, ref_spectra=[]):
+        self.id =  f'{type(self).__name__}-{str(uuid.uuid4())}'
+        
     def __init__(self):
         self.input_size = None
         self.output_size = None
@@ -36,7 +40,7 @@ class BaseDecider(ABC):
 
     @property
     @abstractmethod
-    def input_dim(self) -> tuple[int,int,int]:
+    def input_dim(self) -> Tuple[int,int,int]:
         """
         Returns the needed shape for the input data.
         If a dimension is not important it will return -1 in the specific position.

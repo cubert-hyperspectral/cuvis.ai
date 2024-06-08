@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod, abstractproperty
 import numpy as np
 import typing
 import uuid
+from ..node import CubeConsumer
 
-class Preprocessor(ABC):
+class Preprocessor(ABC, CubeConsumer):
     """
     Abstract class for data preprocessing.
     """

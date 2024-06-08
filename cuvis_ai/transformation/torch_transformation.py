@@ -1,8 +1,11 @@
-from typing import Optional, Any, Dict, Iterable
+from typing import Optional, Any, Dict, Iterable, Tuple
 import yaml
 import pickle as pk
 import torch
+import uuid
 import os
+import numpy as np
+from ..node import Node
 from . import BaseTransformation
 
 class TorchTransformation(BaseTransformation):
@@ -33,49 +36,49 @@ class TorchTransformation(BaseTransformation):
             self.fun = None
             self.initialized = False
 
-    def forward(self, X: Iterable, Y: Optional[Iterable]=None):
+    def forward(self, X: np.ndarray, Y: Optional[np.ndarray]=None):
         """Apply the pytorch method :arg:`function_name` on :arg:`X`.
         This node basically runs `torch.<function_name>(X, Y)`.
         
         Parameters
         ----------
-        X : Iterable
+        X : np.ndarray
             The first operand for the pytorch method.
-        Y : Iterable, optional
+        Y : np.ndarray, optional
             The second operand for the pytorch method.
         
         Returns
         -------
-        Any, Tuple
+        Any, np.ndarray
             Returns the result of the pytorch method and any additional labels or metadata passed along with :arg:`X`
         """
         if Y is not None and self.b is not None:
             raise ValueError(F"TorchTransformation with operation '{self.op_name}' was given a constant value and a second operand!" \
                              "\nTorchTransformation can have none or one of either, but must not have both.")
-        x_supplemental = None
-        if isinstance(X, torch.Tensor):
-            x_data = X
-        else:
-            x_data = X[0]
-            x_supplemental = X[1:]
+        
+        if isinstance(X, np.ndarray):
+            X = torch.as_tensor(X)
+        
             
-        if isinstance(Y, torch.Tensor):
-            y_data = Y
-        else:
-            y_data = Y[0]
+        if isinstance(Y, np.ndarray):
+            Y = torch.as_tensor(Y)
         
         try:
             if Y is not None:
-                res = self.fun(x_data, y_data, **self.fun_kwargs)
+                return self.fun(X, Y, **self.fun_kwargs).numpy()
             elif self.b is not None:
-                res = self.fun(x_data, self.b, **self.fun_kwargs)
+                return self.fun(X, self.b, **self.fun_kwargs).numpy()
             else:
-                res = self.fun(x_data, **self.fun_kwargs)
+                return self.fun(X, **self.fun_kwargs).numpy()
         except RuntimeError as re:
             raise RuntimeError(F"TorchTransformation with operation '{self.op_name}' was called with non-matching input and " \
                              F"{'constant ' if self.b is not None else ''}second operand shapes!\nPyTorch reports: '{re}'")
+
+    def fit(self, X: Any, Y: Optional[Any]=None):
+        pass
         
-        return res if (x_supplemental is None) else (res, *x_supplemental)
+    def check_output_dim(self, X: Any, Y: Optional[Any]=None):
+        pass
 
     def fit(self, X: Iterable, Y: Optional[Iterable]=None):
         pass
@@ -88,6 +91,14 @@ class TorchTransformation(BaseTransformation):
             self.forward(X, Y)
         except RuntimeError:
             assert(False)
+            
+    @Node.output_dim.getter
+    def output_dim(self) -> Tuple[int, int, int]:
+        return -1, -1, -1
+
+    @Node.input_dim.getter
+    def input_dim(self) -> Tuple[int, int, int]:
+        return -1, -1, -1
 
     def serialize(self, serial_dir: str):
         """Serialize this node and save to :arg:`serial_dir`."""

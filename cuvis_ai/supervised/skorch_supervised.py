@@ -4,6 +4,7 @@ from ..utils.nn_config import Optimizer
 from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
 import numpy as np
 from torch import nn
+from typing import Union
 from torch.optim.optimizer import Optimizer as torch_optim
 
 from dataclasses import dataclass, field
@@ -11,7 +12,7 @@ from dataclasses import dataclass, field
 @dataclass
 class SkorchSupervised(BaseSupervised):
     epochs: int = 10
-    optimizer: Optimizer | torch_optim = None
+    optimizer: Union[Optimizer, torch_optim] = None
     verbose: bool = False
     model: nn.Module = None
     model_args: dict = field(default_factory=dict)

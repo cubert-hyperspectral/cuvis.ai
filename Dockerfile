@@ -10,4 +10,4 @@ WORKDIR /install/
 COPY cuvis_ai cuvis_ai/
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
-CMD /install/entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

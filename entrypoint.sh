@@ -1,5 +1,5 @@
 #!/bin/sh -l
 
-echo "Hello $1"
-time=$(date)
-echo "time=$time" >> $GITHUB_OUTPUT
+. /install/venv_3.10/bin/activate
+cd cuvis.ai
+pip install . >> $GITHUB_OUTPUT

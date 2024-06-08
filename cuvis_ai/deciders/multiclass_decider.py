@@ -11,8 +11,14 @@ class MultiClassDecider(BaseDecider):
     Given a matrix with N channels, chooses the channel with the highest value per spatial location.
     The result will be a single channel matrix with the indices of the chosen channels as values."""
 
-    def __init__(self, ) -> None:
-    def __init__(self, n) -> None:
+    def __init__(self, n: int) -> None:
+        """Create multi-class decider instance
+
+        Parameters
+        ----------
+        n : int
+            Number of classes
+        """
         super().__init__()
         self.id = f"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.n = n

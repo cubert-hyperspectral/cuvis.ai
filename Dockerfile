@@ -10,4 +10,6 @@ COPY cuvis_ai cuvis_ai/
 COPY setup.py setup.py
 COPY entrypoint.sh entrypoint.sh
 RUN echo $(ls -1 /install/cuvis.ai/)
+RUN echo $(ls -1 /install/venv_3.10/lib/python3.10/site-packages/cuvis_il/)
+
 ENV CUVIS=/lib/cuvis

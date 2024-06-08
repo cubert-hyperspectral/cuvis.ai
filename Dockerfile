@@ -1,7 +1,7 @@
 FROM nhansoncubert/cuvis_noetic:latest
 
 # Build from the base ROS noetic image
-
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 # Copies your code file from your action repository to the filesystem path `/` of the container
 RUN rm -rf /catkin_ws
 

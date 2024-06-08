@@ -187,21 +187,23 @@ class Graph():
         self.graph.remove_edges_from([id])
         del self.nodes[id]
 
-    def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
-        """
-        # TODO Update this
-        Pass data through the graph by starting at the root node and flowing through all
+    def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Pass data through the graph by starting at the root node and flowing through all
         intermediary stages.
 
         Parameters
         ----------
-        data : np.ndarray
-            Hyperspectral data to pass through all processing stages.
+        X : np.ndarray
+            Input data
+        Y : Optional[Union[np.ndarray, List]], optional
+            Label data
+        M : Optional[Union[np.ndarray, List]], optional
+            Metadata by default None
 
         Returns
         -------
-        Any
-            Returns the output from the leaf nodes of the graph.
+        tuple[np.ndarray, np.ndarray, np.ndarray]
+            Residuals of processed X, Y, and M
         """
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
@@ -240,7 +242,20 @@ class Graph():
         return (rxs, rys, rms)
         
 
-    def _forward_helper(self, current, intermediary, intermediary_labels, intermediary_metas):
+    def _forward_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
+        """Helper function to aggregate inputs and calculate products from a given node.
+
+        Parameters
+        ----------
+        current : str
+            id for current node
+        intermediary : dict
+            Dictionary containing intermediary products with key as id of node
+        intermediary_labels : np.ndarray
+            Dictionary containing intermediary labels with key as id of node
+        intermediary_metas : np.ndarray
+            Dictionary containing intermediary metadata with key as id of node
+        """
         p_nodes = list(self.graph.predecessors(current))
         p_nodes = self.graph.predecessors(current)
         # TODO how to concat multiple input data from multiple nodes
@@ -270,7 +285,25 @@ class Graph():
             intermediary_metas.pop(current)
     
 
-    def _forward_node(self, node: Node, data, labels, metadata):
+    def _forward_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Pass data through a node which has already been trained/fit.
+
+        Parameters
+        ----------
+        node : Node
+            Node within the graph
+        data : np.ndarray
+            Data to pass through the nodes
+        labels : np.ndarray
+            Labels associated with input data
+        metadata : np.ndarray
+            Metadata needed for forward pass
+
+        Returns
+        -------
+        tuple[np.ndarray, np.ndarray, np.ndarray]
+            Output data, output labels, output metadata
+        """
         node_input = [data]
             
         if isinstance(node, LabelConsumerInference):
@@ -306,6 +339,20 @@ class Graph():
             len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
 
     def train(self, train_dataloader:torch.utils.data.DataLoader, test_dataloader:torch.utils.data.DataLoader):
+        """Train a graph use a dataloader to iteratively pass data through the graph
+
+        Parameters
+        ----------
+        train_dataloader : torch.utils.data.DataLoader
+            Training dataloader
+        test_dataloader : torch.utils.data.DataLoader
+            Test dataloader
+
+        Raises
+        ------
+        TypeError
+            Raises error if dataloaders passed to train function are not pytorch dataloaders
+        """
         if not isinstance(train_dataloader, torch.utils.data.DataLoader) or not isinstance(test_dataloader, torch.utils.data.DataLoader):
             raise TypeError("train or test dataloader argument is not a pytorch DataLoader!")
         
@@ -330,6 +377,17 @@ class Graph():
             # do some metrics
 
     def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
+        """Take a graph of uninitialized nodes and fit then given a set of inputs and outputs
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Input data
+        Y : Optional[Union[np.ndarray, List]], optional
+            Input labels, by default None
+        M : Optional[Union[np.ndarray, List]], optional
+            Input metadata, by default None
+        """
         # training stage
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
@@ -347,7 +405,20 @@ class Graph():
             self._fit_helper(node, intermediary, intermediary_labels, intermediary_metas)
         # do some metrics
 
-    def _fit_helper(self, current, intermediary, intermediary_labels, intermediary_metas):
+    def _fit_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
+        """Private helper function to fit an individual node.
+
+        Parameters
+        ----------
+        current : str
+            id of current node in graph
+        intermediary : str
+            Dictionary containing intermediary products
+        intermediary_labels : np.ndarray
+            Dictionary containing intermediary labels
+        intermediary_metas : np.ndarray
+            Dictionary containing intermediary metadata
+        """
         p_nodes = list(self.graph.predecessors(current))
 
         # TODO how to concat multiple input data from multiple nodes
@@ -373,7 +444,30 @@ class Graph():
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
 
-    def _fit_node(self, node: Node, data, labels, metadata):
+    def _fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> np.ndarray:
+        """Private function wrapper to call the fit function for an individual node
+
+        Parameters
+        ----------
+        node : Node
+            Graph node that will be fit
+        data : np.ndarray
+            Training data
+        labels : np.ndarray
+            Training labels
+        metadata : np.ndarray
+            Training metadata
+
+        Returns
+        -------
+        np.ndarray
+            Results of passing data through the fit node
+
+        Raises
+        ------
+        RuntimeError
+            Data is empty (length 0)
+        """
         node_input = []
         
         if isinstance(node, CubeConsumer):
@@ -495,7 +589,19 @@ class Graph():
         return stage
 
     @staticmethod
-    def _flatten_to_4dim(x):
+    def _flatten_to_4dim(x: list | np.ndarray) -> np.ndarray:
+        """Private method to flatten
+
+        Parameters
+        ----------
+        x : list | np.ndarray
+            Make sure all array like data has 4 dimensions
+
+        Returns
+        -------
+        np.ndarray
+            Flattened array
+        """
         if isinstance(x, List):
             if len(x[0].shape) == 5:
                 x = np.concatenate(x, axis=0)

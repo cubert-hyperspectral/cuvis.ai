@@ -1,5 +1,4 @@
 name: Python Unittests CI
-description: Deploy tests in a Dockerfile through GitHub actions
 on:
   pull_request:
     branches: [ main ]

@@ -13,9 +13,9 @@ jobs:
     - name: Build docker images
       run: docker build -t "cuvis_ai" .
     - name: Run docker container
-      run: docker run --name "test-container" cuvis_ai
-    - name: Enter container through entrypoint script
-      run: docker run --entrypoint=/bin/bash -c "/bin/bash /install/cuvis.ai/entrypoint.sh"
+      run: docker run cuvis_ai /bin/bash  /install/cuvis.ai/entrypoint.sh
+    # - name: Enter container through entrypoint script
+      # run: docker run --entrypoint=/bin/bash -c "/bin/bash /install/cuvis.ai/entrypoint.sh"
     # - name: Run tests
     # run: docker run -it -v $PWD:/srv -w/srv local make test
 

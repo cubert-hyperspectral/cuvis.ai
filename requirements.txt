@@ -11,3 +11,7 @@ pytorch-lightning
 skorch
 imantics
 networkx
+opencv-python
+torchvision
+pycocotools
+scikit-image

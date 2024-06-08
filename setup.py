@@ -11,6 +11,12 @@ REQUIREMENTS = {
         'numpy',
         'scikit-learn',
         'matplotlib',
+        "torch",
+        'skorch',
+        'opencv-python',
+        'torchvision',
+        'pycocotools',
+        'scikit-image'
     ],
 }
 

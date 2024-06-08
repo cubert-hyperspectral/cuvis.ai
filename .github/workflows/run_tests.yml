@@ -11,7 +11,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v3
     - name: Build docker images
-      run: docker build -t local < ./Dockerfile
+      run: docker build -t local .
     # - name: Run tests
     # run: docker run -it -v $PWD:/srv -w/srv local make test
 

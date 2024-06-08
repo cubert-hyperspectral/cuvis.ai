@@ -7,7 +7,7 @@ COPY entrypoint.sh /entrypoint.sh
 RUN rm -rf /catkin_ws
 
 WORKDIR /install/
-COPY cuvis_ai cuvis_ai/
+COPY cuvis.ai cuvis.ai/
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 ENTRYPOINT ["/entrypoint.sh"]

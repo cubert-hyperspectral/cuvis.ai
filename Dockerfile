@@ -1,4 +1,4 @@
-FROM nhansoncubert:cuvis_noetic
+FROM nhansoncubert/cuvis_noetic:latest
 
 # Build from the base ROS noetic image
 

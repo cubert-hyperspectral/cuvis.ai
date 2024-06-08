@@ -10,6 +10,4 @@ COPY cuvis_ai cuvis_ai/
 COPY setup.py setup.py
 COPY entrypoint.sh entrypoint.sh
 RUN echo $(ls -1 /install/cuvis.ai/)
-
-# Code file to execute when the docker container starts up (`entrypoint.sh`)
-# ENTRYPOINT ["/install/cuvis.ai/entrypoint.sh"]
+ENV CUVIS=/lib/cuvis

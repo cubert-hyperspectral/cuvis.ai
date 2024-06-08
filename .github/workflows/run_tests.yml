@@ -15,7 +15,7 @@ jobs:
     - name: Run docker container
       run: docker run -d --name test-container cuvis_ai
     - name: Enter container through entrypoint script
-      run: docker exec test-container
+      run: docker exec test-container /bin/sh -c "/entrypoint.sh"
     # - name: Run tests
     # run: docker run -it -v $PWD:/srv -w/srv local make test
 

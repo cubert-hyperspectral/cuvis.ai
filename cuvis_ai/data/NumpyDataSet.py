@@ -1,43 +1,26 @@
-import os
-import glob
-import yaml
-import json
-import time
-from typing import Optional, Callable, Dict
-import numpy as np
 import cv2
-from copy import deepcopy
+import glob
+import os
+import time
 import torch
 import torchvision
-from torchvision.datasets import VisionDataset 
+import uuid
+import yaml
+import numpy as np
+from copy import deepcopy
+from typing import Optional, Callable, Dict, Union, Any, Tuple, List
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
-from .Labels2TV import convert_COCO2TV
-from enum import Enum
 
-from .Metadata import Metadata
+from .BaseDataSet import BaseDataSet
+from .Labels2TV import convert_COCO2TV
+from .MetadataUtils import metadataInit
+from .OutputFormat import OutputFormat
+from ..tv_transforms import WavelengthList
 
 debug_enabled = True
 
-C_SUPPORTED_DTYPES = (np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_)
-
-
-class OutputFormat(Enum):
-    """"
-    Describes the output format that is returned by NumpyData and CuvisData.
-    Possible values and their respective return formats:
-        - Full: (cube, meta.data, label data)
-        - BoundingBox: (cube, torchvision BoundingBoxes)
-        - SegmentationMask: (cube, torchvision Mask)
-        - CustomFilter: output_lambda((cube, meta.data, label data))
-    """
-    Full = 0
-    BoundingBox = 1
-    SegmentationMask = 2
-    CustomFilter = 99
-
-
-class NumpyData(VisionDataset):
+class NumpyDataSet(BaseDataSet):
     """Representation for a set of data cubes, their meta-data and labels.
     
     This class is a subclass of torchvisions VisionDataset which is a subclass
@@ -51,19 +34,26 @@ class NumpyData(VisionDataset):
     See :class:`Metadata` for an explanation of the data format.
     Labels for any data file are expected in a file of the same name but with the .json extension in COCO label format.
     
-    Args:
-        root (str, optional): The absolute or relative path to the directory containing the HSI data.
-        transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
-        transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
-        target_transform (callable, optional): A function/transform that takes in the target and transforms it.
-        output_format (OutputFormat): Enum value that controls the output format of the dataset. See :class:`OutputFormat`
-        output_lambda (callable, optional): Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
+    Parameters
+    ----------
+    root : str, optional
+        The absolute or relative path to the directory containing the HSI data.
+    transforms : callable, optional
+        A function/transforms that takes in an image and a label and returns the transformed versions of both.
+    transform : callable, optional
+        A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
+    target_transform : callable, optional
+        A function/transform that takes in the target and transforms it.
+    output_format : OutputFormat
+        Enum value that controls the output format of the dataset. See :class:`OutputFormat`
+    output_lambda : callable, optional
+        Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
         
-    Note:
-        :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    Notes
+    -----
+    :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
     
-    Note:
-        If :attr:`root` is not passed in the constructor, the :py:meth:`~NumpyData.initialize` or :py:meth:`~NumpyData.load` method has to be called with a root path before the dataset can be used.
+    If :attr:`root` is not passed in the constructor, the :py:meth:`~NumpyDataSet.initialize` or :py:meth:`~NumpyDataSet.load` method has to be called with a root path before the dataset can be used.
     """
     
     class _NumpyLoader_:
@@ -97,12 +87,9 @@ class NumpyData(VisionDataset):
         output_format: OutputFormat = OutputFormat.Full,
         output_lambda: Optional[Callable] = None,
     ):
-        super().__init__(root, transforms, transform, target_transform)
-        self.output_format = output_format
-        self.output_lambda = output_lambda
-        
+        super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self._FILE_EXTENSION = ".npy"
-        self.provide_datatype:np.dtype = np.float32
         
         self._clear()
         
@@ -114,9 +101,12 @@ class NumpyData(VisionDataset):
         """ Initialize the dataset by scanning the provided directory for data.
         Initialize will be called by the constructor if a root path is provided or by the load method.
         
-        Args:
-            root: Path of the directory containing the data this dataset will represent.
-            force: If True, the dataset will clear all currently held data and re-initialize with the provided root path.
+        Parameters
+        ----------
+        root : str
+            Path of the directory containing the data this dataset will represent.
+        force : bool
+            If True, the dataset will clear all currently held data and re-initialize with the provided root path.
         """
         if self.initialized:
             if force:
@@ -161,27 +151,31 @@ class NumpyData(VisionDataset):
         self.cubes.append(self._NumpyLoader_(filepath))
         
             
-        if self.metadata_filepath:
-            meta = Metadata(filepath, self.fileset_metadata)
-        else:
-            meta = Metadata(filepath)
-
+        meta = metadataInit(filepath, self.fileset_metadata)
+        try:
+            meta["wavelengths_nm"] = WavelengthList(meta["wavelengths_nm"])
+        except:
+            pass
+        
         temp_data = np.load(filepath)
-        meta.shape = temp_data.shape
-        meta.datatype = temp_data.dtype
-        self.data_types.add(meta.datatype)
+        meta["shape"] = temp_data.shape
+        meta["datatype"] = temp_data.dtype
+        self.data_types.add(temp_data.dtype)
 
-        if meta.references is not None:
-            for t, v in meta.references.items():
+        try:
+            refs = meta["references"]
+            for t, v in refs.items():
                 if isinstance(v, str) and os.path.exists(v):
                     if os.path.splitext(v)[-1] == ".npy":
-                        meta.references[t] = _NumpyLoader_(v)
+                        meta["references"][t] = self._NumpyLoader_(v)
                     else:
-                        meta.references[t] = _CVLoader_(v)
+                        meta["references"][t] = self._CVLoader_(v)
+        except KeyError:
+            pass
         self.metas.append(meta)
 
         labelpath = os.path.splitext(filepath)[0] + ".json"
-        canvas_size = (meta.shape[0], meta.shape[1])
+        canvas_size = (meta["shape"][0], meta["shape"][1])
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
             anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))
@@ -196,71 +190,50 @@ class NumpyData(VisionDataset):
         
         self.labels.append(l)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """The number of data elements this data set holds."""
         return len(self.cubes)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx:Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Return data element number 'idx' in the selected :attr:`OutputFormat`.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels):
         """
         data = self.get_data(idx)
-        meta = self.get_metadata(idx)
         label = self.get_labels(idx)
-        return self._get_return_shape(data, meta, label)
+        meta = self.get_metadata(idx)
+        return self._get_return_shape(data, label, meta)
     
-    def __next__(self):
+    def __next__(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         for idx in range(len(self)):
             yield self[idx]
     
-    def _get_return_shape(self, data, metadata, labels):
-        if self.output_format == OutputFormat.Full:
-            return data, metadata, labels
+    def forward(self, X:Any) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
+        return next(self)
 
-        elif self.output_format == OutputFormat.BoundingBox:
-            return data, [l['bbox'] for l in labels]
-        
-        elif self.output_format == OutputFormat.SegmentationMask:
-            return data, [l['segmentation'] for l in labels]
-        
-        elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
-            return [self.output_lambda(d, m, l) for d, m, l in zip(data, metadata, labels)]
-        
-        else:
-            raise NotImplementedError("Think about it.")
-
-    def _apply_transform(self, d):
-        return d if self.transforms is None else self.transforms(d)
-    
     def merge(self, other_dataset):
         """Merge another NumpyData dataset into this dataset."""
         if type(self) is type(other_dataset):
             self.paths.extend(other_dataset.paths)
             self.cubes.extend(other_dataset.cubes)
-            self.metas.extend(other_dataset.metas)
             self.labels.extend(other_dataset.labels)
+            self.metas.extend(other_dataset.metas)
         else:
             raise TypeError(F"Cannot merge NumpyData with an object of type {type(other_dataset).__name__}")
 
-    def set_datatype(self, dtype: np.dtype):
-        """Specify a Numpy datatype to transform the cube into before returning it.
-        Valid data types are:
-        np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_
-        """
-        if dtype in NumpyData.C_SUPPORTED_DTYPES:
-            self.provide_datatype = dtype
-        else:
-            raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in NumpyData.C_SUPPORTED_DTYPES]))
-
     def random_split(self, train_percent, val_percent, test_percent) -> list[torch.utils.data.dataset.Subset]:
         """Generate three datasets with randomly chosen data from this dataset.
-        Args:
-            train_percent (float): How much of the data to put into the training dataset.
-            val_percent (float): How much of the data to put into the validation dataset.
-            test_percent (float): How much of the data to put into the testing dataset.
+        Parameters
+        ----------
+        train_percent : float
+            How much of the data to put into the training dataset.
+        val_percent : float
+            How much of the data to put into the validation dataset.
+        test_percent : float
+            How much of the data to put into the testing dataset.
         
-        Returns:
-            tuple: (train, val, test) datasets
+        Returns
+        -------
+        tuple of datasets. Contents depend on the :attr:`output_format` specified.
         """
         gen = torch.torch.Generator().manual_seed(time.time_ns())
         return torch.utils.data.random_split(self, [train_percent, val_percent, test_percent], gen)
@@ -268,32 +241,29 @@ class NumpyData(VisionDataset):
     def get_dataitems_datatypes(self) -> list:
         """Get a list with all datatypes detected when scanning the root folder."""
         return list(self.data_types)
-
-    def get_datatype(self):
-        """Get the current datatype set that all data will be converted into before return."""
-        return self.provide_datatype
     
     def get_all_cubes(self):
         """Get a list of all cubes in this dataset.
-        Note:
-            Not recommended for large sets. All data will be read into RAM!
+        Notes
+        -----
+        Not recommended for large sets. All data will be read into RAM!
         """
         return [cube(self.provide_datatype) for cube in self.cubes]
 
-    def get_data(self, idx):
+    def get_data(self, idx:Union[int, slice]):
         """Get the cube at 'idx'."""
+        loaded_cubes = list(map(lambda c: c(self.provide_datatype), [self.cubes[idx]] if isinstance(idx, int) else self.cubes[idx]))
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
-        if isinstance(idx, int):
-            return self._apply_transform(self.cubes[idx](self.provide_datatype).permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-        return [self._apply_transform(cube(self.provide_datatype).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]) for cube in self.cubes[idx]]
+        return self._apply_transform(torch.concatenate(loaded_cubes, dim=0).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
 
-    def get_all_items(self):
+    def get_all_items(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Get all items of this dataset in the selected :attr:`output_format`.
-        Note:
-            Not recommended for large sets. All data will be read into RAM!"""
+        Notes
+        -----
+        Not recommended for large sets. All data will be read into RAM!"""
         return self[:]
     
-    def get_item(self, idx):
+    def get_item(self, idx:Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Get item at 'idx' of this dataset in the selected :attr:`output_format`."""
         return self[idx]
 
@@ -301,32 +271,33 @@ class NumpyData(VisionDataset):
         """Get the meta-data for every cube in this dataset."""
         return [self.get_metadata(idx) for idx in range(len(self.metas))]
 
-    def get_metadata(self, idx):
+    def get_metadata(self, idx:Union[int, slice]):
         """Get the meta-data for the cube at 'idx' in this dataset."""
         def transform_meta(m):
             m_out = deepcopy(m)
-            for t, v in m.references.items():
+            try:
+                m["wavelengths_nm"] = self._apply_transform(m["wavelengths_nm"], True)
+            except:
+                pass
+            for t, v in m["references"].items():
                 try:
                     refdata = v(self.provide_datatype)
                 except:
                     refdata = v
                 if isinstance(refdata, torch.Tensor):
-                    refdata = self._apply_transform(refdata.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-                m_out.references[t] = refdata
+                    refdata = self._apply_transform(refdata.permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
+                m_out["references"][t] = refdata
             return m_out
-        if isinstance(idx, int):
-            return transform_meta(self.metas[idx])
-        return list(map(transform_meta, self.metas[idx]))
+        return list(map(transform_meta, [self.metas[idx]] if isinstance(idx, int) else self.metas[idx]))
 
     def get_all_labels(self):
         """Get the labels for every cube in this dataset."""
-        return [self.get_labels(idx) for idx in range(len(self.labels))]
+        return self.get_labels(slice(None))
 
-    def get_labels(self, idx):
+    def get_labels(self, idx:Union[int, slice]):
         """Get the labels for the cube at 'idx' in this dataset."""
-        if isinstance(idx, int):
-            return self._apply_transform(self.labels[idx])
-        return [self._apply_transform(l) for l in self.labels[idx]]
+        labels = [self.labels[idx]] if isinstance(idx, int) else self.labels[idx]
+        return list(map(self._apply_transform, labels, [True]*len(labels)))
 
     def serialize(self, serial_dir: str):
         """Serialize the parameters of this dataset and store in 'serial_dir'."""

@@ -4,6 +4,7 @@ import uuid
 from typing import Any
 
 from ..utils.numpy_utils import check_array_shape, get_shape_without_batch
+from ..node import CubeConsumer
 
 class BaseUnsupervised(ABC):
     """Abstract node for all unsupervised classifiers to follow.

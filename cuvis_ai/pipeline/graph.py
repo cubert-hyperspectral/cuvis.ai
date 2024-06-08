@@ -2,10 +2,11 @@ import os
 import yaml
 import typing
 import shutil
+import torch
 from typing import Any
 from datetime import datetime
 from os.path import expanduser
-from typing import Optional
+from typing import Optional, Dict, List, Tuple, Any, Union
 from cuvis_ai.preprocessor import *
 from cuvis_ai.pipeline import *
 from cuvis_ai.unsupervised import *
@@ -13,10 +14,14 @@ from cuvis_ai.supervised import *
 from cuvis_ai.distance import *
 from cuvis_ai.deciders import *
 import networkx as nx
+from typing import List, Union
 from collections import defaultdict
 import pkg_resources  # part of setuptools
 from ..node import Node
+from ..node.Consumers import *
+from ..data.OutputFormat import OutputFormat
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
+
 
 class Graph():
     """Main class for connecting nodes in a CUVIS.AI processing graph
@@ -182,8 +187,10 @@ class Graph():
         self.graph.remove_edges_from([id])
         del self.nodes[id]
 
-    def forward(self, data: np.ndarray) -> Any:
-        """Pass data through the graph by starting at the root node and flowing through all
+    def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
+        """
+        # TODO Update this
+        Pass data through the graph by starting at the root node and flowing through all
         intermediary stages.
 
         Parameters
@@ -198,51 +205,87 @@ class Graph():
         """
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
+        
+        xs = self._flatten_to_4dim(X)
+        xs = np.split(xs, indices_or_sections=xs.shape[0], axis=0)
+        ys = None
+        if Y is not None:
+            if (isinstance(Y, List) and isinstance(Y[0], np.ndarray)) or isinstance(Y, np.ndarray):
+                ys = self._flatten_to_4dim(Y)
+                ys = np.split(ys, indices_or_sections=ys.shape[0], axis=0)
+            else:
+                ys = Y
+        
+        results = []
+        for x, y, m in zip(xs, ys, M):
+            
+            intermediary = {}
+            intermediary_labels = {}
+            intermediary_metas = {}
+            intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(self.nodes[self.entry_point], x, y, m)
 
-        intermediary = {}
-        intermediary[self.entry_point] = self._forward_node(self.nodes[self.entry_point], data)
+            for node in self.sorted_graph[1:]:
+                self._forward_helper(node, intermediary, intermediary_labels, intermediary_metas)
 
-        for node in self.sorted_graph[1:]:
-            self._forward_helper(node, intermediary)
+            results.append((intermediary[self.sorted_graph[-1]], intermediary_labels[self.sorted_graph[-1]], intermediary_metas[self.sorted_graph[-1]]))
+        zr = tuple(zip(*results))
+        rxs = zr[0]
+        rys = zr[1]
+        rms = zr[2]
+        
+        rxs = np.concatenate(rxs, axis=0)
+        if isinstance(rys[0], np.ndarray):
+            rys = np.concatenate(rys, axis=0)
 
-        return intermediary[self.sorted_graph[-1]]
+        return (rxs, rys, rms)
+        
 
-    def _forward_helper(self, current: str, intermediary: list) -> None:
-        """Pass data through the current nodes
-
-        Parameters
-        ----------
-        current : str
-            Current node in processing graph.
-        intermediary : list
-            List of node ids that define which nodes generate data for the current node
-        """
+    def _forward_helper(self, current, intermediary, intermediary_labels, intermediary_metas):
+        p_nodes = list(self.graph.predecessors(current))
         p_nodes = self.graph.predecessors(current)
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
+        
+        no_labels = intermediary_labels[p_nodes[0]] is None
+        if not no_labels:
+            if isinstance(intermediary_labels[p_nodes[0]], np.ndarray):
+                use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+            else:
+                use_labels = [intermediary_labels[p] for p in p_nodes]
+        else:
+            use_labels = []
+        
+        no_metas = intermediary_metas[p_nodes[0]] is None
+        if not no_metas:
+            use_metas = [intermediary_metas[p] for p in p_nodes]
+        else:
+            use_metas = []
 
-        intermediary[current] = self._forward_node(self.nodes[current], use_prods)
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._forward_node(self.nodes[current], use_prods, use_labels, use_metas)
         
         if self._not_needed_anymore(current, intermediary):
             # Free memory that is not needed for the current passthrough anymore
-            del intermediary[current]
+            intermediary.pop(current)
+            intermediary_labels.pop(current)
+            intermediary_metas.pop(current)
+    
 
-    def _forward_node(self, node: Node, data: np.ndarray) -> Any:
-        """Private wrapper to call the forward method on a graph node.
-
-        Parameters
-        ----------
-        node : Node
-            Node which will apply some operation to the data.
-        data : np.ndarray
-            Data that will be transformed by the node.
-
-        Returns
-        -------
-        Any
-            Given the variety of nodes, the return type may vary, but will generally be an np.ndarray.
-        """
-        return node.forward(data)
+    def _forward_node(self, node: Node, data, labels, metadata):
+        node_input = [data]
+            
+        if isinstance(node, LabelConsumerInference):
+            node_input.append(labels)
+        if isinstance(node, MetadataConsumerInference):
+            node_input.append(metadata)
+        
+        if len(node_input) == 1:
+            out = node.forward(node_input[0])
+        else:
+            out = node.forward(tuple(node_input))
+        if isinstance(out, Tuple):
+            return out
+        else:
+            return out, labels, metadata
     
     def _not_needed_anymore(self, id: str, intermediary: list[Node]) -> bool:
         """Private function to determine if a node products are still needed or can be safely removed.
@@ -262,113 +305,92 @@ class Graph():
         return all([succs in intermediary for succs in self.graph.successors(id)]) and \
             len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
 
-    def fit(self, X: np.ndarray, Y: Optional[np.ndarray] = None):
-        """For all nodes on the graph apply the training data to fit the nodes which require training.
+    def train(self, train_dataloader:torch.utils.data.DataLoader, test_dataloader:torch.utils.data.DataLoader):
+        if not isinstance(train_dataloader, torch.utils.data.DataLoader) or not isinstance(test_dataloader, torch.utils.data.DataLoader):
+            raise TypeError("train or test dataloader argument is not a pytorch DataLoader!")
+        
+        xs = []
+        ys = []
+        ms = []
+        for x, y, m in iter(train_dataloader):
+            xs.append(x)
+            ys.append(y)
+            ms.append(m)
+        
+        xs = self._flatten_to_4dim(xs)
 
-        Parameters
-        ----------
-        X : np.ndarray
-            Input data
-        Y : Optional[np.ndarray], optional
-            Labels or records corresponding to input data, by default None
-        """
+        if isinstance(ys[0], np.ndarray):
+            ys = self._flatten_to_4dim(ys)
+        
+        self.fit(xs, ys, ms)
+
+        # test stage
+        for x, y, m in iter(test_dataloader):
+            test_results = self.forward(x, y, m)
+            # do some metrics
+
+    def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
         # training stage
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
 
         intermediary = {}
         intermediary_labels = {}
-        intermediary[self.entry_point], intermediary_labels[self.entry_point] = self._fit_node(self.nodes[self.entry_point], X,Y)
+        intermediary_metas = {}
+        
+        result = self._fit_node(self.nodes[self.entry_point], X, Y, M)
+        
+        
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._fit_node(self.nodes[self.entry_point], X, Y, M)
 
         for node in self.sorted_graph[1:]:
-            self._fit_helper(node, intermediary, intermediary_labels)
+            self._fit_helper(node, intermediary, intermediary_labels, intermediary_metas)
         # do some metrics
 
-
-        
-    def train(self, train_dataloader: Any, test_dataloader: Any):
-        """Similar to fit method but works with dataloader
-
-        Parameters
-        ----------
-        train_dataloader : Any
-            Dataloader for training data
-        test_dataloader : Any
-            Dataloader for testing data
-        """
-        x, y = zip(*[train_dataloader[i] for i in range(0,10)])
-        x = np.array(x)
-        y = np.array(y)
-
-        self.fit(x,y)
-
-        # test stage
-        test_x, test_y = zip(*[train_dataloader[i] for i in range(10,20)])
-        test_x = np.array(test_x)
-
-        test_results = self.forward(test_x)
-        # do some metrics
-
-    def _fit_helper(self, current: str, intermediary: dict, intermediary_labels: dict):
-        """Fit the node and consider the products from other nodes that are needed to fit it.
-
-        Parameters
-        ----------
-        current : str
-            ID of the current node to fit
-        intermediary : dict
-            Dict of intermediary products keyed by id
-        intermediary_labels : dict
-            Labels associated with the intermediary products
-        """
+    def _fit_helper(self, current, intermediary, intermediary_labels, intermediary_metas):
         p_nodes = list(self.graph.predecessors(current))
 
-        no_labels = intermediary_labels[p_nodes[0]] is None
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
+        
+        no_labels = intermediary_labels[p_nodes[0]] is None
         if not no_labels:
             use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
         else:
             use_labels = None
+        
+        no_metas = intermediary_metas[p_nodes[0]] is None
+        if not no_metas:
+            use_metas = np.concatenate([intermediary_metas[p] for p in p_nodes], axis=-1)
+        else:
+            use_metas = None
 
-        intermediary[current], intermediary_labels[current] = self._fit_node(self.nodes[current], use_prods, use_labels)
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._fit_node(self.nodes[current], use_prods, use_labels, use_metas)
         
         if self._not_needed_anymore(current, intermediary):
             # Free memory that is not needed for the current passthrough anymore
-            del intermediary[current]
-            del intermediary_labels[current]
+            intermediary.pop(current)
+            intermediary_labels.pop(current)
+            intermediary_metas.pop(current)
 
-    def _fit_node(self, node: Node, input: np.ndarray, labels: np.ndarray) -> np.ndarray:
-        """Fit a node of the graph.
-
-        Parameters
-        ----------
-        node : Node
-            Node object to fit
-        input : np.ndarray
-            Training data
-        labels : np.ndarray
-            Labels to evaluate performance against
-
-        Returns
-        -------
-        np.ndarray
-            Output from passing data through the fit node
-
-        Raises
-        ------
-        NotImplementedError
-           Node does not inherit from one of the predefined base classes
-        """
-        if isinstance(node,BaseUnsupervised) or isinstance(node,Preprocessor):
-            node.fit(input)
-        elif isinstance(node,BaseSupervised):
-            node.fit(input,labels)
-        else:
-            raise NotImplementedError("Invalid class type")
+    def _fit_node(self, node: Node, data, labels, metadata):
+        node_input = []
         
-        return node.forward(input), labels
-
+        if isinstance(node, CubeConsumer):
+            node_input.append(data)
+        if isinstance(node, LabelConsumer):
+            node_input.append(labels)
+        if isinstance(node, MetadataConsumer):
+            node_input.append(metadata)
+        
+        if len(node_input) == 0:
+            raise RuntimeError(F"Node {node} invalid, does not indicate input data type!")
+        elif len(node_input) == 1:
+            node.fit(node_input[0])
+        else:
+            node.fit(tuple(node_input))
+        
+        return self._forward_node(node, data, labels, metadata)
 
     def serialize(self) -> None:
         """Convert graph structure and all contained nodes to a serializable YAML format.
@@ -471,3 +493,14 @@ class Graph():
         stage = globals()[data.get('type')]()
         stage.load(data, filepath)
         return stage
+
+    @staticmethod
+    def _flatten_to_4dim(x):
+        if isinstance(x, List):
+            if len(x[0].shape) == 5:
+                x = np.concatenate(x, axis=0)
+            else:
+                x = np.stack(x, axis=0)
+        while len(x.shape) >= 5:
+            x = x.reshape((x.shape[0] * x.shape[1], *x.shape[2:]))
+        return x

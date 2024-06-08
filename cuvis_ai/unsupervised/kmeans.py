@@ -25,6 +25,7 @@ class KMeans(Node, BaseUnsupervised):
             number of clusters to seed for k-means clustering, by default None
         """
         super().__init__()
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.n_clusters = n_clusters
         self.input_size = None
         self.initialized = False

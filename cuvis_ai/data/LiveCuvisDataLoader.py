@@ -1,22 +1,25 @@
 import os
 import cuvis
-import numpy as np
-from pathlib import Path
-from typing import Optional, Callable, Union, Dict
-import yaml
-import torch
+import math
 import time
-from torchvision import tv_tensors
-from torchvision.datasets import VisionDataset
+import torch
+import uuid
+import yaml
 
+import numpy as np
+
+from pathlib import Path
+from typing import Optional, Callable, Union, Dict, Tuple, List, Any
+from torchvision import tv_tensors
 from cuvis.General import SDKException
 
-from .NumpyData import OutputFormat, NumpyData
-from .Metadata import Metadata
+from .BaseDataSet import BaseDataSet
+from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
 
 
-class LiveCuvisData(VisionDataset):
+
+class LiveCuvisDataLoader(BaseDataSet):
     """Representation of a live source of HSI data cubes in the form of a real or simulated Cubert camera.
     
     This class is a subclass of torchvisions VisionDataset which is a subclass
@@ -25,17 +28,26 @@ class LiveCuvisData(VisionDataset):
     Additionally, using the attribute :attr:`processing_context` you have full access to the :class:`cuvis.ProcessingContext` used to process the raw data from the (simulated) camera.
     LiveCuvisData acts as a generator.
     
-    Args:
-        path (str, optional): Path to either a SessionFile or the directory containing a factory file.
-        simulate (bool, optional): Only applicable when a SessionFile is passed as :attr:`path`. Will simulate having the camera that recorded the file connected. Loops the contents of the SessionFile.
-        transforms (callable, optional): A function/transforms that takes in an image and a label and returns the transformed versions of both.
-        transform (callable, optional): A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
-        target_transform (callable, optional): A function/transform that takes in the target and transforms it.
-        output_format (OutputFormat): Enum value that controls the output format of the dataset. See :class:`OutputFormat`
-        output_lambda (callable, optional): Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
+    Parameters
+    ----------
+    path : str, optional
+        Path to either a SessionFile or the directory containing a factory file.
+    transforms : callable, optional
+        A function/transforms that takes in an image and a label and returns the transformed versions of both.
+    transform : callable, optional
+        A function/transform that takes in a PIL image and returns a transformed version. E.g, transforms.RandomCrop
+    target_transform : callable, optional
+        A function/transform that takes in the target and transforms it.
+    output_format : OutputFormat
+        Enum value that controls the output format of the dataset. See :class:`OutputFormat`
+    output_lambda : callable, optional
+        Only used when :attr:`output_format` is set to `CustomFilter`. Before returning data, the full output of the dataset is passed through this function to allow for custom filtering.
         
-    Note:
-        :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    Notes
+    -----
+    :attr:`transforms` and the combination of :attr:`transform` and :attr:`target_transform` are mutually exclusive.
+    
+    If :attr:`path` is not passed in the constructor, the :py:meth:`~LiveCuvisData.initialize` or :py:meth:`~LiveCuvisData.load` method has to be called with a path before the object can be used.
     """
     
     _cuvis_refmap = {
@@ -48,6 +60,8 @@ class LiveCuvisData(VisionDataset):
     _cuvis_non_cube_references = (cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
     
     def __init__(self, path:Optional[Union[str, Path]] = None, 
+        *,
+        batch_size:Optional[int] = 1,
         simulate:Optional[bool] = False, 
         transforms: Optional[Callable] = None,
         transform: Optional[Callable] = None,
@@ -55,12 +69,10 @@ class LiveCuvisData(VisionDataset):
         output_format: OutputFormat = OutputFormat.Full,
         output_lambda: Optional[Callable] = None
     ):
-        super().__init__(path, transforms, transform, target_transform)
-        self.output_format = output_format
-        self.output_lambda = output_lambda
-        self.provide_datatype:np.dtype = np.float32
+        super().__init__(path, transforms, transform, target_transform, output_format, output_lambda)
+        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self._clear()
-        
+        self.batch_size = batch_size
         if path is not None:
             self.initialize(path, simulate)
     
@@ -76,13 +88,23 @@ class LiveCuvisData(VisionDataset):
         self.sess = None
         self._refcache = {}
         
-    def initialize(self, path:Union[str, Path], simulate:bool=False, force:bool=False) -> bool:
+    def initialize(self, path:Union[str, Path], simulate:bool=False, force:bool=False, timeout_s:int=20) -> bool:
         """Try to connect to the camera of the factory file in :attr:`path` or load the Sessionfile :attr:`path`.
         
-        Args:
-            path (str, optional): Path to either a SessionFile or the directory containing a factory file.
-            simulate (bool, optional): Only applicable when a SessionFile is passed as :attr:`path`. Will simulate having the camera that recorded the file connected. Loops the contents of the SessionFile.
-            force (bool, optional): Force reload. 
+        Parameters
+        ----------
+        path : str, optional
+            Path to either a SessionFile or the directory containing a factory file.
+        simulate : bool, optional
+            Only applicable when a SessionFile is passed as :attr:`path`. Will simulate having the camera that recorded the file connected. Loops the contents of the SessionFile.
+        force : bool, optional
+            Force reload.
+        timeout_s : int, optional
+            Duration in seconds to wait for the device to establish a connection before returning. Default is 20 seconds
+        
+        Returns
+        -------
+        False if the device does not come online before the timeout specified by :attr:`timeout_s`, True otherwise.
         """
         if self.initialized:
             if force:
@@ -104,7 +126,7 @@ class LiveCuvisData(VisionDataset):
         
         self.processing_context.processing_mode = cuvis.ProcessingMode.Raw
         
-        timeout = 20.0
+        timeout = timeout_s
         while self.camera.state != cuvis.HardwareState.Online:
             time.sleep(0.2)
             timeout -= 0.2
@@ -114,6 +136,7 @@ class LiveCuvisData(VisionDataset):
         self.camera.operation_mode = cuvis.OperationMode.Software
         self.capture_timeout_ms = 1000
         self.initialized = True
+        return True
     
     @property
     def continuous(self) -> bool:
@@ -121,7 +144,12 @@ class LiveCuvisData(VisionDataset):
     
     @continuous.setter
     def continuous(self, val:bool):
-        """Start continuous recording"""
+        """Start or stop continuous recording.
+        Parameters
+        ----------
+        val : bool
+            Pass `True` to start recording. Pass `False` to stop recording.
+        """
         if self._camera_recording != val:
             if not self._camera_recording:
                 self.camera.operation_mode = cuvis.OperationMode.Internal
@@ -136,6 +164,14 @@ class LiveCuvisData(VisionDataset):
     
     @processing_mode.setter
     def processing_mode(self, val:cuvis.ProcessingMode):
+        """Set the processing mode for preprocessing of the data.
+        Parameters
+        ----------
+        val : cuvis.ProcessingMode
+            Valid modes are `Raw`, `DarkSubtract`, `Reflectance` and `SpectralRadiance`.
+            All modes except for `Raw` require a dark reference to be set using :meth:`set_reference` or :meth:`record_dark`.
+            The mode `Reflectance` additionally requires a white reference to be set using :meth:`set_reference` or :meth:`record_white`.
+        """
         self.processing_context.processing_mode = val
     
     def _fetch_mesu(self) -> cuvis.Measurement:
@@ -165,24 +201,47 @@ class LiveCuvisData(VisionDataset):
         return mesu
 
     def set_reference(self, mesu: cuvis.Measurement, reftype: cuvis.ReferenceType):
+        """Associate a reference measurement with this acquisition session.
+        Parameters
+        ----------
+        mesu : cuvis.Measurement
+            The existing measurement to use as the reference.
+        reftype : cuvis.ReferenceType
+            The type of reference to use this measurement as.
+        """
         #print(F"Adding reference mesu: [{reftype.name} -> {mesu.name} ({list(mesu.data.keys())})]")
         self.processing_context.set_reference(mesu, reftype)
         if reftype not in self._cuvis_non_cube_references:
             self._refcache[reftype.name] = mesu
 
     def record_dark(self, averaging_count:int = 5):
+        """Record a dark reference measurement using this acquisition session.
+        Parameters
+        ----------
+        averaging_count : int
+            The number of measurements to record and average into one measurement. This can improve the quality of reference measurement by reducing the impact of noise. Default is 5.
+        """
         avg = max(1, averaging_count)
         self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.Dark)
     
     def record_white(self, averaging_count:int = 5):
+        """Record a white reference measurement using this acquisition session.
+        Parameters
+        ----------
+        averaging_count : int
+            The number of measurements to record and average into one measurement. This can improve the quality of reference measurement by reducing the impact of noise. Default is 5.
+        """
         avg = max(1, averaging_count)
         self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.White)
     
     def record_distance(self):
+        """Record a distance reference measurement using this acquisition session.
+        The camera should be pointed at a scene with high contrast at the distance that you want to observe.
+        Cuvis will attempt to reduce the parallax effect present in the HSI camera by live-tuning on the captured image.
+        """
         self.set_reference(self._fetch_mesu(), cuvis.ReferenceType.Distance)
     
-    @staticmethod
-    def _mesu_to_tensor(mesu:cuvis.Measurement, astype:np.dtype) -> tv_tensors.Image:
+    def _mesu2TensorAndTransform(self, mesu:cuvis.Measurement, astype:np.dtype) -> tv_tensors.Image:
         try:
             cube = mesu.data["cube"].array
         except KeyError:
@@ -195,14 +254,26 @@ class LiveCuvisData(VisionDataset):
         while len(cube.shape) < 4:
             cube = cube.unsqueeze(0)
         cube = (cube.to(memory_format=torch.channels_last))
+        
+        cube = self._apply_transform(cube.permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
         return cube
     
     def _capture(self):
-        mesu = self._fetch_mesu()
+        label_list = []
+        metas = []
+        mesus = []
+        cubes = []
         
+        for m_idx in range(self.batch_size):
+            mesu = self._fetch_mesu()
+            if mesu.processing_mode != self.processing_mode:
+                mesu = self.processing_context.apply(mesu)
+                mesu.refresh()
+            mesus.append(mesu)
+            
         # Load references from session file
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            reftype = LiveCuvisData._cuvis_refmap[key]
+            reftype = self._cuvis_refmap[key]
             hasref = self.processing_context.has_reference(reftype)
             if (self.sess is not None) and (not hasref):
                 
@@ -218,77 +289,60 @@ class LiveCuvisData(VisionDataset):
                     refcount += 1
                 if refmesu is not None:
                     self.set_reference(refmesu, reftype)
-        reprocessed = False
-        if mesu.processing_mode != self.processing_mode:
-            mesu = self.processing_context.apply(mesu)
-            reprocessed = True
-            mesu.refresh()
         
-        wl = mesu.data["cube"].wavelength
+        for mesu in mesus:
+            wl = mesu.data["cube"].wavelength
+            cube = self._mesu2TensorAndTransform(mesu, self.provide_datatype)
+            
+            meta = {
+                "name": mesu.name, 
+                "integration_time_us": int(mesu.integration_time * 1000),
+                "shape": cube.shape,
+                "wavelengths_nm": self._apply_transform(WavelengthList(wl), True),
+                "processing_mode": mesu.processing_mode,
+                "flags": {},
+                "references": {},
+            }
+            
+            for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
+                meta["flags"][key] = val
+            
+            for reftype, refmesu in self._refcache.items():
+                meta["references"][reftype] = self._mesu2TensorAndTransform(refmesu, self.provide_datatype)
+            
+            labels = {"wavelength": WavelengthList(wl)}
+            
+            cubes.append(cube)
+            label_list.append(labels)
+            metas.append(meta)
         
-        cube = self._mesu_to_tensor(mesu, self.provide_datatype)
-        
-        meta = Metadata(mesu.name)
-        meta.integration_time_us = int(mesu.integration_time * 1000)
-        meta.shape = cube.shape
-        meta.wavelengths_nm = wl
-        meta.processing_mode = mesu.processing_mode
-        
-        meta.flags = {}
-        for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
-            meta.flags[key] = val
-        
-        meta.references = {}
-        for reftype, refmesu in self._refcache.items():
-            meta.references[reftype] = self._mesu_to_tensor(refmesu, self.provide_datatype)
-        
-        labels = {"wavelength": WavelengthList(wl)}
-        
-        return (cube, meta, labels)
+        if self.batch_size == 1:
+            cube = cubes[0]
+        else:
+            cube = np.stack(cubes, axis=0)
+            
+        return (cube, label_list, metas)
     
-    def __getitem__(self, idx):
+    def __getitem__(self, idx:Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Return next data element in the selected :attr:`OutputFormat`. idx is ignored.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels)
         """
         return self.__next__()
     
-    def __next__(self):
+    def __next__(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """Return next data element in the selected :attr:`OutputFormat`.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels)
         """
-        cube, meta, labels = self._capture()
+        cube, labels, meta = self._capture()
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
-        cube = self._apply_transform(cube.permute([0, 3, 1, 2])).permute([0, 2, 3, 1])
-        labels = self._apply_transform(labels)
-        return self._get_return_shape(cube, meta, labels)
+        labels = self._apply_transform(labels, True)
+        return self._get_return_shape(cube, [labels], [meta])
     
-    def set_datatype(self, dtype: np.dtype):
-        """Specify a Numpy datatype to transform the cube into before returning it.
-        Valid data types are:
-        np.float64, np.float32, np.float16, np.complex64, np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_
-        """
-        if dtype in NumpyData.C_SUPPORTED_DTYPES:
-            self.provide_datatype = dtype
-        else:
-            raise ValueError("Unsupported data type: {" + str(dtype.name) + " - use one of: " + str([d.name for d in NumpyData.C_SUPPORTED_DTYPES]))
-
+    def forward(self, X:Any) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
+        return next(self)
+    
     def get_references(self) -> Dict[cuvis.ReferenceType, cuvis.Measurement]:
         return self._refcache
-
-    def _apply_transform(self, d):
-        return d if self.transforms is None else self.transforms(d)
-    
-    def _get_return_shape(self, data, metadata, labels):
-        if self.output_format == OutputFormat.Full:
-            return data, metadata, labels
-        elif self.output_format == OutputFormat.BoundingBox:
-            return data, [l['bbox'] for l in labels]
-        elif self.output_format == OutputFormat.SegmentationMask:
-            return data, [l['segmentation'] for l in labels]
-        elif self.output_format == OutputFormat.CustomFilter and self.output_lambda is not None:
-            return [self.output_lambda(d, m, l) for d, m, l in zip(data, metadata, labels)]
-        else:
-            raise NotImplementedError("Think about it.")
 
     def serialize(self, serial_dir: str):
         """Serialize the parameters of this dataset and store in 'serial_dir'."""
@@ -304,6 +358,7 @@ class LiveCuvisData(VisionDataset):
             'data_type': self.provide_datatype,
             'processing_mode': self.processing_contextessing_mode.value,
             'simulate': self.simulate,
+            'batch_size': self.batch_size,
             'transforms': blobname,
         }
         # Dump to a string
@@ -314,6 +369,7 @@ class LiveCuvisData(VisionDataset):
         root = params["root_dir"]
         simulate = params["simulate"]
         self.provide_datatype = params["data_type"]
+        self.batch_size = params["batch_size"]
         self.transforms = torch.load(os.path.join(filepath, params["transforms"]))
         self.initialize(root, simulate)
         self.processing_contextessing_mode = cuvis.ProcessingMode(params["processing_mode"])

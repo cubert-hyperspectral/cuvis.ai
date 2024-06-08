@@ -6,8 +6,8 @@ FROM nhansoncubert/cuvis_noetic:latest
 COPY entrypoint.sh /entrypoint.sh
 RUN rm -rf /catkin_ws
 
-WORKDIR /install/
-COPY cuvis.ai cuvis.ai/
+WORKDIR /install/cuvis.ai
+COPY cuvis_ai cuvis_ai/
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 ENTRYPOINT ["/entrypoint.sh"]

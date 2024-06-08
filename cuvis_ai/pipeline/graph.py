@@ -2,6 +2,7 @@ import os
 import yaml
 import typing
 import shutil
+from typing import Any
 from datetime import datetime
 from os.path import expanduser
 from typing import Optional
@@ -12,13 +13,14 @@ from cuvis_ai.supervised import *
 from cuvis_ai.distance import *
 from cuvis_ai.deciders import *
 import networkx as nx
-from typing import List, Union
 from collections import defaultdict
 import pkg_resources  # part of setuptools
 from ..node import Node
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
 class Graph():
+    """Main class for connecting nodes in a CUVIS.AI processing graph
+    """
     def __init__(self, name: str) -> None:
         self.graph = nx.DiGraph()
         self.sorted_graph = None
@@ -27,10 +29,28 @@ class Graph():
         self.name = name
 
 
-    def add_node(self, node: Node, parent: Optional[Union[List[Node], Node]] = None):
-        '''
-        Alternative proposal to add Nodes to the Network
-        '''
+    def add_node(self, node: Node, parent: list[Node] | Node = None) -> None:
+        """Add a new node into the graph structure
+
+        Parameters
+        ----------
+        node : Node
+            CUVIS.AI type node
+        parent : list[Node] | Node, optional
+           Node(s) that the child node should be connected to,
+           with data flowing from parent(s) to child, by default None.
+
+        Raises
+        ------
+        ValueError
+            If no parent is provided, node is assumed to be the base node of the graph.
+            This event will raise an error to prevent base from being overwritten.
+        ValueError
+            If parent(s) do not already belong to the graph.
+        ValueError
+            If parent(s) and child nodes are mismatched in expected data size.
+            
+        """
         if parent is None:
             # this is the first Node of the graph
             if self.entry_point is not None:
@@ -60,19 +80,28 @@ class Graph():
             self.delete_node(node)
 
     def add_base_node(self, node: Node) -> None:
-        '''
-        Adds new node into the network
+        """Adds new node into the graph by creating the first entry point.
 
-        This function creates the first entry
-        '''
+        Parameters
+        ----------
+        node : Node
+            CUVIS.AI node to add to the graph
+        """
         self.graph.add_node(node.id)
         self.nodes[node.id] = node
         self.entry_point = node.id
 
     def add_edge(self, node: Node, node2: Node) -> None:
-        '''
-        Adds sequential nodes to create a directed edge
-        '''
+        """Adds sequential nodes to create a directed edge.
+        At least one of the nodes should already be in the graph.
+
+        Parameters
+        ----------
+        node : Node
+            Parent node.
+        node2 : Node
+            Child node.
+        """
         self.graph.add_edge(node.id, node2.id)
         self.nodes[node.id] = node
         self.nodes[node2.id] = node2
@@ -85,6 +114,13 @@ class Graph():
             self.graph.remove_nodes_from([node.id, node2.id])
 
     def _verify_input_outputs(self) -> bool:
+        """Private function to validate the integrity of data passed between nodes.
+
+        Returns
+        -------
+        bool
+            Inputs and outputs of all nodes are congruent.
+        """
         all_edges = list(self.graph.edges)
         for start, end in all_edges:
             # TODO: Issue what if multiple Nodes feed into the same successor Node, how would the shape look like?
@@ -94,6 +130,13 @@ class Graph():
         return True
 
     def _verify(self) -> bool:
+        """Private function to verify the integrity of the processing graph.
+
+        Returns
+        -------
+        bool
+            Graph meets/does not meet requirements for ordered and error-free flow of data.
+        """
         if len(self.nodes.keys()) == 0:
             print('Empty graph!')
             return True
@@ -109,10 +152,23 @@ class Graph():
         
         return True
     
-    def delete_node(self, id: Union[Node, str]) -> None:
-        '''
-        Removes a node by its id. To Sucessfully remove a node it need to have no sucessors.
-        '''
+    def delete_node(self, id: Node | str) -> None:
+        """Removes a node from the graph.
+        To successfully remove a node, it must not have successors.
+
+
+        Parameters
+        ----------
+        id : Node | str
+            UUID for target node to delete, or a copy of the node itself.
+
+        Raises
+        ------
+        ValueError
+            Node to delete contains successors in the graph.
+        ValueError
+            Node does not exist in the graph.
+        """
         if isinstance(id, Node):
             id = id.id
 
@@ -126,7 +182,20 @@ class Graph():
         self.graph.remove_edges_from([id])
         del self.nodes[id]
 
-    def forward(self, data: np.ndarray):
+    def forward(self, data: np.ndarray) -> Any:
+        """Pass data through the graph by starting at the root node and flowing through all
+        intermediary stages.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Hyperspectral data to pass through all processing stages.
+
+        Returns
+        -------
+        Any
+            Returns the output from the leaf nodes of the graph.
+        """
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
 
@@ -138,7 +207,16 @@ class Graph():
 
         return intermediary[self.sorted_graph[-1]]
 
-    def _forward_helper(self, current: str, intermediary):
+    def _forward_helper(self, current: str, intermediary: list) -> None:
+        """Pass data through the current nodes
+
+        Parameters
+        ----------
+        current : str
+            Current node in processing graph.
+        intermediary : list
+            List of node ids that define which nodes generate data for the current node
+        """
         p_nodes = self.graph.predecessors(current)
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
@@ -149,18 +227,51 @@ class Graph():
             # Free memory that is not needed for the current passthrough anymore
             del intermediary[current]
 
-    def _forward_node(self, node: Node, data):
+    def _forward_node(self, node: Node, data: np.ndarray) -> Any:
+        """Private wrapper to call the forward method on a graph node.
+
+        Parameters
+        ----------
+        node : Node
+            Node which will apply some operation to the data.
+        data : np.ndarray
+            Data that will be transformed by the node.
+
+        Returns
+        -------
+        Any
+            Given the variety of nodes, the return type may vary, but will generally be an np.ndarray.
+        """
         return node.forward(data)
     
-    def _not_needed_anymore(self, id: str, intermediary) -> bool:
-        '''
-        Checks if the intermediary results of a node are needed again,
-        if all successors are already present in intermediary, it will return True
-        '''
+    def _not_needed_anymore(self, id: str, intermediary: list[Node]) -> bool:
+        """Private function to determine if a node products are still needed or can be safely removed.
+
+        Parameters
+        ----------
+        id : str
+            Alphanumeric identifier for node to check
+        intermediary : list[Node]
+            List node nodes for which the current node's data is an intermediary
+
+        Returns
+        -------
+        bool
+           If all successors are already present in intermediary, it will return True
+        """
         return all([succs in intermediary for succs in self.graph.successors(id)]) and \
             len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
 
     def fit(self, X: np.ndarray, Y: Optional[np.ndarray] = None):
+        """For all nodes on the graph apply the training data to fit the nodes which require training.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Input data
+        Y : Optional[np.ndarray], optional
+            Labels or records corresponding to input data, by default None
+        """
         # training stage
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert(self.sorted_graph[0] == self.entry_point)
@@ -175,8 +286,16 @@ class Graph():
 
 
         
-    def train(self, train_dataloader, test_dataloader):
+    def train(self, train_dataloader: Any, test_dataloader: Any):
+        """Similar to fit method but works with dataloader
 
+        Parameters
+        ----------
+        train_dataloader : Any
+            Dataloader for training data
+        test_dataloader : Any
+            Dataloader for testing data
+        """
         x, y = zip(*[train_dataloader[i] for i in range(0,10)])
         x = np.array(x)
         y = np.array(y)
@@ -190,7 +309,18 @@ class Graph():
         test_results = self.forward(test_x)
         # do some metrics
 
-    def _fit_helper(self, current, intermediary, intermediary_labels):
+    def _fit_helper(self, current: str, intermediary: dict, intermediary_labels: dict):
+        """Fit the node and consider the products from other nodes that are needed to fit it.
+
+        Parameters
+        ----------
+        current : str
+            ID of the current node to fit
+        intermediary : dict
+            Dict of intermediary products keyed by id
+        intermediary_labels : dict
+            Labels associated with the intermediary products
+        """
         p_nodes = list(self.graph.predecessors(current))
 
         no_labels = intermediary_labels[p_nodes[0]] is None
@@ -208,18 +338,42 @@ class Graph():
             del intermediary[current]
             del intermediary_labels[current]
 
-    def _fit_node(self, node: Node, input, labels):
-            if isinstance(node,BaseUnsupervised) or isinstance(node,Preprocessor):
-                node.fit(input)
-            elif isinstance(node,BaseSupervised):
-                node.fit(input,labels)
-            else:
-                raise NotImplementedError("Invalid class type")
-            
-            return node.forward(input), labels
+    def _fit_node(self, node: Node, input: np.ndarray, labels: np.ndarray) -> np.ndarray:
+        """Fit a node of the graph.
+
+        Parameters
+        ----------
+        node : Node
+            Node object to fit
+        input : np.ndarray
+            Training data
+        labels : np.ndarray
+            Labels to evaluate performance against
+
+        Returns
+        -------
+        np.ndarray
+            Output from passing data through the fit node
+
+        Raises
+        ------
+        NotImplementedError
+           Node does not inherit from one of the predefined base classes
+        """
+        if isinstance(node,BaseUnsupervised) or isinstance(node,Preprocessor):
+            node.fit(input)
+        elif isinstance(node,BaseSupervised):
+            node.fit(input,labels)
+        else:
+            raise NotImplementedError("Invalid class type")
+        
+        return node.forward(input), labels
 
 
     def serialize(self) -> None:
+        """Convert graph structure and all contained nodes to a serializable YAML format.
+        Numeric data and fit models will be stored in zipped directory named with current time.
+        """
         output = {
             'edges': [],
             'nodes': [],
@@ -245,6 +399,13 @@ class Graph():
         print(f'Project saved to ~/{self.name}_{now}.zip')
     
     def load(self, filepath: str) -> None:
+        """Reconstruct the graph from a file path defining the location of a zip archive.
+
+        Parameters
+        ----------
+        filepath : str
+            Location of zip archive
+        """
         self.now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         shutil.unpack_archive(filepath, f'/tmp/cuvis_{self.now}')
         # Read the pipeline structure from the location
@@ -253,6 +414,18 @@ class Graph():
         self.reconstruct_from_yaml(f'/tmp/cuvis_{self.now}')
 
     def reconstruct_from_yaml(self, root_path: str) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        root_path : str
+            Path to unzipped graph archive directory.
+
+        Raises
+        ------
+        Exception
+            Currently installed version of CUVIS.AI does not match version model was saved with
+        """
         with open(f'{root_path}/main.yml') as f:
             structure = yaml.safe_load(f)
         # We now have a dictionary defining the pipeline
@@ -281,6 +454,20 @@ class Graph():
             self.add_base_node(list(self.nodes.values())[0])
 
     def reconstruct_stage(self, data: dict, filepath: str) -> Node:
+        """Function to rebuild each node in the graph.
+
+        Parameters
+        ----------
+        data : dict
+            Parameters defining the values to initialize the node
+        filepath : str
+            Path to any associated models or numeric data to initialize the node
+
+        Returns
+        -------
+        Node
+            Fully initialized node
+        """
         stage = globals()[data.get('type')]()
         stage.load(data, filepath)
         return stage

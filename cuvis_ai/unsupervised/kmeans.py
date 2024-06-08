@@ -8,11 +8,22 @@ from .base_unsupervised import BaseUnsupervised
 from sklearn.cluster import KMeans as sk_kmeans
 
 class KMeans(Node, BaseUnsupervised):
-    """
-    K-Means based unsupervised classifier
+    """K-Means classifier
+
+    Parameters
+    ----------
+    Node : Abstract Node, shared by all CUVIS.AI classes
+    BaseUnsupervised : Secondary inheritance for unsupervised nodes 
     """
     
     def __init__(self, n_clusters: int=None):
+        """Initialize a K-Means unsupervised classifier
+
+        Parameters
+        ----------
+        n_clusters : int, optional
+            number of clusters to seed for k-means clustering, by default None
+        """
         super().__init__()
         self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.n_clusters = n_clusters
@@ -22,14 +33,12 @@ class KMeans(Node, BaseUnsupervised):
         self.output_size = (-1,-1,-1)
 
     def fit(self, X: np.ndarray):
-        """
-        Fit K-Means to the data.
+        """Train the K-Means classifier given a sample datacube.
 
-        Parameters:
-        X (array-like): Input data.
-
-        Returns:
-        self
+        Parameters
+        ----------
+        X : np.ndarray
+            Training data for classifier in shape of W x H x C
         """
         n_pixels = X.shape[0] * X.shape[1]
         image_2d = X.reshape(n_pixels, -1)
@@ -42,22 +51,39 @@ class KMeans(Node, BaseUnsupervised):
         self.initialized = True
 
     @Node.input_dim.getter
-    def input_dim(self):
+    def input_dim(self) -> int:
+        """Get required input dimension.
+
+        Returns
+        -------
+        int
+            Number of channels
+        """
         return self.input_size
     
     @Node.output_dim.getter
-    def output_dim(self):
+    def output_dim(self) -> int:
+        """Get required output dimension.
+
+        Returns
+        -------
+        _type_
+            _description_
+        """
         return self.output_size
     
-    def forward(self, X: np.ndarray):
-        """
-        Transform the input data.
+    def forward(self, X: np.ndarray) -> np.ndarray:
+        """Apply K-Mean classifier to new data
 
-        Parameters:
-        X (array-like): Input data.
+        Parameters
+        ----------
+        X : np.ndarray
+            Array in W x H x C defining a hyperspectral datacube
 
-        Returns:
-        Transformed data.
+        Returns
+        -------
+        np.ndarray
+            W x H class predictions
         """
         # Transform data using precomputed K-Means components
         n_pixels = X.shape[0] * X.shape[1]
@@ -66,10 +92,19 @@ class KMeans(Node, BaseUnsupervised):
         cube_data = data.reshape((X.shape[0], X.shape[1]))
         return cube_data
 
-    def serialize(self, serial_dir: str):
-        '''
-        This method should dump parameters to a yaml file format
-        '''
+    def serialize(self, serial_dir: str) -> str:
+        """Write the model parameters to a YAML format and save K-Means weights
+
+        Parameters
+        ----------
+        serial_dir : str
+            Path to where weights should be saved
+
+        Returns
+        -------
+        str
+            YAML formatted string which will can be safely written to file.
+        """
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
@@ -86,9 +121,15 @@ class KMeans(Node, BaseUnsupervised):
         return yaml.dump(data, default_flow_style=False)
 
     def load(self, params: dict, filepath: str):
-        '''
-        Load dumped parameters to recreate the K-Means object
-        '''
+        """_summary_
+
+        Parameters
+        ----------
+        params : dict
+            Parameters loaded form YAML file 
+        filepath : str
+            Path to unzipped directory containing stored matrices and weights.
+        """
         self.id = params.get('id')
         self.input_size = params.get('input_size')
         self.n_clusters = params.get('n_clusters')

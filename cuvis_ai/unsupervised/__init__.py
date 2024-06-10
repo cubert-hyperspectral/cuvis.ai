@@ -1,3 +1,3 @@
 from .kmeans import *
 from .gmm import *
-from .dbscan import *
+from .mean_shift import *

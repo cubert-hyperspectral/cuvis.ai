@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 from ..node import Node
 from typing import Union, Optional, Callable
 from .base_unsupervised import BaseUnsupervised
-from sklearn.cluster import DBSCAN as sk_dbscan
+from sklearn.cluster import MeanShift as sk_meanshift
 
-class DBSCAN(Node, BaseUnsupervised):
-    """Density-based spatial clustering of applications with noise (DBSCAN)
+class MeanShift(Node, BaseUnsupervised):
+    """Mean Shift Clustering
 
     Parameters
     ----------
@@ -18,24 +18,18 @@ class DBSCAN(Node, BaseUnsupervised):
     BaseUnsupervised : Secondary inheritance for unsupervised nodes 
     """
     
-    def __init__(self, algorithm: Optional[Union[callable, str]] = 'euclidean'):
-        """Initialize a DBSCAN clustering algorithm.
-
-        Parameters
-        ----------
-        algorithm : Optional[Union[callable, str]], optional
-           Name of distance function to use in clustering metric or a callable function, by default euclidean distance
+    def __init__(self):
+        """Initialize a Mean Shift clustering algorithm.
         """
         super().__init__()
         self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
-        self.algorithm = algorithm
         self.input_size = None
         self.initialized = False
         self.input_size = (-1,-1,-1)
         self.output_size = (-1,-1,-1)
 
     def fit(self, X: np.ndarray):
-        """Train the DBSCAN classifier given a sample datacube.
+        """Train the Mean Shift classifier given a sample datacube.
 
         Parameters
         ----------
@@ -44,8 +38,8 @@ class DBSCAN(Node, BaseUnsupervised):
         """
         n_pixels = X.shape[0] * X.shape[1]
         image_2d = X.reshape(n_pixels, -1)
-        self.fit_dbscan = sk_dbscan(metric=self.algorithm)
-        self.fit_dbscan.fit(image_2d)
+        self.fit_meanshift = sk_meanshift()
+        self.fit_meanshift.fit(image_2d)
         # Set the dimensions for a later check
         self.input_size = (-1,-1,X.shape[2]) # Constrain the number of wavelengths or input features
         self.output_size = (-1,-1,1)
@@ -75,7 +69,7 @@ class DBSCAN(Node, BaseUnsupervised):
         return self.output_size
     
     def forward(self, X: np.ndarray) -> np.ndarray:
-        """Apply DBSCAN classifier to new data
+        """Apply Mean Shift classifier to new data
 
         Parameters
         ----------
@@ -90,12 +84,12 @@ class DBSCAN(Node, BaseUnsupervised):
         # Transform data using precomputed K-Means components
         n_pixels = X.shape[0] * X.shape[1]
         image_2d = X.reshape(n_pixels, -1)
-        data = self.fit_dbscan.predict(image_2d)
+        data = self.fit_meanshift.predict(image_2d)
         cube_data = data.reshape((X.shape[0], X.shape[1]))
         return cube_data
 
     def serialize(self, serial_dir: str) -> str:
-        """Write the model parameters to a YAML format and save DBSCAN weights
+        """Write the model parameters to a YAML format and save Mean Shift weights
 
         Parameters
         ----------
@@ -111,13 +105,12 @@ class DBSCAN(Node, BaseUnsupervised):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_dbscan, open(os.path.join(serial_dir,f"{hash(self.fit_dbscan)}_dbscan.pkl"),"wb"))
+        pk.dump(self.fit_meanshift, open(os.path.join(serial_dir,f"{hash(self.fit_meanshift)}_mean_shift.pkl"),"wb"))
         data = {
             'type': type(self).__name__,
             'id': self.id,
-            'algorithm': self.algorithm,
             'input_size': self.input_size,
-            'dbscan_object': f"{hash(self.fit_dbscan)}_dbscan.pkl"
+            'mean_shift_object': f"{hash(self.fit_meanshift)}_mean_shift.pkl"
         }
         # Dump to a string
         return yaml.dump(data, default_flow_style=False)
@@ -134,6 +127,5 @@ class DBSCAN(Node, BaseUnsupervised):
         """
         self.id = params.get('id')
         self.input_size = params.get('input_size')
-        self.algorithm = params.get('algorithm')
-        self.fit_dbscan = pk.load(open(os.path.join(filepath, params.get('dbscan_object')),'rb'))
+        self.fit_meanshift = pk.load(open(os.path.join(filepath, params.get('mean_shift_object')),'rb'))
         self.initialized = True

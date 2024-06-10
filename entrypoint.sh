@@ -9,4 +9,4 @@ echo "======================="
 echo "======================="
 echo "OUTPUT OF CUVIS.AI Unit testing"
 echo "======================="
-. /install/venv_3.10/bin/activate && python3.10 -m unittest discoverr
+. /install/venv_3.10/bin/activate && python3.10 -m unittest discover

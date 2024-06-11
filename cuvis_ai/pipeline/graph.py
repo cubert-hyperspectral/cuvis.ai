@@ -218,8 +218,15 @@ class Graph():
             else:
                 ys = Y
         
+        if ys is None:
+            ys = [None]*len(xs)
+        if M is None:
+            ms = [None]*len(xs)
+        else:
+            ms = M
+        
         results = []
-        for x, y, m in zip(xs, ys, M):
+        for x, y, m in zip(xs, ys, ms):
             
             intermediary = {}
             intermediary_labels = {}

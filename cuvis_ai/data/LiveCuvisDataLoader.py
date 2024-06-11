@@ -174,6 +174,8 @@ class LiveCuvisDataLoader(BaseDataSet):
             All modes except for `Raw` require a dark reference to be set using :meth:`set_reference` or :meth:`record_dark`.
             The mode `Reflectance` additionally requires a white reference to be set using :meth:`set_reference` or :meth:`record_white`.
         """
+        if val == cuvis.ProcessingMode.Preview:
+            raise ValueError("Processing mode 'Preview' is not supported, as it does not produce any cubes. Use 'cuvis.ProcessingMode.Raw' instead.")
         self.processing_context.processing_mode = val
     
     def _fetch_mesu(self) -> cuvis.Measurement:

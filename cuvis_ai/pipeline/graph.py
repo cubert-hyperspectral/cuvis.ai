@@ -264,7 +264,6 @@ class Graph():
             Dictionary containing intermediary metadata with key as id of node
         """
         p_nodes = list(self.graph.predecessors(current))
-        p_nodes = self.graph.predecessors(current)
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
         

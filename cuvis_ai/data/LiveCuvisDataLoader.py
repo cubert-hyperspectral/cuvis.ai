@@ -179,6 +179,7 @@ class LiveCuvisDataLoader(BaseDataSet):
         self.processing_context.processing_mode = val
     
     def _fetch_mesu(self) -> cuvis.Measurement:
+        self.capture_timeout_ms = self.camera.integration_time + 1000
         mesu = None
         while mesu is None:
             try:
@@ -209,14 +210,22 @@ class LiveCuvisDataLoader(BaseDataSet):
         Parameters
         ----------
         mesu : cuvis.Measurement
-            The existing measurement to use as the reference.
+            The existing measurement to use as the reference. Pass None to clear the reference.
         reftype : cuvis.ReferenceType
             The type of reference to use this measurement as.
         """
         #print(F"Adding reference mesu: [{reftype.name} -> {mesu.name} ({list(mesu.data.keys())})]")
-        self.processing_context.set_reference(mesu, reftype)
-        if reftype not in self._cuvis_non_cube_references:
-            self._refcache[reftype.name] = mesu
+        
+        if not isinstance(reftype, cuvis.ReferenceType):
+            raise TypeError("'reftype' must be of type cuvis.ReferenceType!")
+        if mesu is None:
+            self.processing_context.clear_reference(reftype)
+            if reftype not in self._cuvis_non_cube_references:
+                self._refcache.pop(reftype.name)
+        else:
+            self.processing_context.set_reference(mesu, reftype)
+            if reftype not in self._cuvis_non_cube_references:
+                self._refcache[reftype.name] = mesu
 
     def record_dark(self, averaging_count:int = 5):
         """Record a dark reference measurement using this acquisition session.

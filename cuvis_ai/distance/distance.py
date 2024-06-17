@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ..node import Node
+from ..node import Node, CubeConsumer
 from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
 import numpy as np
 import typing
@@ -8,7 +8,7 @@ import yaml
 import warnings
 from copy import deepcopy
 
-class AbstractDistance(Node):
+class AbstractDistance(Node, CubeConsumer):
     """
     Abstract class for data preprocessing.
 

@@ -20,14 +20,12 @@ jobs:
 
       - name: Build
         run: |
-          mkdir _build
-          cmake -B ./_build .
-          cmake --build "_build"
-          touch ./_build/doc/sphinx/.nojekyll
+		  make html
+          touch docs/_build/html/.nojekyll
           
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./_build/doc/sphinx
+          folder: ./docs/_build/html/
 

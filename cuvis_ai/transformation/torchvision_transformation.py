@@ -7,11 +7,12 @@ from typing import Optional, Any, Dict, Callable, Tuple, Union, Iterable
 from . import BaseTransformation
 from ..node import Node
 
+
 class TorchVisionTransformation(BaseTransformation):
     """ Node for applying a torchvision transform within the pipeline.
     For proper functionality, these transformations should be added to the dataloader.
     Any transform present in torchvision.transforms.v2 should be compatible.
-    
+
     Parameters
     ----------
     tv_transform : Callable,optional
@@ -22,10 +23,9 @@ class TorchVisionTransformation(BaseTransformation):
     Torchvision Transformations added to the graph using this node only apply the HSI data (the cube)!
     Only transformations added to the dataloader apply to labels and metadata as well.
     """
-    
-    def __init__(self, tv_transform: Optional[Callable]=None):
+
+    def __init__(self, tv_transform: Optional[Callable] = None):
         super().__init__()
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.tv_transform = tv_transform
         self.initialized = self.tv_transform is not None
 
@@ -40,17 +40,11 @@ class TorchVisionTransformation(BaseTransformation):
         Tuple
             The transformed data including any labels and meta-data passed in, if any.
         """
-        
+
         if isinstance(X, np.ndarray):
             return self.tv_transform(torch.as_tensor(X).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
 
     def fit(self, X: Union[Tuple, np.ndarray]):
-        pass
-        
-    def check_output_dim(self, X: Iterable):
-        pass
-
-    def check_input_dim(self, X: Iterable):
         pass
 
     @Node.output_dim.getter
@@ -60,23 +54,24 @@ class TorchVisionTransformation(BaseTransformation):
     @Node.input_dim.getter
     def input_dim(self) -> Tuple[int, int, int]:
         return (-1, -1, -1)
-    
+
     def serialize(self, serial_dir: str):
         """Serialize this node."""
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
 
-        blobfile_path = os.path.join(serial_dir, F"{hash(self.tv_transform)}_tvtransformation.zip")
+        blobfile_path = os.path.join(
+            serial_dir, F"{hash(self.tv_transform)}_tvtransformation.zip")
         torch.save(self.tv_transform, blobfile_path)
-        
+
         data = {
             "type": type(self).__name__,
             "tv_transform": blobfile_path,
         }
         return yaml.dump(data, default_flow_style=False)
 
-    def load(self, filepath:str, params:Dict):
+    def load(self, filepath: str, params: Dict):
         """Load this node from a serialized graph."""
         blobfile_path = os.path.join(filepath, params.get("tv_transform"))
         self.tv_transform = torch.load(blobfile_path)

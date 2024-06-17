@@ -19,7 +19,6 @@ class BinaryDecider(BaseDecider):
     def __init__(self, threshold: Any) -> None:
         super().__init__()
         self.threshold = threshold
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         """Apply binary decision on input data.

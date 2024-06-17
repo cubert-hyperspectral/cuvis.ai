@@ -6,6 +6,7 @@ import numpy as np
 
 from dataclasses import dataclass
 
+
 @dataclass
 class MLP(BaseSupervised):
     epochs: int = 10
@@ -19,18 +20,18 @@ class MLP(BaseSupervised):
         if self.optimizer is not None:
             args.update(self.optimizer.args)
 
-        self.mlp = sk_mlp(max_iter=self.epochs,verbose=self.verbose,**args)
+        self.mlp = sk_mlp(max_iter=self.epochs, verbose=self.verbose, **args)
 
     @BaseSupervised.input_dim.getter
     def input_dim(self):
         return self._input_dim
-    
+
     @BaseSupervised.output_dim.getter
     def output_dim(self):
         return self._output_dim
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        self._input_dim = get_shape_without_batch(X, ignore=[0,1])
+        self._input_dim = get_shape_without_batch(X, ignore=[0, 1])
 
         flatten_image = flatten_batch_and_spatial(X)
 
@@ -39,8 +40,8 @@ class MLP(BaseSupervised):
         print(f'shape image: {flatten_image.shape}')
         print(f'shape labels: {flatten_l.shape}')
 
-        self.mlp.fit(flatten_image,flatten_l)
-    
+        self.mlp.fit(flatten_image, flatten_l)
+
     def forward(self, X: np.ndarray):
         flatten_image = flatten_batch_and_spatial(X)
 
@@ -53,4 +54,3 @@ class MLP(BaseSupervised):
 
     def load():
         pass
-

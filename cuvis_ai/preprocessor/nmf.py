@@ -41,12 +41,6 @@ class NMF(Node, Preprocessor):
         # Initialization is complete
         self.initialized = True
 
-    def check_input_dim(self, X: np.ndarray):
-        assert (X.shape[2] == self.input_size[2])
-
-    def check_output_dim(self, X: np.ndarray):
-        assert (X.shape[2] == self.n_components)
-
     @Node.input_dim.getter
     def input_dim(self):
         return self.input_size

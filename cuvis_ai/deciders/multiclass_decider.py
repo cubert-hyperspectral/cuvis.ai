@@ -6,6 +6,7 @@ from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_s
 
 import numpy as np
 
+
 class MultiClassDecider(BaseDecider):
     """Simple multi-class maximum decider.
     Given a matrix with N channels, chooses the channel with the highest value per spatial location.
@@ -20,7 +21,6 @@ class MultiClassDecider(BaseDecider):
             Number of classes
         """
         super().__init__()
-        self.id = f"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.n = n
 
     def forward(self, X: np.ndarray) -> np.ndarray:
@@ -34,20 +34,20 @@ class MultiClassDecider(BaseDecider):
         np.ndarray
             Classified data. Single channel matrix comprised of the channel indices of the chosen classes.
         """
-        self._input_dim = get_shape_without_batch(X, ignore=[0,1])
+        self._input_dim = get_shape_without_batch(X, ignore=[0, 1])
         flatten_soft_output = flatten_batch_and_spatial(X)
-        decisions = np.argmax(flatten_soft_output,axis=1)
+        decisions = np.argmax(flatten_soft_output, axis=1)
         return unflatten_batch_and_spatial(decisions, X.shape)
 
     @BaseDecider.input_dim.getter
     def input_dim(self):
-        return [-1,-1, self.n]
+        return [-1, -1, self.n]
 
     def serialize(self):
         return super().serialize()
-    
+
     def load(self) -> None:
         return super().load()
-    
+
 
 # TODO: How would this functionality be integrated into Deep Learning Methods and Models

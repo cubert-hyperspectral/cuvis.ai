@@ -5,10 +5,11 @@ import uuid
 from typing import Dict, Iterable, Any, Tuple, List
 import torch
 
+
 class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInference):
     """Generic reflectance calculus: (data - dark) / (white - dark)
     Requires "Dark" and "White" references to be set in Metadata.
-    
+
     Parameters
     ----------
     lower_bound : float, optional
@@ -16,48 +17,49 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
     upper_bound : float, optional
         Threshold for the largest allowed value, everything higher will be clamped. Set to None to allow any value. Default: 2.0
     """
-    
-    def __init__(self, lower_bound:float=0.0, upper_bound:float=2.0):
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
+
+    def __init__(self, lower_bound: float = 0.0, upper_bound: float = 2.0):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.input_size = None
         self.output_size = None
 
-    def fit(self, X:Tuple):
+    def fit(self, X: Tuple):
         pass
-    
-    def forward(self, X:Tuple[np.ndarray, List[Dict]]):
+
+    def forward(self, X: Tuple[np.ndarray, List[Dict]]):
         """Apply reflectance calculus to the data.
         Returns the data as percentage values between the "Dark" and "White" references set in the meta-data.
         e.g. A pixel value of 1.0 means that the pixel is as bright as the white reference at this pixel, 1.5 -> 50% brighter, 0.0 -> as bright as the dark reference, -0.2 -> 20% darker than the dark reference.
         The output values can be clamped by setting :attr:`lower_bond` and :attr:`upper_bound`.
-        
-        
+
+
         Parameters
         ----------
         X : Tuple
             Data to compute reflectance of. Expects a tuple of (data, meta-data) as (np.ndarray, Dict)
-        
+
         Returns
         -------
         Tuple
             Returns the reflectance data in a tuple along with the remaining data passed in.
         """
-        
-        def reflectanceCalc(cube:np.ndarray, white:np.ndarray, dark:np.ndarray, ub:Optional[float], lb:Optional[float]) -> np.ndarray:
+
+        def reflectanceCalc(cube: np.ndarray, white: np.ndarray, dark: np.ndarray, ub: Optional[float], lb: Optional[float]) -> np.ndarray:
             ref = np.divide(np.subtract(cube, dark), np.subtract(white, dark))
             if not ((self.lower_bound is None) and (self.upper_bound is None)):
-                ref = torch.clamp(torch.as_tensor(ref), self.lower_bound, self.upper_bound).numpy()
+                ref = torch.clamp(torch.as_tensor(
+                    ref), self.lower_bound, self.upper_bound).numpy()
             return ref
-        
+
         if not isinstance(X, tuple) or (isinstance(X, tuple) and len(X) != 2):
-            raise ValueError("Reflectance calculation input must be a tuple containing cube data and metadata containing dark and white references.")
-        
+            raise ValueError(
+                "Reflectance calculation input must be a tuple containing cube data and metadata containing dark and white references.")
+
         cubes = np.split(X[0], axis=0)
         metas = X[1]
         refs = []
-        
+
         for cube, meta in zip(cubes, metas):
             try:
                 dark = meta["references"]["Dark"]
@@ -67,17 +69,13 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
             except AttributeError:
                 pass
             if dark is None or white is None:
-                raise ValueError("Reflectance calculation requires a dark and white references in the metadata to be present.")
-            refs.append(reflectanceCalc(cube, white, dark, self.upper_bound, self.lower_bound))
-        
+                raise ValueError(
+                    "Reflectance calculation requires a dark and white references in the metadata to be present.")
+            refs.append(reflectanceCalc(cube, white, dark,
+                        self.upper_bound, self.lower_bound))
+
         return np.stack(refs, axis=0)
 
-    def check_output_dim(self, X:Tuple):
-        pass
-
-    def check_input_dim(self, X:Tuple):
-        pass
-    
     @Node.output_dim.getter
     def output_dim(self) -> Tuple[int, int, int]:
         return (-1, -1, -1)
@@ -86,7 +84,7 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
     def input_dim(self) -> Tuple[int, int, int]:
         return (-1, -1, -1)
 
-    def serialize(self, serial_dir:str):
+    def serialize(self, serial_dir: str):
         """Serialize this node."""
         data = {
             "type": type(self).__name__,
@@ -95,7 +93,7 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
         }
         return yaml.dump(data, default_flow_style=False)
 
-    def load(self, filepath:str, params:Dict):
+    def load(self, filepath: str, params: Dict):
         """Load this node from a serialized graph."""
         try:
             self.lower_bound = float(params["lower"])
@@ -105,4 +103,3 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
             self.upper_bound = float(params["upper"])
         except:
             self.upper_bound = None
-        

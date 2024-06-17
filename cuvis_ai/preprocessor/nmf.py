@@ -2,8 +2,8 @@ import os
 import yaml
 import pickle as pk
 import numpy as np
-import uuid
 from ..node import Node
+from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from .base_preprocessor import Preprocessor
 from sklearn.decomposition import NMF as sk_nmf
 
@@ -30,8 +30,7 @@ class NMF(Node, Preprocessor):
         Returns:
         self
         """
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         self.fit_nmf = sk_nmf(n_components=self.n_components)
         self.fit_nmf.fit(image_2d)
         # Set the dimensions for a later check
@@ -60,11 +59,9 @@ class NMF(Node, Preprocessor):
         Transformed data.
         """
         # Transform data using precomputed NMF components
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         data = self.fit_nmf.transform(image_2d)
-        cube_data = data.reshape((X.shape[0], X.shape[1], self.n_components))
-        return cube_data
+        return unflatten_batch_and_spatial(data, X.shape)
 
     def serialize(self, serial_dir: str):
         '''

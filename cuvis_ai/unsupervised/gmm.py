@@ -5,6 +5,7 @@ import numpy as np
 import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
+from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from .base_unsupervised import BaseUnsupervised
 from sklearn.mixture import GaussianMixture as sk_gmm
 
@@ -41,8 +42,7 @@ class GMM(Node, BaseUnsupervised):
         X : np.ndarray
             Training data for classifier in shape of W x H x C
         """
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         self.fit_gmm = sk_gmm(n_components=self.n_clusters)
         self.fit_gmm.fit(image_2d)
         # Set the dimensions for a later check
@@ -88,11 +88,9 @@ class GMM(Node, BaseUnsupervised):
             W x H class predictions
         """
         # Transform data using precomputed K-Means components
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         data = self.fit_gmm.predict(image_2d)
-        cube_data = data.reshape((X.shape[0], X.shape[1]))
-        return cube_data
+        return unflatten_batch_and_spatial(data, X.shape)
 
     def serialize(self, serial_dir: str) -> str:
         """Write the model parameters to a YAML format and save GMMs weights

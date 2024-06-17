@@ -218,8 +218,15 @@ class Graph():
             else:
                 ys = Y
         
+        if ys is None:
+            ys = [None]*len(xs)
+        if M is None:
+            ms = [None]*len(xs)
+        else:
+            ms = M
+        
         results = []
-        for x, y, m in zip(xs, ys, M):
+        for x, y, m in zip(xs, ys, ms):
             
             intermediary = {}
             intermediary_labels = {}
@@ -257,7 +264,6 @@ class Graph():
             Dictionary containing intermediary metadata with key as id of node
         """
         p_nodes = list(self.graph.predecessors(current))
-        p_nodes = self.graph.predecessors(current)
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
         

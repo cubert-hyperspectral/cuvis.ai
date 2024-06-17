@@ -119,12 +119,14 @@ class LiveCuvisDataLoader(BaseDataSet):
         if self.sess is not None:
             self.camera = cuvis.AcquisitionContext(self.sess, simulate=simulate)
             self.processing_context = cuvis.ProcessingContext(self.sess)
+            self.raw_processing_context = cuvis.ProcessingContext(self.sess)
         else:
             calib = cuvis.Calibration(path)
             self.camera = cuvis.AcquisitionContext(calib)
             self.processing_context = cuvis.ProcessingContext(calib)
-        
+            self.raw_processing_context = cuvis.ProcessingContext(calib)
         self.processing_context.processing_mode = cuvis.ProcessingMode.Raw
+        self.raw_processing_context.processing_mode = cuvis.ProcessingMode.Raw
         
         timeout = timeout_s
         while self.camera.state != cuvis.HardwareState.Online:
@@ -172,6 +174,8 @@ class LiveCuvisDataLoader(BaseDataSet):
             All modes except for `Raw` require a dark reference to be set using :meth:`set_reference` or :meth:`record_dark`.
             The mode `Reflectance` additionally requires a white reference to be set using :meth:`set_reference` or :meth:`record_white`.
         """
+        if val == cuvis.ProcessingMode.Preview:
+            raise ValueError("Processing mode 'Preview' is not supported, as it does not produce any cubes. Use 'cuvis.ProcessingMode.Raw' instead.")
         self.processing_context.processing_mode = val
     
     def _fetch_mesu(self) -> cuvis.Measurement:
@@ -222,7 +226,9 @@ class LiveCuvisDataLoader(BaseDataSet):
             The number of measurements to record and average into one measurement. This can improve the quality of reference measurement by reducing the impact of noise. Default is 5.
         """
         avg = max(1, averaging_count)
-        self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.Dark)
+        mesu = self._fetch_averaged_mesu(avg)
+        mesu = self.raw_processing_context.apply(mesu)
+        self.set_reference(mesu, cuvis.ReferenceType.Dark)
     
     def record_white(self, averaging_count:int = 5):
         """Record a white reference measurement using this acquisition session.
@@ -232,14 +238,18 @@ class LiveCuvisDataLoader(BaseDataSet):
             The number of measurements to record and average into one measurement. This can improve the quality of reference measurement by reducing the impact of noise. Default is 5.
         """
         avg = max(1, averaging_count)
-        self.set_reference(self._fetch_averaged_mesu(avg), cuvis.ReferenceType.White)
+        mesu = self._fetch_averaged_mesu(avg)
+        mesu = self.raw_processing_context.apply(mesu)
+        self.set_reference(mesu, cuvis.ReferenceType.White)
     
     def record_distance(self):
         """Record a distance reference measurement using this acquisition session.
         The camera should be pointed at a scene with high contrast at the distance that you want to observe.
         Cuvis will attempt to reduce the parallax effect present in the HSI camera by live-tuning on the captured image.
         """
-        self.set_reference(self._fetch_mesu(), cuvis.ReferenceType.Distance)
+        mesu = self._fetch_mesu()
+        mesu = self.raw_processing_context.apply(mesu)
+        self.set_reference(mesu, cuvis.ReferenceType.Distance)
     
     def _mesu2TensorAndTransform(self, mesu:cuvis.Measurement, astype:np.dtype) -> tv_tensors.Image:
         try:

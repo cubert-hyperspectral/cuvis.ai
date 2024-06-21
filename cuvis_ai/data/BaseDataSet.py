@@ -19,7 +19,6 @@ class BaseDataSet(VisionDataset, Node):
         output_lambda: Optional[Callable] = None,
     ):
         super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform)
-        self.id = str(uuid.uuid4())
         self.output_format = output_format
         self.output_lambda = output_lambda
         self.provide_datatype:np.dtype = np.float32

@@ -88,7 +88,6 @@ class NumpyDataSet(BaseDataSet):
         output_lambda: Optional[Callable] = None,
     ):
         super().__init__(root, transforms=transforms, transform=transform, target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self._FILE_EXTENSION = ".npy"
         
         self._clear()

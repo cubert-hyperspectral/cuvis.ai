@@ -54,17 +54,22 @@ class CuvisDataSet(NumpyDataSet):
             self.idx = idx
             self.proc_mode = proc_mode
         def __call__(self, to_dtype:np.dtype):
+            sess = cuvis.SessionFile(self.path)
+            mesu = sess.get_measurement(self.idx)
+            need_reprocess = bool(self.proc_mode is None)
             try:
-                cube = cuvis.SessionFile(self.path).get_measurement(self.idx).data["cube"].array
+                cube = mesu.data["cube"].array
             except KeyError:
-                sess = cuvis.SessionFile(self.path)
-                mesu = sess.get_measurement(self.idx)
+                need_reprocess = True
+            
+            if need_reprocess:
                 pc = cuvis.ProcessingContext(sess)
                 if self.proc_mode is not None:
                     pc.processing_mode = self.proc_mode
                 mesu = pc.apply(mesu)
-                cube = mesu.data["cube"].array
                 
+            cube = mesu.data["cube"].array
+            
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -98,16 +103,22 @@ class CuvisDataSet(NumpyDataSet):
         def __init__(self, path, proc_mode=None):
             self.path = path
             self.proc_mode = proc_mode
+            
         def __call__(self, to_dtype:np.dtype):
+            mesu = cuvis.Measurement.load(self.path)
+            need_reprocess = bool(self.proc_mode is None)
             try:
-                cube = cuvis.Measurement.load(self.path).data["cube"].array
+                cube = mesu.data["cube"].array
             except KeyError:
-                mesu = cuvis.Measurement.load(self.path)
+                need_reprocess = True
+            
+            if need_reprocess:
                 pc = cuvis.ProcessingContext(mesu)
                 if self.proc_mode is not None:
                     pc.processing_mode = self.proc_mode
                 mesu = pc.apply(mesu)
-                cube = mesu.data["cube"].array
+                
+            cube = mesu.data["cube"].array
                 
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)

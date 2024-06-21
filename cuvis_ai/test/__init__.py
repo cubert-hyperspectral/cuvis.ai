@@ -1,2 +1,0 @@
-from .test_numpy_utils import TestNumpyUtils
-from .test_unsupervised_kmeans import TestUnsupervisedKMeans

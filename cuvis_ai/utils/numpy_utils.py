@@ -67,8 +67,8 @@ def flatten_batch_and_spatial(array: np.ndarray):
 
 
 def unflatten_batch_and_spatial(array: np.ndarray, orig_shape):
-    if array.ndim != 2:
-        raise ValueError("Input array must be 2D or 3D.")
+    if array.ndim != 2 and array.ndim != 1:
+        raise ValueError("Input array must be 2D or 1D.")
     if array.shape[0] != np.prod(orig_shape[:-1]):
         raise ValueError("Input array and orig shape do not add up.")
     return array.reshape(*orig_shape[:-1], -1)

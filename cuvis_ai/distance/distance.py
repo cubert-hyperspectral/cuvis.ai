@@ -25,7 +25,8 @@ class AbstractDistance(Node, CubeConsumer):
     Node : Node
         Defines the distance measure as a type of node.
     """
-    def __init__(self, ref_spectra: list=[]):
+
+    def __init__(self, ref_spectra: list = []):
         """Initialize distance metric
 
         Parameters
@@ -33,10 +34,8 @@ class AbstractDistance(Node, CubeConsumer):
         ref_spectra : list, optional
             List of reference spectra to compare against, by default []
         """
-        self.id =  f'{type(self).__name__}-{str(uuid.uuid4())}'
         # Assign any reference spectra, if they exist
         self.ref_spectra = self.spectra_to_array(ref_spectra)
-
 
     @staticmethod
     def spectra_to_array(ref_spectra: np.ndarray | list) -> np.ndarray:
@@ -59,8 +58,8 @@ class AbstractDistance(Node, CubeConsumer):
             # Squeeze an extra dimension
             ref_spectra = np.expand_dims(ref_spectra, axis=0)
         return ref_spectra
-    
-    def forward(self, X: np.ndarray, ref_spectra: list=[]) -> np.ndarray:
+
+    def forward(self, X: np.ndarray, ref_spectra: list = []) -> np.ndarray:
         """Pass the data through comparative function
 
         Parameters
@@ -90,16 +89,19 @@ class AbstractDistance(Node, CubeConsumer):
             # Process each spectra
             ref_spectra = self.spectra_to_array(ref_spectra)
             if X.shape[-1] != ref_spectra.shape[-1]:
-                raise ValueError('Mismatch in input data and reference spectra!')
+                raise ValueError(
+                    'Mismatch in input data and reference spectra!')
             # Process and return
-            res = self.score(X.reshape(X.shape[0]*X.shape[1], X.shape[2]), ref_spectra)
+            res = self.score(
+                X.reshape(X.shape[0]*X.shape[1], X.shape[2]), ref_spectra)
             return res.reshape(X.shape[0], X.shape[1], len(ref_spectra))
         elif len(self.ref_spectra) > 0:
             if X.shape[-1] != self.ref_spectra.shape[-1]:
-                raise ValueError('Mismatch in input data and reference spectra!')
+                raise ValueError(
+                    'Mismatch in input data and reference spectra!')
             # Process and return
             res = self.score(flatten_spatial(X), self.ref_spectra)
-            return res.reshape(X.shape[0], X.shape[1], len(self.ref_spectra))    
+            return res.reshape(X.shape[0], X.shape[1], len(self.ref_spectra))
         else:
             raise ValueError('No reference spectra provided!')
 
@@ -122,7 +124,7 @@ class AbstractDistance(Node, CubeConsumer):
         # Dump to a string
         return yaml.dump(data, default_flow_style=False)
 
-    def load(self, params: dict, filepath: str=None):
+    def load(self, params: dict, filepath: str = None):
         """Load dumped parameters to recreate the distance object
 
         Parameters
@@ -163,10 +165,10 @@ class AbstractDistance(Node, CubeConsumer):
         # Note: This denotes by default we don't care about the input image shape
         # so long as the wavelengths match
         if len(self.ref_spectra) > 0:
-            return [-1,-1, self.ref_spectra.shape[1]]
+            return [-1, -1, self.ref_spectra.shape[1]]
         else:
-            return [-1,-1,-1]
-    
+            return [-1, -1, -1]
+
     @Node.output_dim.getter
     def output_dim(self):
         """Get required output dimension
@@ -177,7 +179,8 @@ class AbstractDistance(Node, CubeConsumer):
             List defining which input dimensions should be checked in graph.
         """
         # Note: Output can be arbitrary length depending on the reference spectra
-        return [-1,-1,-1]
+        return [-1, -1, -1]
+
 
 class SpectralAngle(AbstractDistance):
     """Cosine distance between spectra according to the Spectral Angle Mapper (SAM) formula.
@@ -189,7 +192,8 @@ class SpectralAngle(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type
     """
-    def __init__(self, ref_spectra: list=[]):
+
+    def __init__(self, ref_spectra: list = []):
         """Construct SAM 
 
         Parameters
@@ -218,14 +222,17 @@ class SpectralAngle(AbstractDistance):
         # Throw a warning for a large number of unnormalized values
         if np.percentile(data, 90) > 2.0:
             # 10% of the data exceeds 200%
-            warnings.warn("Spectral angle mapper is being used without properly normalized data. Unexpected behavior may occur!")
+            warnings.warn(
+                "Spectral angle mapper is being used without properly normalized data. Unexpected behavior may occur!")
         output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
             output_scores[:, idx] = np.arccos(
-                np.dot(data, ref_spectra[idx]) / (np.linalg.norm(data, axis=1) * np.linalg.norm(ref_spectra[idx]))
+                np.dot(data, ref_spectra[idx]) / (np.linalg.norm(data,
+                                                                 axis=1) * np.linalg.norm(ref_spectra[idx]))
             )
         return output_scores
+
 
 class Euclidean(AbstractDistance):
     """Calculate L2 (Euclidean) Distance.
@@ -235,7 +242,8 @@ class Euclidean(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type.
     """
-    def __init__(self, ref_spectra: list=[]):
+
+    def __init__(self, ref_spectra: list = []):
         """Construct Euclidean distance node. 
 
         Parameters
@@ -244,7 +252,7 @@ class Euclidean(AbstractDistance):
             Reference spectra to compare against, by default []
         """
         super().__init__(ref_spectra)
-    
+
     @staticmethod
     def score(data: np.ndarray, ref_spectra: np.ndarray) -> np.ndarray:
         """Score new datacubes against reference spectra.
@@ -264,8 +272,10 @@ class Euclidean(AbstractDistance):
         output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.sqrt(np.sum((data - ref_spectra[idx,:])**2, axis=1))
+            output_scores[:, idx] = np.sqrt(
+                np.sum((data - ref_spectra[idx, :])**2, axis=1))
         return output_scores
+
 
 class Manhattan(AbstractDistance):
     """Calculate L1 (Manhattan) Distance.
@@ -275,7 +285,8 @@ class Manhattan(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type.
     """
-    def __init__(self, ref_spectra: list=[]):
+
+    def __init__(self, ref_spectra: list = []):
         """Construct Manhattan distance node. 
 
         Parameters
@@ -304,8 +315,10 @@ class Manhattan(AbstractDistance):
         output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] =  np.sum(np.abs(data - ref_spectra[idx,:]), axis=1)
+            output_scores[:, idx] = np.sum(
+                np.abs(data - ref_spectra[idx, :]), axis=1)
         return output_scores
+
 
 class Canberra(AbstractDistance):
     """Calculate  Weighted L1 (Canberra) Distance.
@@ -315,7 +328,8 @@ class Canberra(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type
     """
-    def __init__(self, ref_spectra: list=[]):
+
+    def __init__(self, ref_spectra: list = []):
         """Construct Canberra distance node. 
 
         Parameters
@@ -344,10 +358,12 @@ class Canberra(AbstractDistance):
         output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] =  np.sum(
-                np.abs(data - ref_spectra[idx,:])/(np.abs(data) + np.abs(ref_spectra[idx,:])),
+            output_scores[:, idx] = np.sum(
+                np.abs(data - ref_spectra[idx, :]) /
+                (np.abs(data) + np.abs(ref_spectra[idx, :])),
                 axis=1)
         return output_scores
+
 
 class Minkowski(AbstractDistance):
     """N-th degree normed vector space (Minkowski) Distance.
@@ -357,7 +373,8 @@ class Minkowski(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type
     """
-    def __init__(self,  degree: int, ref_spectra: list=[]):
+
+    def __init__(self,  degree: int, ref_spectra: list = []):
         """Construct Minkowski distance node.
 
         Parameters
@@ -388,12 +405,14 @@ class Minkowski(AbstractDistance):
         output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = (np.sum((data - ref_spectra[idx,:])**self.degree, axis=1))**(1.0/float(self.degree))
+            output_scores[:, idx] = (np.sum(
+                (data - ref_spectra[idx, :])**self.degree, axis=1))**(1.0/float(self.degree))
         return output_scores
+
 
 class GFC(AbstractDistance):
     """Goodness-of-fit Coefficient (GFC)
-    
+
     Citation:
 
     Hernández-Andrés, J., Romero, J., García-Beltrán, A., & Nieves, J. L. (1998). Testing linear models on spectral daylight measurements. Applied Optics, 37(6), 971-977.
@@ -403,7 +422,8 @@ class GFC(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type
     """
-    def __init__(self, ref_spectra: list=[]):
+
+    def __init__(self, ref_spectra: list = []):
         """Construct GFC distance node.
 
         Parameters
@@ -432,9 +452,11 @@ class GFC(AbstractDistance):
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
             output_scores[:, idx] = 1 - (
-                np.dot(data, ref_spectra[idx]) / (np.linalg.norm(data, axis=1) * np.linalg.norm(ref_spectra[idx]))
+                np.dot(data, ref_spectra[idx]) / (np.linalg.norm(data,
+                                                                 axis=1) * np.linalg.norm(ref_spectra[idx]))
             )
         return output_scores
+
 
 class ECS(AbstractDistance):
     """Euclidean Distance of Cumulative Spectrum (ECS)
@@ -444,7 +466,8 @@ class ECS(AbstractDistance):
     AbstractDistance : AbstractDistance
         Defines the node as AbstractDistance node type
     """
-    def __init__(self,  wavelengths: np.ndarray | list, ref_spectra: list=[]):
+
+    def __init__(self,  wavelengths: np.ndarray | list, ref_spectra: list = []):
         """Initialize an ECS distance node.
 
         Parameters
@@ -469,7 +492,7 @@ class ECS(AbstractDistance):
             Required input shape, which can vary in datacube height and width, but must be of consistent channel size.
         """
         # Note: this function depends on the wavelengths, so we need to match the dimension
-        return [-1,-1, len(self.wavelengths)]
+        return [-1, -1, len(self.wavelengths)]
 
     def score(self, data: np.ndarray, ref_spectra: np.ndarray) -> np.ndarray:
         """Score new datacubes against reference spectra.
@@ -489,5 +512,6 @@ class ECS(AbstractDistance):
         output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.sqrt((np.trapz(data, self.wavelengths, axis=1) - np.trapz(ref_spectra[idx], self.wavelengths))**2)
+            output_scores[:, idx] = np.sqrt((np.trapz(
+                data, self.wavelengths, axis=1) - np.trapz(ref_spectra[idx], self.wavelengths))**2)
         return output_scores

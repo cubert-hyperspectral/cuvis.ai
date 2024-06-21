@@ -4,14 +4,15 @@ import typing
 import uuid
 from ..node import CubeConsumer
 
+
 class Preprocessor(ABC, CubeConsumer):
     """
     Abstract class for data preprocessing.
     """
+
     def __init__(self):
         self.input_size = None
         self.output_size = None
-        self.id = str(uuid.uuid4())
 
     @abstractmethod
     def fit(self, X):

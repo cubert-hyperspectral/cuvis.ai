@@ -14,10 +14,6 @@ class BaseUnsupervised(ABC, CubeConsumer):
     ABC : ABC
         Defines node as a base class.
     """
-    def __init__(self):
-        """Initialize node
-        """
-        self.id =  str(uuid.uuid4())
 
     @abstractmethod
     def fit(self, X: Any):
@@ -29,7 +25,7 @@ class BaseUnsupervised(ABC, CubeConsumer):
             Generic method to initialize a classifier with data.
         """
         pass
-    
+
     @abstractmethod
     def forward(self, Any) -> Any:
         """Transform 
@@ -38,7 +34,7 @@ class BaseUnsupervised(ABC, CubeConsumer):
         ----------
         X : Any
             Generic method to pass new data through the unsupervised classifier.
-        
+
         Returns
         -------
         Any

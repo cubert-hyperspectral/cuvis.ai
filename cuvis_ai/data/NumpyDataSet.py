@@ -122,7 +122,7 @@ class NumpyDataSet(BaseDataSet):
             self.metadata_filepath = ""
 
         # Actual data collection
-        self._load_directory(self.root)
+        self._load_directory()
         self.initialized = True
     
     def _clear(self):

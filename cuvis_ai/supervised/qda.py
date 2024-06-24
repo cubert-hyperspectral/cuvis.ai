@@ -7,11 +7,11 @@ import numpy as np
 
 from dataclasses import dataclass
 
+
 @dataclass
 class QDA(BaseSupervised):
     solver: str = 'svd'
     n_components: int = None
-
 
     def __post_init__(self):
         self.initialized = False
@@ -21,22 +21,22 @@ class QDA(BaseSupervised):
     @BaseSupervised.input_dim.getter
     def input_dim(self):
         return self._input_dim
-    
+
     @BaseSupervised.output_dim.getter
     def output_dim(self):
         return self._output_dim
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        self._input_dim = get_shape_without_batch(X, ignore=[0,1])
-        self._output_dim = [-1,-1,self.n_components]
+        self._input_dim = get_shape_without_batch(X, ignore=[0, 1])
+        self._output_dim = (-1, -1, self.n_components)
 
         flatten_image = flatten_batch_and_spatial(X)
         flatten_l = flatten_batch_and_labels(Y)
 
-        self.qda.fit(flatten_image,flatten_l)
+        self.qda.fit(flatten_image, flatten_l)
 
         self.initialized = True
-    
+
     def forward(self, X: np.ndarray):
         flatten_image = flatten_batch_and_spatial(X)
 

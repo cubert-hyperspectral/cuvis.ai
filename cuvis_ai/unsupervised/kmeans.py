@@ -5,8 +5,10 @@ import numpy as np
 import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
+from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from .base_unsupervised import BaseUnsupervised
 from sklearn.cluster import KMeans as sk_kmeans
+
 
 class KMeans(Node, BaseUnsupervised):
     """K-Means classifier
@@ -16,8 +18,8 @@ class KMeans(Node, BaseUnsupervised):
     Node : Abstract Node, shared by all CUVIS.AI classes
     BaseUnsupervised : Secondary inheritance for unsupervised nodes 
     """
-    
-    def __init__(self, n_clusters: int=None):
+
+    def __init__(self, n_clusters: int = None):
         """Initialize a K-Means unsupervised classifier
 
         Parameters
@@ -26,12 +28,11 @@ class KMeans(Node, BaseUnsupervised):
             number of clusters to seed for k-means clustering, by default None
         """
         super().__init__()
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self.n_clusters = n_clusters
         self.input_size = None
         self.initialized = False
-        self.input_size = (-1,-1,-1)
-        self.output_size = (-1,-1,-1)
+        self.input_size = (-1, -1, -1)
+        self.output_size = (-1, -1, -1)
 
     def fit(self, X: np.ndarray):
         """Train the K-Means classifier given a sample datacube.
@@ -41,13 +42,13 @@ class KMeans(Node, BaseUnsupervised):
         X : np.ndarray
             Training data for classifier in shape of W x H x C
         """
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         self.fit_kmeans = sk_kmeans(n_clusters=self.n_clusters)
         self.fit_kmeans.fit(image_2d)
         # Set the dimensions for a later check
-        self.input_size = (-1,-1,X.shape[2]) # Constrain the number of wavelengths or input features
-        self.output_size = (-1,-1,1)
+        # Constrain the number of wavelengths or input features
+        self.input_size = (-1, -1, X.shape[2])
+        self.output_size = (-1, -1, 1)
         # Initialization is complete
         self.initialized = True
 
@@ -61,7 +62,7 @@ class KMeans(Node, BaseUnsupervised):
             Number of channels
         """
         return self.input_size
-    
+
     @Node.output_dim.getter
     def output_dim(self) -> int:
         """Get required output dimension.
@@ -72,7 +73,7 @@ class KMeans(Node, BaseUnsupervised):
             _description_
         """
         return self.output_size
-    
+
     def forward(self, X: np.ndarray) -> np.ndarray:
         """Apply K-Mean classifier to new data
 
@@ -87,11 +88,9 @@ class KMeans(Node, BaseUnsupervised):
             W x H class predictions
         """
         # Transform data using precomputed K-Means components
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         data = self.fit_kmeans.predict(image_2d)
-        cube_data = data.reshape((X.shape[0], X.shape[1]))
-        return cube_data
+        return unflatten_batch_and_spatial(data, X.shape)
 
     def serialize(self, serial_dir: str) -> str:
         """Write the model parameters to a YAML format and save K-Means weights
@@ -110,7 +109,8 @@ class KMeans(Node, BaseUnsupervised):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_kmeans, open(os.path.join(serial_dir,f"{hash(self.fit_kmeans)}_kmeans.pkl"),"wb"))
+        pk.dump(self.fit_kmeans, open(os.path.join(
+            serial_dir, f"{hash(self.fit_kmeans)}_kmeans.pkl"), "wb"))
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -134,5 +134,6 @@ class KMeans(Node, BaseUnsupervised):
         self.id = params.get('id')
         self.input_size = params.get('input_size')
         self.n_clusters = params.get('n_clusters')
-        self.fit_kmeans = pk.load(open(os.path.join(filepath, params.get('kmeans_object')),'rb'))
+        self.fit_kmeans = pk.load(
+            open(os.path.join(filepath, params.get('kmeans_object')), 'rb'))
         self.initialized = True

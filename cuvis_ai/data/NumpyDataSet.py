@@ -126,7 +126,7 @@ class NumpyDataSet(BaseDataSet):
             self.metadata_filepath = ""
 
         # Actual data collection
-        self._load_directory(self.root)
+        self._load_directory()
         self.initialized = True
 
     def _clear(self):
@@ -222,7 +222,8 @@ class NumpyDataSet(BaseDataSet):
             self.labels.extend(other_dataset.labels)
             self.metas.extend(other_dataset.metas)
         else:
-            raise TypeError(f"Cannot merge NumpyData with an object of type {type(other_dataset).__name__}")  # nopep8
+            raise TypeError("Cannot merge NumpyData with an object "
+                            F"of type {type(other_dataset).__name__}")
 
     def random_split(self, train_percent, val_percent, test_percent) -> list[torch.utils.data.dataset.Subset]:
         """Generate three datasets with randomly chosen data from this dataset.

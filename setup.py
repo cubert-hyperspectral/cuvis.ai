@@ -1,24 +1,14 @@
 from setuptools import setup
+from pathlib import Path
 
 NAME = 'cuvis_ai'
 VERSION = '0.0.1'
-
 DESCRIPTION = 'CUVIS AI Toolset.'
 
-REQUIREMENTS = {
-    'install': [
-        'cuvis-il == 3.2.1',
-        'numpy',
-        'scikit-learn',
-        'matplotlib',
-        "torch",
-        'skorch',
-        'opencv-python',
-        'torchvision',
-        'pycocotools',
-        'scikit-image'
-    ],
-}
+REQUIREMENTS = {}
+
+with open(Path(__file__).parent / "requirements.txt", "r") as reqfile:
+    REQUIREMENTS["install"] = reqfile.readlines()
 
 setup(
     name=NAME,

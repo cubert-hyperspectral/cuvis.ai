@@ -63,7 +63,7 @@ class NMF(Node, Preprocessor):
         data = self.fit_nmf.transform(image_2d)
         return unflatten_batch_and_spatial(data, X.shape)
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> str:
         '''
         This method should dump parameters to a yaml file format
         '''

@@ -61,13 +61,13 @@ class TorchVisionTransformation(BaseTransformation):
             print('Module not fully initialized, skipping output!')
             return
 
-        blobfile_path = os.path.join(
-            serial_dir, F"{hash(self.tv_transform)}_tvtransformation.zip")
+        blobfile_name = F"{hash(self.tv_transform)}_tvtransformation.zip"
+        blobfile_path = os.path.join(serial_dir, blobfile_name)
         torch.save(self.tv_transform, blobfile_path)
 
         data = {
             "type": type(self).__name__,
-            "tv_transform": blobfile_path,
+            "tv_transform": blobfile_name,
         }
         return yaml.dump(data, default_flow_style=False)
 

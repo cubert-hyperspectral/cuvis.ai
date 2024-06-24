@@ -2,6 +2,7 @@ from .base_transformation import BaseTransformation
 from ..node import MetadataConsumer, MetadataConsumerInference, Node
 import numpy as np
 import uuid
+import yaml
 from typing import Dict, Iterable, Any, Tuple, List
 import torch
 
@@ -84,7 +85,7 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
     def input_dim(self) -> Tuple[int, int, int]:
         return (-1, -1, -1)
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> str:
         """Serialize this node."""
         data = {
             "type": type(self).__name__,

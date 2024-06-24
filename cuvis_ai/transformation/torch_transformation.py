@@ -99,22 +99,22 @@ class TorchTransformation(BaseTransformation):
     def input_dim(self) -> Tuple[int, int, int]:
         return -1, -1, -1
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> str:
         """Serialize this node and save to :arg:`serial_dir`."""
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
 
         blob = (self.b, self.fun_kwargs)
-        blobfile_path = os.path.join(
-            serial_dir, F"{hash(str(blob))}_torchtransformation.pkl")
+        blobfile_name = F"{hash(str(blob))}_torchtransformation.pkl"
+        blobfile_path = os.path.join(serial_dir, blobfile_name)
         with open(blobfile_path, "wb") as blobfile:
             pk.dump(blob, blobfile)
 
         data = {
             "type": type(self).__name__,
             "op_name": self.op_name,
-            "transformation_blob": blobfile_path,
+            "transformation_blob": blobfile_name,
             "input_size_x": self.input_size,
             "input_size_y": self.input_size_y,
         }

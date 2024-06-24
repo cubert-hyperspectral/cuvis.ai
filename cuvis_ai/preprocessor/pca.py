@@ -36,7 +36,7 @@ class PCA(Node, Preprocessor):
         self.fit_pca.fit(image_2d)
         # Set the dimensions for a later check
         # Constrain the number of wavelengths
-        self.input_size = (-1, -1, X.shape[2])
+        self.input_size = (-1, -1, image_2d.shape[1])
         self.output_size = (-1, -1, self.n_components)
         # Initialization is complete
         self.initialized = True

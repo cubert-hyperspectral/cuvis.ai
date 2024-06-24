@@ -1,6 +1,7 @@
 from .base_supervised import BaseSupervised
 from sklearn import svm as sk_svm
 
+from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
@@ -10,25 +11,25 @@ import pickle as pk
 import os
 
 
-class SVM(BaseSupervised):
+class SVM(Node, BaseSupervised):
 
     def __init__(self) -> None:
         super().__init__()
 
         self.svm = sk_svm.SVC()
-        self._input_dim = (-1, -1, -1)
-        self._output_dim = (-1, -1, -1)
+        self.input_size = (-1, -1, -1)
+        self.output_size = (-1, -1, -1)
 
-    @BaseSupervised.input_dim.getter
+    @Node.input_dim.getter
     def input_dim(self):
-        return self._input_dim
+        return self.input_size
 
-    @BaseSupervised.output_dim.getter
+    @Node.output_dim.getter
     def output_dim(self):
-        return self._output_dim
+        return self.output_size
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        self._input_dim = get_shape_without_batch(X, ignore=[0, 1])
+        self.input_size = get_shape_without_batch(X, ignore=[0, 1])
 
         flatten_image = flatten_batch_and_spatial(X)
         flatten_l = flatten_batch_and_labels(Y)
@@ -54,8 +55,8 @@ class SVM(BaseSupervised):
         data = {
             'type': type(self).__name__,
             'id': self.id,
-            'n_components': self.n_components,
             'input_size': self.input_size,
+            'output_size': self.output_size,
             'svm_object': f"{hash(self.svm)}_svm.pkl"
         }
         # Dump to a string
@@ -64,7 +65,7 @@ class SVM(BaseSupervised):
     def load(self, params: dict, filepath: str):
         self.id = params.get('id')
         self.input_size = params.get('input_size')
-        self.n_components = params.get('n_components')
+        self.output_size = params.get('output_size')
         self.svm = pk.load(
             open(os.path.join(filepath, params.get('svm_object')), 'rb'))
         self.initialized = True

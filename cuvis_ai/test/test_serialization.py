@@ -2,6 +2,7 @@ import unittest
 import yaml
 import os
 import shutil
+import numpy as np
 from ..utils.test import get_np_dummy_data
 from ..preprocessor import PCA, NMF
 from ..unsupervised import GMM, KMeans, MeanShift
@@ -104,21 +105,21 @@ class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = SVM()
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)),
-                      get_np_dummy_data((10, 15, 20, 1)))
+        self.node.fit(get_np_dummy_data((15, 20, 25)),
+                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))
 
 
 class TestSupervisedQDA(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = QDA()
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)),
-                      get_np_dummy_data((10, 15, 20, 1)))
+        self.node.fit(get_np_dummy_data((15, 20, 25)),
+                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))
 
 
 class TestSupervisedLDA(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = LDA()
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)),
-                      get_np_dummy_data((10, 15, 20, 1)))
+        self.node.fit(get_np_dummy_data((15, 20, 25)),
+                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))

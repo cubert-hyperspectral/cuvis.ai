@@ -1,6 +1,7 @@
 from .base_supervised import BaseSupervised
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as sk_lda
 
+from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
 import yaml
 import numpy as np
@@ -11,26 +12,28 @@ from dataclasses import dataclass
 
 
 @dataclass
-class LDA(BaseSupervised):
+class LDA(Node, BaseSupervised):
     solver: str = 'svd'
     n_components: int = None
 
     def __post_init__(self):
+        super().__init__()
         self.initialized = False
-
+        self.input_size = (-1, -1, -1)
+        self.output_size = (-1, -1, -1)
         self.lda = sk_lda(solver=self.solver, n_components=self.n_components)
 
-    @BaseSupervised.input_dim.getter
+    @Node.input_dim.getter
     def input_dim(self):
-        return self._input_dim
+        return self.input_size
 
-    @BaseSupervised.output_dim.getter
+    @Node.output_dim.getter
     def output_dim(self):
-        return self._output_dim
+        return self.output_size
 
     def fit(self, X: np.ndarray, Y: np.ndarray):
-        self._input_dim = get_shape_without_batch(X, ignore=[0, 1])
-        self._output_dim = (-1, -1, self.n_components)
+        self.input_size = get_shape_without_batch(X, ignore=[0, 1])
+        self.output_size = (-1, -1, self.n_components)
 
         flatten_image = flatten_batch_and_spatial(X)
         flatten_l = flatten_batch_and_labels(Y)
@@ -58,6 +61,7 @@ class LDA(BaseSupervised):
             'id': self.id,
             'n_components': self.n_components,
             'input_size': self.input_size,
+            'output_size': self.output_size,
             'lda_object': f"{hash(self.lda)}_lda.pkl"
         }
         # Dump to a string
@@ -66,6 +70,7 @@ class LDA(BaseSupervised):
     def load(self, params: dict, filepath: str):
         self.id = params.get('id')
         self.input_size = params.get('input_size')
+        self.output_size = params.get('output_size')
         self.n_components = params.get('n_components')
         self.lda = pk.load(
             open(os.path.join(filepath, params.get('lda_object')), 'rb'))

@@ -6,28 +6,28 @@ from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_s
 import numpy as np
 from typing import Any
 
+
 class BinaryDecider(BaseDecider):
     """Simple decider node using a static threshold to classify data.
-    
+
     Parameters
     ----------
     threshold : Any
         The threshold to use for classification: result = (input >= threshold)
     """
 
-    def __init__(self, threshold : Any) -> None:
+    def __init__(self, threshold: Any) -> None:
         super().__init__()
         self.threshold = threshold
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         """Apply binary decision on input data.
-        
+
         Paramaters
         ----------
         X : np.ndarray
             Input data as numpy array
-        
+
         Returns
         -------
         np.ndarray
@@ -48,19 +48,19 @@ class BinaryDecider(BaseDecider):
         tuple
             Needed shape for data
         """
-        return [-1,-1,1]
+        return [-1, -1, 1]
 
     def serialize(self):
         """
         Convert the class into a serialized representation
         """
         return super().serialize()
-    
+
     def load(self) -> None:
         """
         Load from serialized format into an object
         """
         return super().load()
-    
+
 
 # TODO: How would this functionality be integrated into Deep Learning Methods and Models

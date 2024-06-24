@@ -2,23 +2,23 @@ import os
 import yaml
 import pickle as pk
 import numpy as np
-import uuid
 from ..node import Node
+from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from .base_preprocessor import Preprocessor
 from sklearn.decomposition import NMF as sk_nmf
+
 
 class NMF(Node, Preprocessor):
     """
     Non-Negative Matrix Factorization (NMF) preprocessor.
     """
-    
-    def __init__(self, n_components: int=None):
+
+    def __init__(self, n_components: int = None):
         super().__init__()
         self.n_components = n_components
         self.input_size = (-1, -1, -1)
         self.output_size = (-1, -1, -1)
         self.initialized = False
-        self.id =  f'{self.__class__.__name__}-{str(uuid.uuid4())}'
 
     def fit(self, X: np.ndarray):
         """
@@ -30,30 +30,24 @@ class NMF(Node, Preprocessor):
         Returns:
         self
         """
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         self.fit_nmf = sk_nmf(n_components=self.n_components)
         self.fit_nmf.fit(image_2d)
         # Set the dimensions for a later check
-        self.input_size = (-1, -1, X.shape[2]) # Constrain the number of wavelengths
+        # Constrain the number of wavelengths
+        self.input_size = (-1, -1, image_2d.shape[1])
         self.output_size = (-1, -1, self.n_components)
         # Initialization is complete
         self.initialized = True
 
-    def check_input_dim(self, X: np.ndarray):
-        assert(X.shape[2] == self.input_size[2])
-
-    def check_output_dim(self, X: np.ndarray):
-        assert(X.shape[2] == self.n_components)
-    
     @Node.input_dim.getter
     def input_dim(self):
         return self.input_size
-    
+
     @Node.output_dim.getter
     def output_dim(self):
         return self.output_size
-    
+
     def forward(self, X: np.ndarray):
         """
         Transform the input data.
@@ -65,11 +59,9 @@ class NMF(Node, Preprocessor):
         Transformed data.
         """
         # Transform data using precomputed NMF components
-        n_pixels = X.shape[0] * X.shape[1]
-        image_2d = X.reshape(n_pixels, -1)
+        image_2d = flatten_batch_and_spatial(X)
         data = self.fit_nmf.transform(image_2d)
-        cube_data = data.reshape((X.shape[0], X.shape[1], self.n_components))
-        return cube_data
+        return unflatten_batch_and_spatial(data, X.shape)
 
     def serialize(self, serial_dir: str):
         '''
@@ -79,7 +71,8 @@ class NMF(Node, Preprocessor):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_nmf, open(os.path.join(serial_dir,f"{hash(self.fit_nmf)}_nmf.pkl"),"wb"))
+        pk.dump(self.fit_nmf, open(os.path.join(
+            serial_dir, f"{hash(self.fit_nmf)}_nmf.pkl"), "wb"))
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -99,6 +92,6 @@ class NMF(Node, Preprocessor):
         self.input_size = params.get('input_size')
         self.n_components = params.get('n_components')
         self.output_size = params.get('output_size')
-        self.fit_nmf = pk.load(open(os.path.join(filepath,params.get('nmf_object')),'rb'))
+        self.fit_nmf = pk.load(
+            open(os.path.join(filepath, params.get('nmf_object')), 'rb'))
         self.initialized = True
-

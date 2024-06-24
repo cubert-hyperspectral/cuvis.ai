@@ -19,7 +19,7 @@ class TestNodeSerialization():
     def test_serialization(self):
         os.makedirs(TEST_DIR, exist_ok=True)
 
-        if lnode.load.__code__.co_argcount == 2:
+        if self.node.serialize.__code__.co_argcount == 2:
             node_yaml = self.node.serialize(TEST_DIR)
         else:
             node_yaml = self.node.serialize()

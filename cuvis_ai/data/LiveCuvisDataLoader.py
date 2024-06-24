@@ -183,9 +183,9 @@ class LiveCuvisDataLoader(BaseDataSet):
         while mesu is None:
             try:
                 if self.continuous:
-                    mesu = self.camera.get_next_measurement(self.capture_timeout_ms)
+                    mesu = self.camera.get_next_measurement(int(self.capture_timeout_ms))
                 else:
-                    mesu = self.camera.capture_at(self.capture_timeout_ms)
+                    mesu = self.camera.capture_at(int(self.capture_timeout_ms))
             except SDKException:
                 raise RuntimeError("Could not fetch a measurement from the device - Timeout")
         return mesu

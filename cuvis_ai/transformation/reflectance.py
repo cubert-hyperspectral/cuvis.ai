@@ -2,6 +2,7 @@ from .base_transformation import BaseTransformation
 from ..node import MetadataConsumer, MetadataConsumerInference, Node
 import numpy as np
 import uuid
+import yaml
 from typing import Dict, Iterable, Any, Tuple, List
 import torch
 

@@ -100,18 +100,21 @@ class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = SVM()
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+        self.node.fit(get_np_dummy_data((10, 15, 20, 25)),
+                      get_np_dummy_data((10, 15, 20, 1)))
 
 
 class TestSupervisedQDA(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = QDA()
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+        self.node.fit(get_np_dummy_data((10, 15, 20, 25)),
+                      get_np_dummy_data((10, 15, 20, 1)))
 
 
 class TestSupervisedLDA(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = LDA()
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+        self.node.fit(get_np_dummy_data((10, 15, 20, 25)),
+                      get_np_dummy_data((10, 15, 20, 1)))

@@ -14,13 +14,11 @@ from dataclasses import dataclass
 
 @dataclass
 class QDA(BaseSupervised):
-    solver: str = 'svd'
-    n_components: int = None
 
     def __post_init__(self):
         self.initialized = False
 
-        self.qda = sk_qda(solver=self.solver, n_components=self.n_components)
+        self.qda = sk_qda()
 
     @BaseSupervised.input_dim.getter
     def input_dim(self):
@@ -58,7 +56,6 @@ class QDA(BaseSupervised):
         data = {
             'type': type(self).__name__,
             'id': self.id,
-            'n_components': self.n_components,
             'input_size': self.input_size,
             'qda_object': f"{hash(self.qda)}_qda.pkl"
         }
@@ -68,7 +65,6 @@ class QDA(BaseSupervised):
     def load(self, params: dict, filepath: str):
         self.id = params.get('id')
         self.input_size = params.get('input_size')
-        self.n_components = params.get('n_components')
         self.qda = pk.load(
             open(os.path.join(filepath, params.get('qda_object')), 'rb'))
         self.initialized = True

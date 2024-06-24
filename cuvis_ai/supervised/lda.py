@@ -2,8 +2,10 @@ from .base_supervised import BaseSupervised
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as sk_lda
 
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
-
+import yaml
 import numpy as np
+import pickle as pk
+import os
 
 from dataclasses import dataclass
 
@@ -44,8 +46,27 @@ class LDA(BaseSupervised):
         predictions = unflatten_batch_and_spatial(predictions, X.shape)
         return predictions
 
-    def serialize(self):
-        pass
+    def serialize(self, serial_dir: str):
+        if not self.initialized:
+            print('Module not fully initialized, skipping output!')
+            return
+        # Write pickle object to file
+        pk.dump(self.lda, open(os.path.join(
+            serial_dir, f"{hash(self.lda)}_lda.pkl"), "wb"))
+        data = {
+            'type': type(self).__name__,
+            'id': self.id,
+            'n_components': self.n_components,
+            'input_size': self.input_size,
+            'lda_object': f"{hash(self.lda)}_lda.pkl"
+        }
+        # Dump to a string
+        return yaml.dump(data, default_flow_style=False)
 
-    def load():
-        pass
+    def load(self, params: dict, filepath: str):
+        self.id = params.get('id')
+        self.input_size = params.get('input_size')
+        self.n_components = params.get('n_components')
+        self.lda = pk.load(
+            open(os.path.join(filepath, params.get('lda_object')), 'rb'))
+        self.initialized = True

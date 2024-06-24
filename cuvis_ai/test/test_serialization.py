@@ -2,12 +2,12 @@ import unittest
 import yaml
 import os
 import shutil
-from copy import deepcopy
-from cuvis_ai.utils.test import get_np_dummy_data
-from cuvis_ai.preprocessor import PCA, NMF
-from cuvis_ai.unsupervised import GMM, KMeans, MeanShift
-from cuvis_ai.transformation import Reflectance, TorchTransformation, TorchVisionTransformation
-from cuvis_ai.tv_transforms import Bandpass
+from ..utils.test import get_np_dummy_data
+from ..preprocessor import PCA, NMF
+from ..unsupervised import GMM, KMeans, MeanShift
+from ..transformation import Reflectance, TorchTransformation, TorchVisionTransformation
+from ..supervised import SVM, QDA, LDA
+from ..tv_transforms import Bandpass
 
 
 TYPES_TO_CHECK = (int, float, str, bool, list, tuple)
@@ -93,4 +93,25 @@ class TestTransformationReflectance(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
         self.node = Reflectance(0.1, 1.8)
+        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+
+
+class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):
+
+    def setUp(self):
+        self.node = SVM()
+        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+
+
+class TestSupervisedQDA(TestNodeSerialization, unittest.TestCase):
+
+    def setUp(self):
+        self.node = QDA()
+        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+
+
+class TestSupervisedLDA(TestNodeSerialization, unittest.TestCase):
+
+    def setUp(self):
+        self.node = LDA()
         self.node.fit(get_np_dummy_data((10, 15, 20, 25)))

@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/fix_pages_job
 
 jobs:
   build-and-deploy:
@@ -14,19 +13,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
-
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install -r docs/requirements.txt
-
-      - name: Build
-        run: |
-          pwd
-          sphinx-build -M html docs docs/_build
-          touch ./_build/html/.nojekyll
-          
-
+      - name: Build docker images
+        run: docker build -t "cuvis_ai" .
+      - name: Make empty dir
+        run: mkdir -p ./docs/_build
+      - name: Run docker container
+        run: docker run -v ./docs/_build:/install/cuvis.ai/docs/_build cuvis_ai /bin/bash  /install/cuvis.ai/entrypoint_doc.sh
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

@@ -42,7 +42,7 @@ class MeanShift(Node, BaseUnsupervised):
         self.fit_meanshift.fit(image_2d)
         # Set the dimensions for a later check
         # Constrain the number of wavelengths or input features
-        self.input_size = (-1, -1, X.shape[2])
+        self.input_size = (-1, -1, image_2d.shape[1])
         self.output_size = (-1, -1, 1)
         # Initialization is complete
         self.initialized = True

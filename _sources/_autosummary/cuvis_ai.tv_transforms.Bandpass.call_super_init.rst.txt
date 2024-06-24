@@ -1,0 +1,6 @@
+cuvis\_ai.tv\_transforms.Bandpass.call\_super\_init
+===================================================
+
+.. currentmodule:: cuvis_ai.tv_transforms
+
+.. autoattribute:: Bandpass.call_super_init

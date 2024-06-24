@@ -1,0 +1,28 @@
+cuvis\_ai.utils.serializer.Serializer
+=====================================
+
+.. currentmodule:: cuvis_ai.utils.serializer
+
+.. autoclass:: Serializer
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Serializer.__init__
+      ~Serializer.load_node
+      ~Serializer.serialize_node
+   
+   
+
+   
+   
+   

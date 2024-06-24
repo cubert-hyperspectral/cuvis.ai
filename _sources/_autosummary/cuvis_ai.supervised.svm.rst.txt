@@ -1,0 +1,31 @@
+cuvis\_ai.supervised.svm
+========================
+
+.. automodule:: cuvis_ai.supervised.svm
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      SVM
+   
+   
+
+   
+   
+   
+
+
+

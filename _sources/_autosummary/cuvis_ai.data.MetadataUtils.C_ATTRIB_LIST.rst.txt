@@ -1,0 +1,6 @@
+cuvis\_ai.data.MetadataUtils.C\_ATTRIB\_LIST
+============================================
+
+.. currentmodule:: cuvis_ai.data.MetadataUtils
+
+.. autodata:: C_ATTRIB_LIST

@@ -1,0 +1,6 @@
+cuvis\_ai.utils.numpy\_utils.unflatten\_spatial
+===============================================
+
+.. currentmodule:: cuvis_ai.utils.numpy_utils
+
+.. autofunction:: unflatten_spatial

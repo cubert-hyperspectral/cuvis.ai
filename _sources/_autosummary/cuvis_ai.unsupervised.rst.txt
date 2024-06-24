@@ -1,0 +1,35 @@
+cuvis\_ai.unsupervised
+======================
+
+.. automodule:: cuvis_ai.unsupervised
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst                
+   :recursive:
+
+   cuvis_ai.unsupervised.base_unsupervised
+   cuvis_ai.unsupervised.gmm
+   cuvis_ai.unsupervised.kmeans
+   cuvis_ai.unsupervised.mean_shift
+

@@ -1,0 +1,6 @@
+cuvis\_ai.tv\_transforms.NormalizeToFloat.dump\_patches
+=======================================================
+
+.. currentmodule:: cuvis_ai.tv_transforms
+
+.. autoattribute:: NormalizeToFloat.dump_patches

@@ -1,0 +1,39 @@
+cuvis\_ai.utils.numpy\_utils
+============================
+
+.. automodule:: cuvis_ai.utils.numpy_utils
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                          
+   
+      check_array_shape
+      flatten_batch_and_labels
+      flatten_batch_and_spatial
+      flatten_labels
+      flatten_spatial
+      get_shape_without_batch
+      unflatten_batch_and_labels
+      unflatten_batch_and_spatial
+      unflatten_labels
+      unflatten_spatial
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

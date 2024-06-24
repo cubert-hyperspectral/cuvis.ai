@@ -1,0 +1,6 @@
+cuvis\_ai.tv\_transforms.MultiBandpass.training
+===============================================
+
+.. currentmodule:: cuvis_ai.tv_transforms
+
+.. autoattribute:: MultiBandpass.training

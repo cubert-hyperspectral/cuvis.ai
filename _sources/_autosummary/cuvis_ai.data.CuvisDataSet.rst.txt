@@ -1,0 +1,31 @@
+cuvis\_ai.data.CuvisDataSet
+===========================
+
+.. automodule:: cuvis_ai.data.CuvisDataSet
+  
+   
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:                                          
+   
+      input_dim
+      output_dim
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -35,6 +35,7 @@
    cuvis_ai.pipeline
    cuvis_ai.preprocessor
    cuvis_ai.supervised
+   cuvis_ai.test
    cuvis_ai.transformation
    cuvis_ai.tv_transforms
    cuvis_ai.unsupervised

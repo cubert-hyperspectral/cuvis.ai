@@ -1,0 +1,31 @@
+cuvis\_ai.supervised.lda
+========================
+
+.. automodule:: cuvis_ai.supervised.lda
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      LDA
+   
+   
+
+   
+   
+   
+
+
+

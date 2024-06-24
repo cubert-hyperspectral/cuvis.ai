@@ -1,0 +1,6 @@
+cuvis\_ai.tv\_transforms.NormalizeStdDev.call\_super\_init
+==========================================================
+
+.. currentmodule:: cuvis_ai.tv_transforms
+
+.. autoattribute:: NormalizeStdDev.call_super_init

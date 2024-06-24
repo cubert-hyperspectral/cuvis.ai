@@ -1,0 +1,6 @@
+cuvis\_ai.data.utils\_dataloader.cuvis\_collate
+===============================================
+
+.. currentmodule:: cuvis_ai.data.utils_dataloader
+
+.. autofunction:: cuvis_collate

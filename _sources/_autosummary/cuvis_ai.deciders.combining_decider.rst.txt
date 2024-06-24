@@ -1,0 +1,39 @@
+cuvis\_ai.deciders.combining\_decider
+=====================================
+
+.. automodule:: cuvis_ai.deciders.combining_decider
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                          
+   
+      all_agree
+      at_least_n_agree
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      CombiningDecider
+   
+   
+
+   
+   
+   
+
+
+

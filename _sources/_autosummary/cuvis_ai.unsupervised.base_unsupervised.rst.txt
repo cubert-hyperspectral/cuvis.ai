@@ -1,0 +1,31 @@
+cuvis\_ai.unsupervised.base\_unsupervised
+=========================================
+
+.. automodule:: cuvis_ai.unsupervised.base_unsupervised
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      BaseUnsupervised
+   
+   
+
+   
+   
+   
+
+
+

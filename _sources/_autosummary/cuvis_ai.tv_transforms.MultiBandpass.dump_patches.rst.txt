@@ -1,0 +1,6 @@
+cuvis\_ai.tv\_transforms.MultiBandpass.dump\_patches
+====================================================
+
+.. currentmodule:: cuvis_ai.tv_transforms
+
+.. autoattribute:: MultiBandpass.dump_patches

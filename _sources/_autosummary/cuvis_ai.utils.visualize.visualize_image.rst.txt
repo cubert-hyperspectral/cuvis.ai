@@ -1,0 +1,6 @@
+cuvis\_ai.utils.visualize.visualize\_image
+==========================================
+
+.. currentmodule:: cuvis_ai.utils.visualize
+
+.. autofunction:: visualize_image

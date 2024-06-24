@@ -1,0 +1,6 @@
+cuvis\_ai.data.Labels2TV.RLE2mask
+=================================
+
+.. currentmodule:: cuvis_ai.data.Labels2TV
+
+.. autofunction:: RLE2mask

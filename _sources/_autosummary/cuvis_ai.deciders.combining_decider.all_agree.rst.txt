@@ -1,0 +1,6 @@
+cuvis\_ai.deciders.combining\_decider.all\_agree
+================================================
+
+.. currentmodule:: cuvis_ai.deciders.combining_decider
+
+.. autofunction:: all_agree

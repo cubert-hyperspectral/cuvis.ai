@@ -13,21 +13,14 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
-
-      - name: Install Dependencies
-        run: |
-          pip install -r docs/requirements.txt
-
-      - name: Build
-        run: |
-          mkdir _build
-          cmake -B ./_build .
-          cmake --build "_build"
-          touch ./_build/doc/sphinx/.nojekyll
-          
-
+      - name: Build docker images
+        run: docker build -t "cuvis_ai" .
+      - name: Make empty dir
+        run: mkdir -p ./docs/_build
+      - name: Run docker container
+        run: docker run -v ./docs/_build:/install/cuvis.ai/docs/_build cuvis_ai /bin/bash  /install/cuvis.ai/entrypoint_doc.sh
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./_build/doc/sphinx
+          folder: ./docs/_build/html/
 

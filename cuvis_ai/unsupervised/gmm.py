@@ -116,6 +116,7 @@ class GMM(Node, BaseUnsupervised):
             'id': self.id,
             'n_clusters': self.n_clusters,
             'input_size': self.input_size,
+            'output_size': self.output_size,
             'gmm_object': f"{hash(self.fit_gmm)}_gmm.pkl"
         }
         # Dump to a string
@@ -133,6 +134,7 @@ class GMM(Node, BaseUnsupervised):
         """
         self.id = params.get('id')
         self.input_size = params.get('input_size')
+        self.output_size = params.get('output_size')
         self.n_clusters = params.get('n_clusters')
         self.fit_gmm = pk.load(
             open(os.path.join(filepath, params.get('gmm_object')), 'rb'))

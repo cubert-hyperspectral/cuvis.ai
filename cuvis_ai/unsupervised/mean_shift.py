@@ -110,6 +110,7 @@ class MeanShift(Node, BaseUnsupervised):
             'type': type(self).__name__,
             'id': self.id,
             'input_size': self.input_size,
+            'output_size': self.output_size,
             'mean_shift_object': f"{hash(self.fit_meanshift)}_mean_shift.pkl"
         }
         # Dump to a string
@@ -127,6 +128,7 @@ class MeanShift(Node, BaseUnsupervised):
         """
         self.id = params.get('id')
         self.input_size = params.get('input_size')
+        self.output_size = params.get('output_size')
         self.fit_meanshift = pk.load(
             open(os.path.join(filepath, params.get('mean_shift_object')), 'rb'))
         self.initialized = True

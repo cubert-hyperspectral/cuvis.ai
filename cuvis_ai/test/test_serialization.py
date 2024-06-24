@@ -32,12 +32,16 @@ class TestNodeSerialization():
         else:
             lnode.load(params=node_dict)
 
-        load_ok = all((getattr(lnode, attr) == getattr(self.node, attr)
-                       for attr in lnode.__dict__.keys()
-                       if type(getattr(lnode, attr)) in TYPES_TO_CHECK))
+        load_ok = True
+        for attr in lnode.__dict__.keys():
+            if type(getattr(lnode, attr)) not in TYPES_TO_CHECK:
+                continue
+            if getattr(lnode, attr) != getattr(self.node, attr):
+                print(F"Attribute '{attr}' not equal!")
+                load_ok = False
+        shutil.rmtree(TEST_DIR)
 
         self.assertTrue(load_ok)
-        shutil.rmtree(TEST_DIR)
 
 
 class TestPreprocessorPCA(TestNodeSerialization, unittest.TestCase):

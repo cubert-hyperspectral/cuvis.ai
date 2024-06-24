@@ -116,6 +116,7 @@ class KMeans(Node, BaseUnsupervised):
             'id': self.id,
             'n_clusters': self.n_clusters,
             'input_size': self.input_size,
+            'output_size': self.output_size,
             'kmeans_object': f"{hash(self.fit_kmeans)}_kmeans.pkl"
         }
         # Dump to a string
@@ -133,6 +134,7 @@ class KMeans(Node, BaseUnsupervised):
         """
         self.id = params.get('id')
         self.input_size = params.get('input_size')
+        self.output_size = params.get('output_size')
         self.n_clusters = params.get('n_clusters')
         self.fit_kmeans = pk.load(
             open(os.path.join(filepath, params.get('kmeans_object')), 'rb'))

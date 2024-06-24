@@ -51,13 +51,28 @@ class CuvisDataSet(NumpyDataSet):
         cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
 
     class _SessionCubeLoader_:
-        def __init__(self, path, idx):
+        def __init__(self, path, idx, proc_mode=None):
             self.path = path
             self.idx = idx
+            self.proc_mode = proc_mode
 
         def __call__(self, to_dtype: np.dtype):
-            cube = cuvis.SessionFile(self.path).get_measurement(
-                self.idx).data["cube"].array
+            sess = cuvis.SessionFile(self.path)
+            mesu = sess.get_measurement(self.idx)
+            need_reprocess = bool(self.proc_mode is None)
+            try:
+                cube = mesu.data["cube"].array
+            except KeyError:
+                need_reprocess = True
+
+            if need_reprocess:
+                pc = cuvis.ProcessingContext(sess)
+                if self.proc_mode is not None:
+                    pc.processing_mode = self.proc_mode
+                mesu = pc.apply(mesu)
+
+            cube = mesu.data["cube"].array
+
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -71,8 +86,17 @@ class CuvisDataSet(NumpyDataSet):
             self.reftype = reftype
 
         def __call__(self, to_dtype: np.dtype):
-            cube = cuvis.SessionFile(self.path).get_reference(
-                0, self.reftype).data["cube"].array
+            try:
+                cube = cuvis.SessionFile(self.path).get_reference(
+                    0, self.reftype).data["cube"].array
+            except KeyError:
+                sess = cuvis.SessionFile(self.path)
+                mesu = sess.get_reference(0, self.reftype)
+                pc = cuvis.ProcessingContext(sess)
+                pc.processing_mode = cuvis.ProcessingMode.Raw
+                mesu = pc.apply(mesu)
+                cube = mesu.data["cube"].array
+
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -81,11 +105,26 @@ class CuvisDataSet(NumpyDataSet):
             return cube.to(memory_format=torch.channels_last)
 
     class _LegacyCubeLoader_:
-        def __init__(self, path):
+        def __init__(self, path, proc_mode=None):
             self.path = path
+            self.proc_mode = proc_mode
 
         def __call__(self, to_dtype: np.dtype):
-            cube = cuvis.Measurement.load(self.path).data["cube"].array
+            mesu = cuvis.Measurement.load(self.path)
+            need_reprocess = bool(self.proc_mode is None)
+            try:
+                cube = mesu.data["cube"].array
+            except KeyError:
+                need_reprocess = True
+
+            if need_reprocess:
+                pc = cuvis.ProcessingContext(mesu)
+                if self.proc_mode is not None:
+                    pc.processing_mode = self.proc_mode
+                mesu = pc.apply(mesu)
+
+            cube = mesu.data["cube"].array
+
             if cube.dtype != to_dtype:
                 cube = cube.astype(to_dtype)
             cube = tv_tensors.Image(cube)
@@ -99,11 +138,13 @@ class CuvisDataSet(NumpyDataSet):
                  target_transform: Optional[Callable] = None,
                  output_format: OutputFormat = OutputFormat.Full,
                  output_lambda: Optional[Callable] = None,
+                 force_proc_mode: Optional[cuvis.ProcessingMode] = None
                  ):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
         super().__init__(root, transforms=transforms, transform=transform,
                          target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
+        self.processing_mode = force_proc_mode
 
     def _load_directory(self, dir_path: str):
         if debug_enabled:
@@ -133,6 +174,12 @@ class CuvisDataSet(NumpyDataSet):
         sess_meta = metadataInit(filepath, self.fileset_metadata)
 
         temp_mesu = crt_session.get_measurement(0)
+        try:
+            temp_mesu.data["cube"]
+        except KeyError:
+            pc = cuvis.ProcessingContext(crt_session)
+            temp_mesu = pc.apply(temp_mesu)
+
         sess_meta["shape"] = (temp_mesu.data["cube"].width,
                               temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
         canvas_size = (sess_meta["shape"][0], sess_meta["shape"][1])
@@ -168,7 +215,8 @@ class CuvisDataSet(NumpyDataSet):
         for idx in range(cube_count):
             cube_path = F"{filepath}:{idx}"
             self.paths.append(cube_path)
-            self.cubes.append(self._SessionCubeLoader_(filepath, idx))
+            self.cubes.append(self._SessionCubeLoader_(
+                filepath, idx, self.processing_mode))
 
             meta = copy.deepcopy(sess_meta)
             # TODO: Add a way to SDK where only meta data is loaded or make the cube lazy-loadable
@@ -183,9 +231,11 @@ class CuvisDataSet(NumpyDataSet):
             for _, v in meta["references"].items():
                 if isinstance(v, str):
                     if os.path.splitext(v)[-1] == ".cu3s":
-                        v = self._SessionCubeLoader_(v)
+                        v = self._SessionCubeLoader_(
+                            v, 0, cuvis.ProcessingMode.Raw)
                     elif os.path.splitext(v)[-1] == ".cu3":
-                        v = self._LegacyCubeLoader_(v)
+                        v = self._LegacyCubeLoader_(
+                            v, cuvis.ProcessingMode.Raw)
 
             self.metas.append(meta)
 
@@ -211,6 +261,12 @@ class CuvisDataSet(NumpyDataSet):
             meta = Metadata(filepath)
 
         mesu = cuvis.Measurement(filepath)
+        try:
+            mesu.data["cube"]
+        except KeyError:
+            pc = cuvis.ProcessingContext(mesu)
+            mesu = pc.apply(mesu)
+
         meta["shape"] = (mesu.data["cube"].width,
                          mesu.data["cube"].height, mesu.data["cube"].channels)
         meta["wavelengths_nm"] = WavelengthList(mesu.data["cube"].wavelength)
@@ -228,7 +284,8 @@ class CuvisDataSet(NumpyDataSet):
             l = convert_COCO2TV(anns, canvas_size)
         self.labels.append(l)
 
-        self.cubes.append(self._LegacyCubeLoader_(filepath))
+        self.cubes.append(self._LegacyCubeLoader_(
+            filepath, self.processing_mode))
 
         meta["integration_time_us"] = int(mesu.integration_time * 1000)
         meta["flags"] = {}
@@ -236,6 +293,7 @@ class CuvisDataSet(NumpyDataSet):
             meta["flags"][key] = val
         meta["references"] = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            meta["references"][key] = self._LegacyCubeLoader_(val)
+            meta["references"][key] = self._LegacyCubeLoader_(
+                val, cuvis.ProcessingMode.Raw)
 
         self.metas.append(meta)

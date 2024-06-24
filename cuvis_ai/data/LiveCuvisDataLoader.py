@@ -70,7 +70,6 @@ class LiveCuvisDataLoader(BaseDataSet):
         output_lambda: Optional[Callable] = None
     ):
         super().__init__(path, transforms, transform, target_transform, output_format, output_lambda)
-        self.id = F"{self.__class__.__name__}-{str(uuid.uuid4())}"
         self._clear()
         self.batch_size = batch_size
         if path is not None:

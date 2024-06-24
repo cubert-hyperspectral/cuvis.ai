@@ -99,7 +99,7 @@ class TorchTransformation(BaseTransformation):
     def input_dim(self) -> Tuple[int, int, int]:
         return -1, -1, -1
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> str:
         """Serialize this node and save to :arg:`serial_dir`."""
         if not self.initialized:
             print('Module not fully initialized, skipping output!')

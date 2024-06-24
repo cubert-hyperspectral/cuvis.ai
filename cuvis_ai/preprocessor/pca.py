@@ -64,7 +64,7 @@ class PCA(Node, Preprocessor):
     def output_dim(self):
         return self.output_size
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> str:
         '''
         This method should dump parameters to a yaml file format
         '''

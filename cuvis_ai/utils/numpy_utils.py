@@ -1,6 +1,11 @@
 
 import numpy as np
 from typing import Tuple, Union
+import json
+import datetime
+import os.path as osp
+import cv2 as cv
+import pycocotools
 
 
 def get_shape_without_batch(array: np.ndarray, ignore=()):
@@ -114,18 +119,6 @@ def unflatten_batch_and_labels(array: np.ndarray, orig_shape):
     if array.ndim != 1:
         raise ValueError("Input array must be 1D.")
     return array.reshape(orig_shape)
-import numpy as np
-import json
-import datetime
-import os.path as osp
-import cv2 as cv
-from itertools import groupby
-import pycocotools
-
-'''
-
-'''
-
 
 def binary_mask_to_rle(binary_mask):
     """
@@ -147,14 +140,15 @@ def binary_mask_to_rle(binary_mask):
     rle["counts"] = lengths.tolist()
 
     return rle
-def gen_coco_labels(img: np.ndarray, mask: np.ndarray, label_names: list, output_dir: str, name: str, single_object_per_label: bool = False):
+
+def gen_coco_labels(mask: np.ndarray, label_names: list, output_dir: str, name: str,img_name: str = None, single_object_per_label: bool = False):
     """
     generating coco labels from numpy image and mask, occluded objects can not be labeled correctly at the moment
-    :param img: image for which these labels apply
     :param mask: mask should be a mask containing zeros for background and integers for labels
     :param label_names: list of labels
     :param output_dir: path where to save the json file, if the output file already exists, the generated labels will be appended
     :param name: name of the json file
+    :param img: image for which these labels apply
     :param single_object_per_label: clarify if every object has its own label or if multiple objects share the same label. default = False
 
     :return:
@@ -203,15 +197,14 @@ def gen_coco_labels(img: np.ndarray, mask: np.ndarray, label_names: list, output
             )
 
     image_id = len(data["images"]) + 1
-    out_img_file = osp.realpath(osp.join(output_dir, name + "_annotations.jpg"))
 
     data["images"].append(
         dict(
             license=0,
             url=None,
-            file_name=osp.relpath(out_img_file, osp.dirname(out_ann_file)),
-            height=img.shape[0],
-            width=img.shape[1],
+            file_name=img_name if img_name else str(image_id),
+            height=mask.shape[0],
+            width=mask.shape[1],
             date_captured=None,
             id=image_id,
         )

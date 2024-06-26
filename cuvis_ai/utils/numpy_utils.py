@@ -122,14 +122,15 @@ def unflatten_batch_and_labels(array: np.ndarray, orig_shape):
 
 def binary_mask_to_rle(binary_mask):
     """
-    converts
+    converts a binary mask to RLE shamelessly copied from https://stackoverflow.com/a/76990451
     :param binary_mask:
     :return:
     """
     rle = {"counts": [], "size": list(binary_mask.shape)}
-
+    # fortran order needed to correctly convert to RLE
     flattened_mask = binary_mask.ravel(order="F")
     diff_arr = np.diff(flattened_mask)
+    # +1 to "convert" from indices to length
     nonzero_indices = np.where(diff_arr != 0)[0] + 1
     lengths = np.diff(np.concatenate(([0], nonzero_indices, [len(flattened_mask)])))
 
@@ -156,6 +157,7 @@ def gen_coco_labels(mask: np.ndarray, label_names: list, output_dir: str, name: 
 
     now = datetime.datetime.now()
     out_ann_file = osp.realpath(osp.join(output_dir, name + "_annotations.json"))
+    # if label file exists load and extend the file, create new data structure otherwise
     if osp.exists(out_ann_file):
         data = json.load(open(out_ann_file, "r"))
 
@@ -211,6 +213,7 @@ def gen_coco_labels(mask: np.ndarray, label_names: list, output_dir: str, name: 
     )
     for label_id, label in enumerate(label_names, start=1):
         label_mask = mask.copy()
+        # remove unwanted labels
         label_mask[label_mask != label_id] = 0
         label_mask[label_mask == label_id] = 1
         label_mask = label_mask.astype(np.uint8)
@@ -219,6 +222,7 @@ def gen_coco_labels(mask: np.ndarray, label_names: list, output_dir: str, name: 
         # if all areas of one label describe the same object put them into one annotation with iscrowd 1 and RLE compressed
         if not single_object_per_label:
             segmentation = binary_mask_to_rle(label_mask)
+            # make mask Fortran contiguous as pycocotools expects it that way
             label_mask = np.asfortranarray(label_mask.astype(np.uint8))
             label_mask = pycocotools.mask.encode(label_mask)
             area = float(pycocotools.mask.area(label_mask))
@@ -241,7 +245,7 @@ def gen_coco_labels(mask: np.ndarray, label_names: list, output_dir: str, name: 
                 contour = el.squeeze()
                 es = el.shape
                 pts.append(el.reshape((es[0], es[-1])))
-
+                # make contour Fortran contiguous as pycocotools expects it that way
                 contour = np.asfortranarray(contour.astype(np.uint8))
                 contour = pycocotools.mask.encode(contour)
                 area = float(pycocotools.mask.area(contour))

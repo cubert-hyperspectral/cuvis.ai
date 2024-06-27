@@ -28,8 +28,8 @@ class PublicDataSets:
             return False
 
         if not os.path.exists(download_path):
-            print(F"Directory '{
-                  download_path}' does not exist. It will be created.")
+            print(F"Directory '{download_path}' does not exist."
+                  " It will be created.")
             os.makedirs(download_path)
         elif not os.path.isdir(download_path):
             print(

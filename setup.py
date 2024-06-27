@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from pathlib import Path
 
 NAME = 'cuvis_ai'
@@ -22,5 +22,5 @@ setup(
     long_description_content_type='text/markdown',
     install_requires=REQUIREMENTS['install'],
     include_package_data=True,
-    packages=[NAME]
+    packages=find_packages() # Automatically find packages and subpackages)
 )

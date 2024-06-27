@@ -1,16 +1,17 @@
 import gdown
 import os
 
+
 class PublicDataSets:
 
     @classmethod
-    def download_dataset(cls, dataset_name, *, download_path: str="", entries:list=None) -> bool:
+    def download_dataset(cls, dataset_name, *, download_path: str = "", entries: list = None) -> bool:
         try:
             dset = cls._datasets[dataset_name]
         except KeyError:
             print(F"Dataset '{dataset_name}' not found.")
             return False
-        
+
         if entries is None:
             to_download = dset[:]
         else:
@@ -19,47 +20,54 @@ class PublicDataSets:
                 try:
                     to_download.append(dset[e])
                 except IndexError:
-                    print(F"Entry {e} does not exist in dataset '{dataset_name}'")
-        
+                    print(F"Entry {e} does not exist in dataset"
+                          F" '{dataset_name}'")
+
         if len(to_download) == 0:
             print("Nothing to download.")
             return False
 
         if not os.path.exists(download_path):
-            print(F"Directory '{download_path}' does not exist. It will be created.")
+            print(F"Directory '{download_path}' does not exist."
+                  " It will be created.")
             os.makedirs(download_path)
         elif not os.path.isdir(download_path):
-            print(F"Path '{download_path}' cannot be used. It points to an existing file.")
+            print(
+                F"Path '{download_path}' cannot be used. It points to an existing file.")
             return False
 
+        items = []
         if isinstance(to_download[0], list):
-            items = []
             for entry in to_download:
                 items.extend(entry)
             total_items = len(items)
             current_idx = 1
-            print(F"Downloading {total_items} files from dataset '{dataset_name}'")
+            print(F"Downloading {total_items} files from dataset"
+                  F" '{dataset_name}'")
             for i in items:
                 try:
-                    gdown.download(id=i[0], output=os.path.join(download_path, i[1]), resume=True)
+                    gdown.download(id=i[0], output=os.path.join(
+                        download_path, i[1]), resume=True)
                 except e:
                     print("Failed to fetch file:", i[1])
                     print("Error:", e)
         else:
             total_items = len(items)
             current_idx = 1
-            print(F"Downloading {total_items} folders from dataset '{dataset_name}'")
+            print(F"Downloading {total_items} folders from dataset"
+                  F" '{dataset_name}'")
             for i in items:
                 try:
-                    gdown.download_folder(id=i[0], output=os.path.join(download_path, i[1]), resume=True)
+                    gdown.download_folder(id=i[0], output=os.path.join(
+                        download_path, i[1]), resume=True)
                 except e:
                     print("Failed to fetch folder:", i[1])
                     print("Error:", e)
-            
+
         return True
 
     @classmethod
-    def list_datasets(cls, verbose:bool=False):
+    def list_datasets(cls, verbose: bool = False):
         for name, data in cls._datasets.items():
             print(F"Dataset '{name}':")
             if isinstance(data[0], list):
@@ -77,7 +85,7 @@ class PublicDataSets:
                 if verbose:
                     for d in data:
                         print("    ", d[1])
-    
+
     _datasets = {
         "GrowRipe_Samples": [
             [
@@ -139,4 +147,3 @@ class PublicDataSets:
             ],
         ]
     }
-    

@@ -126,7 +126,7 @@ class NumpyDataSet(BaseDataSet):
             self.metadata_filepath = ""
 
         # Actual data collection
-        self._load_directory()
+        self._load_directory(self.root)
         self.initialized = True
 
     def _clear(self):
@@ -139,11 +139,11 @@ class NumpyDataSet(BaseDataSet):
         self.data_types: set = set()
         self.initialized = False
 
-    def _load_directory(self):
+    def _load_directory(self, dir_path: str):
         if debug_enabled:
-            print("Reading from directory:", self.root)
+            print("Reading from directory:", dir_path)
         fileset = glob.glob(os.path.join(
-            self.root, '**/*' + self._FILE_EXTENSION), recursive=True)
+            dir_path, '**/*' + self._FILE_EXTENSION), recursive=True)
 
         for cur_path in fileset:
             self._load_file(cur_path)

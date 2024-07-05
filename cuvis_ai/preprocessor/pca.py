@@ -19,7 +19,7 @@ class PCA(Node, Preprocessor):
         self.n_components = n_components
         self.initialized = False
         self.input_size = (-1, -1, -1)
-        self.output_size = (-1, -1, -1)
+        self.output_size = (-1, -1, self.n_components)
 
     def fit(self, X: np.ndarray):
         """

@@ -7,7 +7,7 @@ from typing import Dict, Iterable, Any, Tuple, List
 import torch
 
 
-class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInference):
+class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerInference):
     """Generic reflectance calculus: (data - dark) / (white - dark)
     Requires "Dark" and "White" references to be set in Metadata.
 
@@ -20,6 +20,7 @@ class Reflectance(BaseTransformation, MetadataConsumer, MetadataConsumerInferenc
     """
 
     def __init__(self, lower_bound: float = 0.0, upper_bound: float = 2.0):
+        super().__init__()
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.input_size = None

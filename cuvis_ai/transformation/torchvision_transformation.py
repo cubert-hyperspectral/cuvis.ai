@@ -8,7 +8,7 @@ from . import BaseTransformation
 from ..node import Node
 
 
-class TorchVisionTransformation(BaseTransformation):
+class TorchVisionTransformation(Node, BaseTransformation):
     """ Node for applying a torchvision transform within the pipeline.
     For proper functionality, these transformations should be added to the dataloader.
     Any transform present in torchvision.transforms.v2 should be compatible.

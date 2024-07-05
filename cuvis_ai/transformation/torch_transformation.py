@@ -9,7 +9,7 @@ from ..node import Node
 from . import BaseTransformation
 
 
-class TorchTransformation(BaseTransformation):
+class TorchTransformation(Node, BaseTransformation):
     """Node representing a transformation of data using a pytorch function.
 
     Parameters

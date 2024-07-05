@@ -15,6 +15,19 @@ class Cascaded(BaseDecider):
     def input_dim(self):
         return [-1, -1, 1]
 
+    @BaseDecider.output_dim.getter
+    def output_dim(self):
+        """
+        Returns the provided shape for the output data.
+        If a dimension is not important it will return -1 in the specific position.
+
+        Returns
+        -------
+        tuple
+            Provided shape for data
+        """
+        return [-1, -1, 1]
+
     def serialize(self):
         return super().serialize()
 

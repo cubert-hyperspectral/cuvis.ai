@@ -8,6 +8,7 @@ import yaml
 import warnings
 from copy import deepcopy
 
+
 class AbstractDistance(Node, CubeConsumer):
     """
     Abstract class for data preprocessing.
@@ -34,6 +35,7 @@ class AbstractDistance(Node, CubeConsumer):
         ref_spectra : list, optional
             List of reference spectra to compare against, by default []
         """
+        super().__init__()
         # Assign any reference spectra, if they exist
         self.ref_spectra = self.spectra_to_array(ref_spectra)
 

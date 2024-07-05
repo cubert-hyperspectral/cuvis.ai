@@ -4,7 +4,7 @@ from ..node import CubeConsumer, Node
 import uuid
 
 
-class BaseTransformation(Node, CubeConsumer):
+class BaseTransformation(CubeConsumer):
     def __init__(self):
         self.input_size = None
         self.output_size = None

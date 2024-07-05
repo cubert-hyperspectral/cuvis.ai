@@ -61,6 +61,10 @@ class AbstractDistance(Node, CubeConsumer):
             ref_spectra = np.expand_dims(ref_spectra, axis=0)
         return ref_spectra
 
+    def fit(self, X):
+        self.initialized = True
+        pass
+
     def forward(self, X: np.ndarray, ref_spectra: list = []) -> np.ndarray:
         """Pass the data through comparative function
 
@@ -181,7 +185,7 @@ class AbstractDistance(Node, CubeConsumer):
             List defining which input dimensions should be checked in graph.
         """
         # Note: Output can be arbitrary length depending on the reference spectra
-        return [-1, -1, -1]
+        return [-1, -1, 1]
 
 
 class SpectralAngle(AbstractDistance):

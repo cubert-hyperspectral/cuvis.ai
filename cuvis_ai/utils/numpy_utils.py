@@ -12,6 +12,8 @@ def get_shape_without_batch(array: np.ndarray, ignore=()):
             ndim = array.ndim
         case tuple():
             ndim = len(array)
+        case list():
+            ndim = len(array)
         case _:
             raise ValueError("Unknown input type.")
 
@@ -22,6 +24,8 @@ def get_shape_without_batch(array: np.ndarray, ignore=()):
         case np.ndarray():
             shape = array.shape if ndim == 3 else array.shape[1:]
         case tuple():
+            shape = array if ndim == 3 else array[1:]
+        case list():
             shape = array if ndim == 3 else array[1:]
         case _:
             raise ValueError("Unknown input type.")
@@ -34,6 +38,8 @@ def check_array_shape(array: Union[np.ndarray, Tuple[int, int, int]], wanted_sha
         case np.ndarray():
             array_shape = array.shape
         case tuple():
+            array_shape = array
+        case list():
             array_shape = array
         case _:
             raise ValueError("Unknown input type.")

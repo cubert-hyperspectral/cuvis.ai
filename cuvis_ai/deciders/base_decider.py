@@ -19,6 +19,10 @@ class BaseDecider(Node, CubeConsumer, ABC):
     def __init__(self):
         super().__init__()
 
+    def fit(self, X):
+        # TODO refactor the thing with the empty fits
+        pass
+
     @abstractmethod
     def forward(self, X):
         """

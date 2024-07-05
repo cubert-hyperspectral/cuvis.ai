@@ -5,9 +5,10 @@ import uuid
 from typing import Tuple
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 from ..node import Node
+from ..node.Consumers import *
 
 
-class BaseDecider(Node, ABC):
+class BaseDecider(Node, CubeConsumer, ABC):
     """
     Abstract class for Decision Making Nodes.
 

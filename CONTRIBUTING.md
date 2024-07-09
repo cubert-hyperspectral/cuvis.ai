@@ -10,6 +10,51 @@ If you plan on providing a dataset you own the rights to to cuvis.ai, you can sk
 
 For all code contributions, we suggest you follow this general process.
 
+### Branch from main
+
+The first step towards a contribution is to clone the repository and create a new branch - see below for the branch name guide.
+Before you start fixing a bug or adding a feature, please make sure to check the [issues page](https://github.com/cubert-hyperspectral/cuvis.ai/issues) to see if someone else is already working on your bug/feature.
+Also, double check if your bug/feature is already fixes/implemented in cuvis.ai on the main branch.
+
+We need to differentiate between making contributions to the core code of the framework, contributing new algorithms (Nodes) and contributing data sets, all of which are very welcome.
+
+#### Contributing new Algorithms / Nodes
+
+Name your feature branch correctly: "contrib_node/[my_node_name]"
+
+Before you implement and contribute a new algorithm, please make sure that it is not patented and that you are legally allowed to contribute it to another project.
+Check that either you own the copyright or the software license it is under allows for reuse under the Apache 2.0 license.
+Please make sure to fulfill all obligations that the license, if any, require.
+
+Choose the correct category for your node, see section [Repository Structure](#repository-structure).
+If you are not sure which category is the correct one, feel free to contact us: [Further Questions](#further-questions)
+
+
+#### Contributing Core-Code
+
+Nothing extra to mention here, just name your feature branch correctly: "contrib_code/[add_my_feature/fix_my_bug]"
+
+#### Contributing Datasets
+
+Name your feature branch correctly: "contrib_data/[my_dataset_name]"
+
+Similar restrictions as with [contributing algorithms](#contributing-new-algorithms--nodes) apply, please check:
+ - That you either own the copyright of the data 
+ - Or that your are allowed to redistribute it according to whichever license it is published under
+ - And that you fulfill all obligations mandated by the license of the data, if any applies
+
+**TODO** Where to put data, which data do we want, label format, metadata format
+
+Additionally, label data can be added as well.
+cuvis.ai uses labels in the [COCO format](https://cocodataset.org/#format-data).
+Additionally, a metadata file can be defined for individual images and/or groups of images.
+These are YAML files that provide additional information about images or datasets, such as model of camera, fps, integration (or exposure) time, as well as references used for preprocessing steps, such as reflectance calculation. 
+Here is an example metadata file 
+
+**TODO** ADD example metadata file to repo and link here!
+
+
+
 ### Coding Guidelines
 
 Any code you write for cuvis.ai should follow these guidelines.
@@ -20,6 +65,7 @@ Further style choices:
  - All indentation uses spaces only, 4 spaces per indentation
  - Method names for methods for class-internal use only are prefixed with an underscore
  - CamelCase for class names, snake_case for everything else
+ - We employ the use of type-hinting, at least for all user-facing methods, including hinting at return types
 
 When writing a new Node, please read the source code for the base Node class.
 You can find that in the repository, under: cuvis_ai/node/node.py
@@ -49,34 +95,18 @@ Further directories include:
 
 ### Documentation Guidelines
 
-TODO
+For documenting methods and classes, docstrings in the [numpy format](https://numpydoc.readthedocs.io/en/latest/format.html) should be used.
+At least everything that users of cuvis.ai come in contact with should have complete and detailed docstrings.
+The documentation is automatically built upon creation of a pull-request using doxygen and hosted on GitHub-Pages
+
+**TODO** Add link to GitHub-pages
 
 ### Making a Pull-Request
 
-TODO
-
-## Making a Contribution
-
-We need to differentiate between making contributions to the core code of the framework, contributing new algorithms (Nodes) and contributing data sets, all of which are very welcome.
-
-### Contributing new Algorithms / Nodes
-
-Before you implement and contribute a new algorithm, please make sure that it is not patented and that you are legally allowed to contribute it to another project.
-Check that either you own the copyright or the software license it is under allows for reuse under the Apache 2.0 license.
-Please make sure to fulfill all obligations that the license, if any, require.
-
-Choose the correct category for your node, see section [Repository Structure](#repository-structure).
-If you are not sure which category is the correct one, feel free to contact us: [Further Questions](#further-questions)
-
-Name your feature branch correctly: "contrib_node/[my_node_name]"
-
-### Contributing Core-Code
-
-Nothing extra to mention here, just name your feature branch correctly: "contrib_code/[my_node_name]"
-
-### Contributing Datasets
-
-TODO
+To request that your contribution be added to cuvis.ai, [create a pull-request](https://github.com/cubert-hyperspectral/cuvis.ai/pulls) for your branch.
+Please give the pull-request a meaningful name and a detailed description.
+Make sure to link to any issues that are related to the code contributions in your pull-request.
+Also please give your pull-request the correct label: enhancement, bug, dataset
 
 ## Further Questions
 

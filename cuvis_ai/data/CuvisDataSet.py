@@ -142,9 +142,9 @@ class CuvisDataSet(NumpyDataSet):
                  ):
         self._FILE_EXTENSION_SESSION = ".cu3s"
         self._FILE_EXTENSION_LEGACY = ".cu3"
+        self.processing_mode = force_proc_mode
         super().__init__(root, transforms=transforms, transform=transform,
                          target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
-        self.processing_mode = force_proc_mode
 
     def _load_directory(self, dir_path: str):
         if debug_enabled:

@@ -5,6 +5,7 @@ from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
+from typing import Dict
 
 
 class MultiClassDecider(BaseDecider):
@@ -56,11 +57,23 @@ class MultiClassDecider(BaseDecider):
         """
         return [-1, -1, 1]
 
-    def serialize(self):
-        return super().serialize()
+    def serialize(self, directory: str):
+        """
+        Convert the class into a serialized representation
+        """
+        data = {
+            "type": type(self).__name__,
+            "class_count": self.n,
+        }
+        return yaml.dump(data, default_flow_style=False)
 
-    def load(self) -> None:
-        return super().load()
+    def load(self, filepath: str, params: Dict):
+        """Load this node from a serialized graph."""
+        try:
+            self.n = int(params["class_count"])
+        except:
+            raise ValueError("Could not read attribute 'class_count' as int. "
+                             F"Read '{params}' from save file!")
 
 
 # TODO: How would this functionality be integrated into Deep Learning Methods and Models

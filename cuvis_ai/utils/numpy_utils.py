@@ -58,12 +58,11 @@ def check_array_shape(array: Union[np.ndarray, Tuple[int, int, int]], wanted_sha
 def flatten_spatial(array: np.ndarray):
     if array.ndim == 3:
         # Array is of shape [width, height, channels]
-        return array.reshape(-1, array.shape[2])
-    elif array.ndim == 4:
-        # Array is of shape [batch, width, height, channels]
-        return array.reshape(array.shape[0], -1, array.shape[3])
+        return array.reshape(-1, array.shape[-1])
+    elif array.ndim > 3:
+        return array.reshape((*array.shape[:-3], -1, array.shape[-1]))
     else:
-        raise ValueError("Input array must be 3D or 4D.")
+        raise ValueError("Input array must be 3D or higher.")
 
 
 def flatten_batch_and_spatial(array: np.ndarray):

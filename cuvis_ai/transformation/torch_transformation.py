@@ -26,7 +26,6 @@ class TorchTransformation(Node, BaseTransformation):
         super().__init__()
         self.op_name = function_name
         self.b = operand_b
-        self.input_size_y = None
         self.fun_kwargs = kwargs
 
         if self.op_name is not None:
@@ -79,12 +78,6 @@ class TorchTransformation(Node, BaseTransformation):
     def check_output_dim(self, X: Any, Y: Optional[Any] = None):
         pass
 
-    def fit(self, X: Iterable, Y: Optional[Iterable] = None):
-        pass
-
-    def check_output_dim(self, X: Iterable, Y: Optional[Iterable] = None):
-        pass
-
     def check_input_dim(self, X: Iterable, Y: Optional[Iterable] = None):
         try:
             self.forward(X, Y)
@@ -115,8 +108,6 @@ class TorchTransformation(Node, BaseTransformation):
             "type": type(self).__name__,
             "op_name": self.op_name,
             "transformation_blob": blobfile_name,
-            "input_size_x": self.input_size,
-            "input_size_y": self.input_size_y,
         }
         return yaml.dump(data, default_flow_style=False)
 
@@ -128,6 +119,4 @@ class TorchTransformation(Node, BaseTransformation):
             self.b, self.fun_kwargs = pk.load(blobfile)
         self.op_name = params.get("op_name")
         self.fun = getattr(torch, self.op_name)
-        self.input_size = params.get("input_size_x")
-        self.input_size_y = params.get("input_size_y")
         self.initialized = True

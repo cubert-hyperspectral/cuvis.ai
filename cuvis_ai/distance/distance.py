@@ -56,6 +56,9 @@ class AbstractDistance(Node, CubeConsumer):
         if type(ref_spectra) == list:
             # Cast to a numpy
             ref_spectra = np.array(ref_spectra)
+            if ref_spectra.ndim == 1:
+                ref_spectra = np.reshape(
+                    ref_spectra, (1, ref_spectra.shape[-1]))
         if ref_spectra.shape == 1:
             # Squeeze an extra dimension
             ref_spectra = np.expand_dims(ref_spectra, axis=0)
@@ -65,7 +68,7 @@ class AbstractDistance(Node, CubeConsumer):
         self.initialized = True
         pass
 
-    def forward(self, X: np.ndarray, ref_spectra: list = []) -> np.ndarray:
+    def forward(self, X: np.ndarray, ref_spectra: list = None) -> np.ndarray:
         """Pass the data through comparative function
 
         Parameters
@@ -73,7 +76,7 @@ class AbstractDistance(Node, CubeConsumer):
         X : np.ndarray
             Input data.
         ref_spectra : list, optional
-            List of spectra to compare against, by default []
+            List of spectra to compare against
 
         Returns
         -------
@@ -89,25 +92,16 @@ class AbstractDistance(Node, CubeConsumer):
         ValueError
             No reference spectra provided in init or on forward function pass.
         """
+        ref = self.ref_spectra if ref_spectra is None else ref_spectra
+
         # Default behavior is to use the ref_spectra passed to the function
-        # This overrides any previously stored spectra
-        if len(ref_spectra) > 0:
-            # Process each spectra
-            ref_spectra = self.spectra_to_array(ref_spectra)
-            if X.shape[-1] != ref_spectra.shape[-1]:
+        if len(ref) > 0:
+            if X.shape[-1] != ref.shape[-1]:
                 raise ValueError(
                     'Mismatch in input data and reference spectra!')
             # Process and return
-            res = self.score(
-                X.reshape(X.shape[0]*X.shape[1], X.shape[2]), ref_spectra)
-            return res.reshape(X.shape[0], X.shape[1], len(ref_spectra))
-        elif len(self.ref_spectra) > 0:
-            if X.shape[-1] != self.ref_spectra.shape[-1]:
-                raise ValueError(
-                    'Mismatch in input data and reference spectra!')
-            # Process and return
-            res = self.score(flatten_spatial(X), self.ref_spectra)
-            return res.reshape(X.shape[0], X.shape[1], len(self.ref_spectra))
+            res = self.score(flatten_spatial(X), ref)
+            return res.reshape(*X.shape[:-1], ref.shape[0])
         else:
             raise ValueError('No reference spectra provided!')
 
@@ -230,13 +224,16 @@ class SpectralAngle(AbstractDistance):
             # 10% of the data exceeds 200%
             warnings.warn(
                 "Spectral angle mapper is being used without properly normalized data. Unexpected behavior may occur!")
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.arccos(
-                np.dot(data, ref_spectra[idx]) / (np.linalg.norm(data,
-                                                                 axis=1) * np.linalg.norm(ref_spectra[idx]))
-            )
+            output_scores.append(np.arccos(
+                np.dot(data, ref_spectra[idx, :]) / (np.linalg.norm(data,
+                                                                    axis=-1) * np.linalg.norm(ref_spectra[idx]))
+            ))
+
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores
 
 
@@ -275,11 +272,14 @@ class Euclidean(AbstractDistance):
         np.ndarray
             Distance scores.
         """
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.sqrt(
-                np.sum((data - ref_spectra[idx, :])**2, axis=1))
+            delta = data - ref_spectra[idx, :]
+            score = np.sqrt(np.sum(delta**2, axis=-1))
+            output_scores.append(score)
+
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores
 
 
@@ -318,11 +318,14 @@ class Manhattan(AbstractDistance):
         np.ndarray
             Distance scores
         """
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.sum(
-                np.abs(data - ref_spectra[idx, :]), axis=1)
+            output_scores.append(np.sum(
+                np.abs(data - ref_spectra[idx, :]), axis=-1))
+
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores
 
 
@@ -361,13 +364,14 @@ class Canberra(AbstractDistance):
         np.ndarray
             Distance scores
         """
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.sum(
+            output_scores.append(np.sum(
                 np.abs(data - ref_spectra[idx, :]) /
                 (np.abs(data) + np.abs(ref_spectra[idx, :])),
-                axis=1)
+                axis=-1))
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores
 
 
@@ -408,11 +412,12 @@ class Minkowski(AbstractDistance):
         np.ndarray
             Distance scores
         """
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = (np.sum(
-                (data - ref_spectra[idx, :])**self.degree, axis=1))**(1.0/float(self.degree))
+            output_scores.append((np.sum(
+                (data - ref_spectra[idx, :])**self.degree, axis=-1))**(1.0/float(self.degree)))
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores
 
 
@@ -454,13 +459,14 @@ class GFC(AbstractDistance):
         np.ndarray
             Distance scores
         """
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = 1 - (
-                np.dot(data, ref_spectra[idx]) / (np.linalg.norm(data,
-                                                                 axis=1) * np.linalg.norm(ref_spectra[idx]))
-            )
+            output_scores.append(1.0 - (
+                np.dot(data, ref_spectra[idx, :]) / (np.linalg.norm(data,
+                                                                    axis=-1) * np.linalg.norm(ref_spectra[idx]))
+            ))
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores
 
 
@@ -515,9 +521,10 @@ class ECS(AbstractDistance):
         np.ndarray
             Distance scores
         """
-        output_scores = np.zeros((data.shape[0], ref_spectra.shape[0]))
+        output_scores = []
         for idx in range(ref_spectra.shape[0]):
             # Calculate the distances
-            output_scores[:, idx] = np.sqrt((np.trapz(
-                data, self.wavelengths, axis=1) - np.trapz(ref_spectra[idx], self.wavelengths))**2)
+            output_scores.append(np.sqrt((np.trapz(
+                data, self.wavelengths, axis=-1) - np.trapz(ref_spectra[idx, :], self.wavelengths))**2))
+        output_scores = np.stack(output_scores, axis=-1)
         return output_scores

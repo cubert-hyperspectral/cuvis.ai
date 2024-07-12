@@ -4,7 +4,7 @@ from .base_decider import BaseDecider
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 
 import numpy as np
-from typing import Any
+from typing import Any, Dict
 
 
 class BinaryDecider(BaseDecider):
@@ -63,17 +63,23 @@ class BinaryDecider(BaseDecider):
         """
         return [-1, -1, 1]
 
-    def serialize(self):
+    def serialize(self, directory: str):
         """
         Convert the class into a serialized representation
         """
-        return super().serialize()
+        data = {
+            "type": type(self).__name__,
+            "threshold": self.threshold,
+        }
+        return yaml.dump(data, default_flow_style=False)
 
-    def load(self) -> None:
-        """
-        Load from serialized format into an object
-        """
-        return super().load()
+    def load(self, filepath: str, params: Dict):
+        """Load this node from a serialized graph."""
+        try:
+            self.threshold = float(params["threshold"])
+        except:
+            raise ValueError("Could not read attribute 'threshold' as float. "
+                             F"Read '{params}' from save file!")
 
 
 # TODO: How would this functionality be integrated into Deep Learning Methods and Models

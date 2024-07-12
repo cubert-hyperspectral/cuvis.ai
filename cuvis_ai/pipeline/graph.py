@@ -496,12 +496,14 @@ class Graph():
         """Convert graph structure and all contained nodes to a serializable YAML format.
         Numeric data and fit models will be stored in zipped directory named with current time.
         """
+
+        from cuvis_ai import __version__
         output = {
             'edges': [],
             'nodes': [],
             'name': self.name,
             'entry_point': self.entry_point,
-            'version': pkg_resources.require('cuvis_ai')[0].version
+            'version': __version__
         }
         now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         working_dir = f'{expanduser("~")}/{self.name}_{now}'
@@ -509,7 +511,7 @@ class Graph():
         # Step through all the stages of the pipeline and serialize
         for node in self.nodes.values():
             output['nodes'].append(
-                yaml.safe_load(node.serialize(working_dir))
+                yaml.full_load(node.serialize(working_dir))
             )
         # Grab the connections and write as plain text
         output['edges'] = [list(z) for z in list(self.graph.edges)]

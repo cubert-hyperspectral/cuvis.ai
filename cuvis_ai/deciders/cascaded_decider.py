@@ -1,6 +1,7 @@
 from .base_decider import BaseDecider
 
 import numpy as np
+from typing import Dict
 
 
 class Cascaded(BaseDecider):
@@ -28,8 +29,15 @@ class Cascaded(BaseDecider):
         """
         return [-1, -1, 1]
 
-    def serialize(self):
-        return super().serialize()
+    def serialize(self, directory: str):
+        """
+        Convert the class into a serialized representation
+        """
+        data = {
+            "type": type(self).__name__,
+        }
+        return yaml.dump(data, default_flow_style=False)
 
-    def load(self) -> None:
-        return super().load()
+    def load(self, filepath: str, params: Dict):
+        """Load this node from a serialized graph."""
+        pass  # No attributes

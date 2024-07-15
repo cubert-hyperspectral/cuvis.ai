@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.ECS
       ~ECS.__init__
       ~ECS.check_input_dim
       ~ECS.check_output_dim
+      ~ECS.fit
       ~ECS.forward
       ~ECS.load
       ~ECS.score

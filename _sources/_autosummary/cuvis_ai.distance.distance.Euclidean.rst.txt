@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.Euclidean
       ~Euclidean.__init__
       ~Euclidean.check_input_dim
       ~Euclidean.check_output_dim
+      ~Euclidean.fit
       ~Euclidean.forward
       ~Euclidean.load
       ~Euclidean.score

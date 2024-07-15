@@ -89,7 +89,7 @@
 
 <div class="viewcode-block" id="TorchTransformation">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.transformation.torch_transformation.TorchTransformation.html#cuvis_ai.transformation.torch_transformation.TorchTransformation">[docs]</a>
-<span class="k">class</span> <span class="nc">TorchTransformation</span><span class="p">(</span><span class="n">BaseTransformation</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TorchTransformation</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">BaseTransformation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Node representing a transformation of data using a pytorch function.</span>
 
 <span class="sd">    Parameters</span>
@@ -108,7 +108,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">op_name</span> <span class="o">=</span> <span class="n">function_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">operand_b</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_size_y</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fun_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -159,21 +158,15 @@
                                <span class="sa">F</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;constant &#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">second operand shapes!</span><span class="se">\n</span><span class="s2">PyTorch reports: &#39;</span><span class="si">{</span><span class="n">re</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">check_output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">pass</span>
-
 <div class="viewcode-block" id="TorchTransformation.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.transformation.torch_transformation.TorchTransformation.html#cuvis_ai.transformation.torch_transformation.TorchTransformation.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="TorchTransformation.check_output_dim">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.transformation.torch_transformation.TorchTransformation.html#cuvis_ai.transformation.torch_transformation.TorchTransformation.check_output_dim">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">check_output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
@@ -212,8 +205,6 @@
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="s2">&quot;op_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_name</span><span class="p">,</span>
             <span class="s2">&quot;transformation_blob&quot;</span><span class="p">:</span> <span class="n">blobfile_name</span><span class="p">,</span>
-            <span class="s2">&quot;input_size_x&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span><span class="p">,</span>
-            <span class="s2">&quot;input_size_y&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_size_y</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
@@ -228,8 +219,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fun_kwargs</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">blobfile</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">op_name</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;op_name&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_size_x&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_size_y</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_size_y&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span></div>
 </div>
 

@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.Minkowski
       ~Minkowski.__init__
       ~Minkowski.check_input_dim
       ~Minkowski.check_output_dim
+      ~Minkowski.fit
       ~Minkowski.forward
       ~Minkowski.load
       ~Minkowski.score

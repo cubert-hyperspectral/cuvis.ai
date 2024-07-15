@@ -20,6 +20,7 @@ cuvis\_ai.deciders.binary\_decider.BinaryDecider
       ~BinaryDecider.__init__
       ~BinaryDecider.check_input_dim
       ~BinaryDecider.check_output_dim
+      ~BinaryDecider.fit
       ~BinaryDecider.forward
       ~BinaryDecider.load
       ~BinaryDecider.serialize

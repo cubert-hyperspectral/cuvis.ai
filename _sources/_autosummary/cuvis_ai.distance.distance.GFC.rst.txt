@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.GFC
       ~GFC.__init__
       ~GFC.check_input_dim
       ~GFC.check_output_dim
+      ~GFC.fit
       ~GFC.forward
       ~GFC.load
       ~GFC.score

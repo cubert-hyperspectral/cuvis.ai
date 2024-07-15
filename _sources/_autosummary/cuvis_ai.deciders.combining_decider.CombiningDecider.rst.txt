@@ -20,6 +20,7 @@ cuvis\_ai.deciders.combining\_decider.CombiningDecider
       ~CombiningDecider.__init__
       ~CombiningDecider.check_input_dim
       ~CombiningDecider.check_output_dim
+      ~CombiningDecider.fit
       ~CombiningDecider.forward
       ~CombiningDecider.load
       ~CombiningDecider.serialize

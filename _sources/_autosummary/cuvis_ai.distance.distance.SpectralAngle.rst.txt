@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.SpectralAngle
       ~SpectralAngle.__init__
       ~SpectralAngle.check_input_dim
       ~SpectralAngle.check_output_dim
+      ~SpectralAngle.fit
       ~SpectralAngle.forward
       ~SpectralAngle.load
       ~SpectralAngle.score

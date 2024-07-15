@@ -1,0 +1,6 @@
+cuvis\_ai.utils.numpy\_utils.gen\_coco\_labels
+==============================================
+
+.. currentmodule:: cuvis_ai.utils.numpy_utils
+
+.. autofunction:: gen_coco_labels

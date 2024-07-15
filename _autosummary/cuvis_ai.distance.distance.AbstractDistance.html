@@ -151,19 +151,22 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.check_output_dim" title="cuvis_ai.distance.distance.AbstractDistance.check_output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_dim</span></code></a>(X)</p></td>
 <td><p>Check that the parameters for the output data data match user expectations</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.forward" title="cuvis_ai.distance.distance.AbstractDistance.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, ref_spectra])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.fit" title="cuvis_ai.distance.distance.AbstractDistance.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.forward" title="cuvis_ai.distance.distance.AbstractDistance.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, ref_spectra])</p></td>
 <td><p>Pass the data through comparative function</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.load" title="cuvis_ai.distance.distance.AbstractDistance.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params[, filepath])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.load" title="cuvis_ai.distance.distance.AbstractDistance.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params[, filepath])</p></td>
 <td><p>Load dumped parameters to recreate the distance object</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.score" title="cuvis_ai.distance.distance.AbstractDistance.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(data, X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.score" title="cuvis_ai.distance.distance.AbstractDistance.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(data, X)</p></td>
 <td><p>Abstract distance method implemented by every distance type</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.serialize" title="cuvis_ai.distance.distance.AbstractDistance.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(working_dir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.serialize" title="cuvis_ai.distance.distance.AbstractDistance.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(working_dir)</p></td>
 <td><p>Convert distance node to serializable format</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.spectra_to_array" title="cuvis_ai.distance.distance.AbstractDistance.spectra_to_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectra_to_array</span></code></a>(ref_spectra)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.AbstractDistance.spectra_to_array" title="cuvis_ai.distance.distance.AbstractDistance.spectra_to_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectra_to_array</span></code></a>(ref_spectra)</p></td>
 <td><p>Convert list of spectra to a numpy array</p></td>
 </tr>
 </tbody>
@@ -202,14 +205,19 @@ X (array-like): Input data.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.AbstractDistance.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/distance/distance.html#AbstractDistance.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.distance.distance.AbstractDistance.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.distance.distance.AbstractDistance.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/distance/distance.html#AbstractDistance.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.distance.distance.AbstractDistance.forward" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/distance/distance.html#AbstractDistance.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.distance.distance.AbstractDistance.forward" title="Link to this definition"></a></dt>
 <dd><p>Pass the data through comparative function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>np.ndarray</em>) – Input data.</p></li>
-<li><p><strong>ref_spectra</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><em>optional</em>) – List of spectra to compare against, by default []</p></li>
+<li><p><strong>ref_spectra</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><em>optional</em>) – List of spectra to compare against</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

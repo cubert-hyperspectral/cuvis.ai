@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.AbstractDistance
       ~AbstractDistance.__init__
       ~AbstractDistance.check_input_dim
       ~AbstractDistance.check_output_dim
+      ~AbstractDistance.fit
       ~AbstractDistance.forward
       ~AbstractDistance.load
       ~AbstractDistance.score

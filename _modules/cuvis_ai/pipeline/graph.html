@@ -602,12 +602,14 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert graph structure and all contained nodes to a serializable YAML format.</span>
 <span class="sd">        Numeric data and fit models will be stored in zipped directory named with current time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">cuvis_ai</span> <span class="kn">import</span> <span class="n">__version__</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="s1">&#39;entry_point&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">,</span>
-            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s1">&#39;cuvis_ai&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span>
+            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">__version__</span>
         <span class="p">}</span>
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y_%m_</span><span class="si">%d</span><span class="s1">_%H_%M_%S&#39;</span><span class="p">)</span>
         <span class="n">working_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s1">&#39;</span>
@@ -615,7 +617,7 @@
         <span class="c1"># Step through all the stages of the pipeline and serialize</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">output</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">working_dir</span><span class="p">))</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">full_load</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">working_dir</span><span class="p">))</span>
             <span class="p">)</span>
         <span class="c1"># Grab the connections and write as plain text</span>
         <span class="n">output</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">)]</span>

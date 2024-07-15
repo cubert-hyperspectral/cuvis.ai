@@ -20,6 +20,7 @@ cuvis\_ai.deciders.multiclass\_decider.MultiClassDecider
       ~MultiClassDecider.__init__
       ~MultiClassDecider.check_input_dim
       ~MultiClassDecider.check_output_dim
+      ~MultiClassDecider.fit
       ~MultiClassDecider.forward
       ~MultiClassDecider.load
       ~MultiClassDecider.serialize

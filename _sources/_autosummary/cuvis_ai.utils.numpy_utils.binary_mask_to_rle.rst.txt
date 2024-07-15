@@ -1,0 +1,6 @@
+cuvis\_ai.utils.numpy\_utils.binary\_mask\_to\_rle
+==================================================
+
+.. currentmodule:: cuvis_ai.utils.numpy_utils
+
+.. autofunction:: binary_mask_to_rle

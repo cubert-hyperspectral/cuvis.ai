@@ -128,13 +128,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.check_output_dim" title="cuvis_ai.deciders.cascaded_decider.Cascaded.check_output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_dim</span></code></a>(X)</p></td>
 <td><p>Check that the parameters for the output data data match user expectations</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.forward" title="cuvis_ai.deciders.cascaded_decider.Cascaded.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.fit" title="cuvis_ai.deciders.cascaded_decider.Cascaded.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.forward" title="cuvis_ai.deciders.cascaded_decider.Cascaded.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
 <td><p>Predict labels based on the input labels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.load" title="cuvis_ai.deciders.cascaded_decider.Cascaded.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>()</p></td>
-<td><p>Load from serialized format into an object</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.load" title="cuvis_ai.deciders.cascaded_decider.Cascaded.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(filepath, params)</p></td>
+<td><p>Load this node from a serialized graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.serialize" title="cuvis_ai.deciders.cascaded_decider.Cascaded.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.serialize" title="cuvis_ai.deciders.cascaded_decider.Cascaded.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(directory)</p></td>
 <td><p>Convert the class into a serialized representation</p></td>
 </tr>
 </tbody>
@@ -146,7 +149,7 @@
 <td><p>Returns the needed shape for the input data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.output_dim" title="cuvis_ai.deciders.cascaded_decider.Cascaded.output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_dim</span></code></a></p></td>
-<td><p>Returns the shape for the output data.</p></td>
+<td><p>Returns the provided shape for the output data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -171,6 +174,11 @@ X (array-like): Input data.</p>
 <p>Returns:
 (Bool) Valid data</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.deciders.cascaded_decider.Cascaded.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.deciders.cascaded_decider.Cascaded.forward">
@@ -200,22 +208,28 @@ If a dimension is not important, it will return -1 in the specific position.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.deciders.cascaded_decider.Cascaded.load">
-<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/deciders/cascaded_decider.html#Cascaded.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.load" title="Link to this definition"></a></dt>
-<dd><p>Load from serialized format into an object</p>
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/deciders/cascaded_decider.html#Cascaded.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.load" title="Link to this definition"></a></dt>
+<dd><p>Load this node from a serialized graph.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.deciders.cascaded_decider.Cascaded.output_dim">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.output_dim" title="Link to this definition"></a></dt>
-<dd><p>Returns the shape for the output data.
-If a dimension is dependent on the input, it will return -1 in the specific position.</p>
-<p>Returns:
-(tuple) expected output shape for data</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.output_dim" title="Link to this definition"></a></dt>
+<dd><p>Returns the provided shape for the output data.
+If a dimension is not important it will return -1 in the specific position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Provided shape for data</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)">tuple</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.deciders.cascaded_decider.Cascaded.serialize">
-<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/deciders/cascaded_decider.html#Cascaded.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.serialize" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/deciders/cascaded_decider.html#Cascaded.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.deciders.cascaded_decider.Cascaded.serialize" title="Link to this definition"></a></dt>
 <dd><p>Convert the class into a serialized representation</p>
 </dd></dl>
 

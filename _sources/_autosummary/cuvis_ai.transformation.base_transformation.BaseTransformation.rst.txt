@@ -18,8 +18,6 @@ cuvis\_ai.transformation.base\_transformation.BaseTransformation
    .. autosummary::
    
       ~BaseTransformation.__init__
-      ~BaseTransformation.check_input_dim
-      ~BaseTransformation.check_output_dim
       ~BaseTransformation.fit
       ~BaseTransformation.forward
       ~BaseTransformation.input_dim

@@ -1814,6 +1814,8 @@
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.nn_config.Adam.html#cuvis_ai.utils.nn_config.Adam.beta_2">beta_2 (cuvis_ai.utils.nn_config.Adam attribute)</a>
 </li>
+      <li><a href="_autosummary/cuvis_ai.utils.numpy_utils.binary_mask_to_rle.html#cuvis_ai.utils.numpy_utils.binary_mask_to_rle">binary_mask_to_rle() (in module cuvis_ai.utils.numpy_utils)</a>
+</li>
       <li><a href="_autosummary/cuvis_ai.deciders.binary_decider.BinaryDecider.html#cuvis_ai.deciders.binary_decider.BinaryDecider">BinaryDecider (class in cuvis_ai.deciders.binary_decider)</a>
 </li>
   </ul></td>
@@ -1881,8 +1883,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.supervised.svm.SVM.html#cuvis_ai.supervised.svm.SVM.check_input_dim">(cuvis_ai.supervised.svm.SVM method)</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.transformation.base_transformation.BaseTransformation.html#cuvis_ai.transformation.base_transformation.BaseTransformation.check_input_dim">(cuvis_ai.transformation.base_transformation.BaseTransformation method)</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.transformation.reflectance.Reflectance.html#cuvis_ai.transformation.reflectance.Reflectance.check_input_dim">(cuvis_ai.transformation.reflectance.Reflectance method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.transformation.torch_transformation.TorchTransformation.html#cuvis_ai.transformation.torch_transformation.TorchTransformation.check_input_dim">(cuvis_ai.transformation.torch_transformation.TorchTransformation method)</a>
@@ -1936,8 +1936,6 @@
         <li><a href="_autosummary/cuvis_ai.supervised.qda.QDA.html#cuvis_ai.supervised.qda.QDA.check_output_dim">(cuvis_ai.supervised.qda.QDA method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.supervised.svm.SVM.html#cuvis_ai.supervised.svm.SVM.check_output_dim">(cuvis_ai.supervised.svm.SVM method)</a>
-</li>
-        <li><a href="_autosummary/cuvis_ai.transformation.base_transformation.BaseTransformation.html#cuvis_ai.transformation.base_transformation.BaseTransformation.check_output_dim">(cuvis_ai.transformation.base_transformation.BaseTransformation method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.transformation.reflectance.Reflectance.html#cuvis_ai.transformation.reflectance.Reflectance.check_output_dim">(cuvis_ai.transformation.reflectance.Reflectance method)</a>
 </li>
@@ -2069,8 +2067,6 @@
         <li><a href="_autosummary/cuvis_ai.data.utils_dataloader.html#module-cuvis_ai.data.utils_dataloader">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cuvis_ai.deciders
 
@@ -2078,6 +2074,8 @@
         <li><a href="_autosummary/cuvis_ai.deciders.html#module-cuvis_ai.deciders">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cuvis_ai.deciders.base_decider
 
@@ -2918,9 +2916,35 @@
         <li><a href="_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.failureException">(cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans attribute)</a>
 </li>
       </ul></li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.fit">fit() (cuvis_ai.pipeline.graph.Graph method)</a>
+      <li><a href="_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider.fit">fit() (cuvis_ai.deciders.base_decider.BaseDecider method)</a>
 
       <ul>
+        <li><a href="_autosummary/cuvis_ai.deciders.binary_decider.BinaryDecider.html#cuvis_ai.deciders.binary_decider.BinaryDecider.fit">(cuvis_ai.deciders.binary_decider.BinaryDecider method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.deciders.cascaded_decider.Cascaded.html#cuvis_ai.deciders.cascaded_decider.Cascaded.fit">(cuvis_ai.deciders.cascaded_decider.Cascaded method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.deciders.combining_decider.CombiningDecider.html#cuvis_ai.deciders.combining_decider.CombiningDecider.fit">(cuvis_ai.deciders.combining_decider.CombiningDecider method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.deciders.multiclass_decider.MultiClassDecider.html#cuvis_ai.deciders.multiclass_decider.MultiClassDecider.fit">(cuvis_ai.deciders.multiclass_decider.MultiClassDecider method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.fit">(cuvis_ai.distance.distance.AbstractDistance method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.Canberra.html#cuvis_ai.distance.distance.Canberra.fit">(cuvis_ai.distance.distance.Canberra method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.ECS.html#cuvis_ai.distance.distance.ECS.fit">(cuvis_ai.distance.distance.ECS method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.Euclidean.html#cuvis_ai.distance.distance.Euclidean.fit">(cuvis_ai.distance.distance.Euclidean method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.GFC.html#cuvis_ai.distance.distance.GFC.fit">(cuvis_ai.distance.distance.GFC method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.Manhattan.html#cuvis_ai.distance.distance.Manhattan.fit">(cuvis_ai.distance.distance.Manhattan method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.Minkowski.html#cuvis_ai.distance.distance.Minkowski.fit">(cuvis_ai.distance.distance.Minkowski method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.distance.distance.SpectralAngle.html#cuvis_ai.distance.distance.SpectralAngle.fit">(cuvis_ai.distance.distance.SpectralAngle method)</a>
+</li>
+        <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.fit">(cuvis_ai.pipeline.graph.Graph method)</a>
+</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.base_preprocessor.Preprocessor.html#cuvis_ai.preprocessor.base_preprocessor.Preprocessor.fit">(cuvis_ai.preprocessor.base_preprocessor.Preprocessor method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF.fit">(cuvis_ai.preprocessor.nmf.NMF method)</a>
@@ -3032,6 +3056,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/cuvis_ai.utils.numpy_utils.gen_coco_labels.html#cuvis_ai.utils.numpy_utils.gen_coco_labels">gen_coco_labels() (in module cuvis_ai.utils.numpy_utils)</a>
+</li>
       <li><a href="_autosummary/cuvis_ai.data.utils_dataloader.get_dataloader_from_dataset.html#cuvis_ai.data.utils_dataloader.get_dataloader_from_dataset">get_dataloader_from_dataset() (in module cuvis_ai.data.utils_dataloader)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.data.BaseDataSet.BaseDataSet.html#cuvis_ai.data.BaseDataSet.BaseDataSet.get_datatype">get_datatype() (cuvis_ai.data.BaseDataSet.BaseDataSet method)</a>

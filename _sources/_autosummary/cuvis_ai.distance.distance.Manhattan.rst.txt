@@ -20,6 +20,7 @@ cuvis\_ai.distance.distance.Manhattan
       ~Manhattan.__init__
       ~Manhattan.check_input_dim
       ~Manhattan.check_output_dim
+      ~Manhattan.fit
       ~Manhattan.forward
       ~Manhattan.load
       ~Manhattan.score

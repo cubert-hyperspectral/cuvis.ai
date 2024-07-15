@@ -20,6 +20,7 @@ cuvis\_ai.deciders.cascaded\_decider.Cascaded
       ~Cascaded.__init__
       ~Cascaded.check_input_dim
       ~Cascaded.check_output_dim
+      ~Cascaded.fit
       ~Cascaded.forward
       ~Cascaded.load
       ~Cascaded.serialize

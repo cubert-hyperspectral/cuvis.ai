@@ -20,6 +20,7 @@ cuvis\_ai.deciders.base\_decider.BaseDecider
       ~BaseDecider.__init__
       ~BaseDecider.check_input_dim
       ~BaseDecider.check_output_dim
+      ~BaseDecider.fit
       ~BaseDecider.forward
       ~BaseDecider.load
       ~BaseDecider.serialize

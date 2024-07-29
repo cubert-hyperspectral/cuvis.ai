@@ -48,7 +48,11 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Concepts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-pipeline-or-algorithm-tree">The Pipeline or Algorithm Tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessor-nodes">Preprocessor Nodes</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../_autosummary/cuvis_ai.html">cuvis_ai</a></li>
@@ -80,6 +84,21 @@
              
   <section id="concepts">
 <h1>Concepts<a class="headerlink" href="#concepts" title="Link to this heading"></a></h1>
+<section id="the-pipeline-or-algorithm-tree">
+<h2>The Pipeline or Algorithm Tree<a class="headerlink" href="#the-pipeline-or-algorithm-tree" title="Link to this heading"></a></h2>
+<p>At the hearth of the cuvis.ai framework is the Pipeline class.
+This class allows the easy definition and execution of machine learning pipelines,
+using both shallow learning and deep learning modules.
+In its simple form the Pipeline is a list of modules that will process the data one after another.
+This modules can be of different types.
+For the pipeline this are Preprocessor nodes, unsupervised nodes and supervised nodes.</p>
+</section>
+<section id="preprocessor-nodes">
+<h2>Preprocessor Nodes<a class="headerlink" href="#preprocessor-nodes" title="Link to this heading"></a></h2>
+<p>This type of modules represent all Modules that do not need labeled data to be trained,
+but rather are trained on the input data themselves.
+Those modules are often used for tasks like dimensionality reduction (e.g. PCA) or similar things.</p>
+</section>
 </section>
 
 

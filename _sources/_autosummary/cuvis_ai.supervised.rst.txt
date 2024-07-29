@@ -28,10 +28,10 @@ cuvis\_ai.supervised
    :template: custom-module-template.rst                
    :recursive:
 
-   cuvis_ai.supervised.base_supervised
-   cuvis_ai.supervised.lda
-   cuvis_ai.supervised.qda
-   cuvis_ai.supervised.simple_mlp
-   cuvis_ai.supervised.skorch_supervised
-   cuvis_ai.supervised.svm
+   base_supervised
+   lda
+   qda
+   simple_mlp
+   skorch_supervised
+   svm
 

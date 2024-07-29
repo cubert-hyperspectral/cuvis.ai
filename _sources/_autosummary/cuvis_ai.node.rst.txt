@@ -28,6 +28,6 @@ cuvis\_ai.node
    :template: custom-module-template.rst                
    :recursive:
 
-   cuvis_ai.node.Consumers
-   cuvis_ai.node.node
+   Consumers
+   node
 

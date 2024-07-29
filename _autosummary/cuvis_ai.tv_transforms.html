@@ -105,19 +105,19 @@
 <p class="rubric">Modules</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.Bandpass.html#module-cuvis_ai.tv_transforms.Bandpass" title="cuvis_ai.tv_transforms.Bandpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cuvis_ai.tv_transforms.Bandpass</span></code></a>(from_channel)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.Bandpass.html#module-cuvis_ai.tv_transforms.Bandpass" title="cuvis_ai.tv_transforms.Bandpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bandpass</span></code></a>(from_channel[, to_channel])</p></td>
 <td><p>Apply a bandpass operation over the input.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.MultiBandpass.html#module-cuvis_ai.tv_transforms.MultiBandpass" title="cuvis_ai.tv_transforms.MultiBandpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cuvis_ai.tv_transforms.MultiBandpass</span></code></a>(bandpasses)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.MultiBandpass.html#module-cuvis_ai.tv_transforms.MultiBandpass" title="cuvis_ai.tv_transforms.MultiBandpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultiBandpass</span></code></a>(bandpasses)</p></td>
 <td><p>Apply multiple bandpasses in parallel to the input data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.NormalizeStdDev.html#module-cuvis_ai.tv_transforms.NormalizeStdDev" title="cuvis_ai.tv_transforms.NormalizeStdDev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cuvis_ai.tv_transforms.NormalizeStdDev</span></code></a>(*[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.NormalizeStdDev.html#module-cuvis_ai.tv_transforms.NormalizeStdDev" title="cuvis_ai.tv_transforms.NormalizeStdDev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeStdDev</span></code></a>(*[, normalize_by_channel, ...])</p></td>
 <td><p>Apply a normalization operation over the input, resulting outputs normalized with a mean close to 0 and a standard deviation of 1.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.NormalizeToFloat.html#module-cuvis_ai.tv_transforms.NormalizeToFloat" title="cuvis_ai.tv_transforms.NormalizeToFloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cuvis_ai.tv_transforms.NormalizeToFloat</span></code></a>(*[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.NormalizeToFloat.html#module-cuvis_ai.tv_transforms.NormalizeToFloat" title="cuvis_ai.tv_transforms.NormalizeToFloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeToFloat</span></code></a>(*[, normalize_by_channel, ...])</p></td>
 <td><p>Apply a normalization operation over the input, resulting in outputs scaled to values between [0.0, 1.0].</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.WavelengthList.html#module-cuvis_ai.tv_transforms.WavelengthList" title="cuvis_ai.tv_transforms.WavelengthList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cuvis_ai.tv_transforms.WavelengthList</span></code></a>(data, *)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.tv_transforms.WavelengthList.html#module-cuvis_ai.tv_transforms.WavelengthList" title="cuvis_ai.tv_transforms.WavelengthList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WavelengthList</span></code></a>(data, *[, dtype, device, ...])</p></td>
 <td><p>A torchvision transforms data type which represents a list of wavelengths.</p></td>
 </tr>
 </tbody>

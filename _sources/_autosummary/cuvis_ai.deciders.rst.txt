@@ -28,9 +28,9 @@ cuvis\_ai.deciders
    :template: custom-module-template.rst                
    :recursive:
 
-   cuvis_ai.deciders.base_decider
-   cuvis_ai.deciders.binary_decider
-   cuvis_ai.deciders.cascaded_decider
-   cuvis_ai.deciders.combining_decider
-   cuvis_ai.deciders.multiclass_decider
+   base_decider
+   binary_decider
+   cascaded_decider
+   combining_decider
+   multiclass_decider
 

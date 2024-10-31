@@ -21,6 +21,7 @@ def _wrap_preprocessor_class(cls):
     class SklearnWrappedPreprocessor(cls, Node):
 
         __doc__ = cls.__doc__
+        __module__ = cls.__module__
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
@@ -78,6 +79,7 @@ def _wrap_preprocessor_class(cls):
             for k, v in params_dependent.items():
                 setattr(self, k, v)
 
+    functools.update_wrapper(SklearnWrappedPreprocessor.__init__, cls.__init__)
     return SklearnWrappedPreprocessor
 
 
@@ -86,6 +88,7 @@ def _wrap_supervised_class(cls):
     class SklearnWrappedSupervised(cls, Node):
 
         __doc__ = cls.__doc__
+        __module__ = cls.__module__
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
@@ -145,6 +148,7 @@ def _wrap_supervised_class(cls):
             for k, v in params_dependent.items():
                 setattr(self, k, v)
 
+    functools.update_wrapper(SklearnWrappedSupervised.__init__, cls.__init__)
     return SklearnWrappedSupervised
 
 
@@ -153,6 +157,7 @@ def _wrap_unsupervised_class(cls):
     class SklearnWrappedUnsupervised(cls, Node):
 
         __doc__ = cls.__doc__
+        __module__ = cls.__module__
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
@@ -210,6 +215,7 @@ def _wrap_unsupervised_class(cls):
             for k, v in params_dependent.items():
                 setattr(self, k, v)
 
+    functools.update_wrapper(SklearnWrappedUnsupervised.__init__, cls.__init__)
     return SklearnWrappedUnsupervised
 
 

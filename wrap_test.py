@@ -24,6 +24,7 @@ if __name__ == '__main__':
     params = testPCA.get_params()
 
     wrappedPCAInstance = node(testPCA)
+    help(wrappedPCAInstance)
 
     wrappedPCAInstance2 = WrappedPCA(n_components=3)
 

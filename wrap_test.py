@@ -1,6 +1,7 @@
 from cuvis_ai.node.wrap import node
 
 from sklearn.decomposition import PCA, NMF
+from sklearn.cluster import KMeans, MeanShift
 
 from cuvis_ai.utils.test import get_np_dummy_data
 
@@ -9,6 +10,12 @@ import numpy as np
 WrappedPCA = node(PCA)
 
 WrappedNMF = node(NMF)
+
+
+WrappedKMeans = node(KMeans)
+
+WrappedMeanShift = node(MeanShift)
+
 
 if __name__ == '__main__':
     testPCA = PCA(n_components=3)
@@ -29,6 +36,12 @@ if __name__ == '__main__':
     testPCA.fit(data)
 
     testNMF.fit(data)
+
+    kmeansInstance = WrappedKMeans(n_clusters=3)
+
+    kmeansInstance.fit(moreData)
+
+    predictions = kmeansInstance.forward(moreData)
 
     serializedData = wrappedPCAInstance2.serialize()
 

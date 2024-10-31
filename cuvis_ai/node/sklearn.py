@@ -20,6 +20,8 @@ def _wrap_preprocessor_class(cls):
 
     class SklearnWrappedPreprocessor(cls, Node):
 
+        __doc__ = cls.__doc__
+
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'

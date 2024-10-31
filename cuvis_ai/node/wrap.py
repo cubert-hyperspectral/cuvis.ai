@@ -7,12 +7,15 @@ import torch
 from sklearn.base import BaseEstimator
 
 from .sklearn import _wrap_sklearn_class, _wrap_sklearn_instance
+from .torch import _wrap_torch_class, _wrap_torch_instance
 
 
 def _wrap_class(cls):
 
     if issubclass(cls, BaseEstimator):
         return _wrap_sklearn_class(cls)
+    elif issubclass(cls, torch.nn.Module):
+        return _wrap_torch_class(cls)
     else:
         raise ValueError("Called on unsupported class")
 
@@ -21,6 +24,8 @@ def _wrap_instance(obj):
 
     if isinstance(obj, BaseEstimator):
         return _wrap_sklearn_instance(obj)
+    elif isinstance(obj, torch.nn.Module):
+        return _wrap_torch_instance(obj)
     else:
         raise ValueError("Called on unsupported object")
 

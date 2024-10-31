@@ -1,10 +1,8 @@
 
 from types import MethodWrapperType, ModuleType
 import inspect
-import functools
 import torch
-
-from sklearn.base import BaseEstimator
+import sklearn
 
 from .sklearn import _wrap_sklearn_class, _wrap_sklearn_instance
 from .torch import _wrap_torch_class, _wrap_torch_instance
@@ -12,7 +10,7 @@ from .torch import _wrap_torch_class, _wrap_torch_instance
 
 def _wrap_class(cls):
 
-    if issubclass(cls, BaseEstimator):
+    if issubclass(cls, sklearn.base.BaseEstimator):
         return _wrap_sklearn_class(cls)
     elif issubclass(cls, torch.nn.Module):
         return _wrap_torch_class(cls)
@@ -22,7 +20,7 @@ def _wrap_class(cls):
 
 def _wrap_instance(obj):
 
-    if isinstance(obj, BaseEstimator):
+    if isinstance(obj, sklearn.base.BaseEstimator):
         return _wrap_sklearn_instance(obj)
     elif isinstance(obj, torch.nn.Module):
         return _wrap_torch_instance(obj)

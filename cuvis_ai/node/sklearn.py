@@ -7,13 +7,15 @@ from .node import Node
 import uuid
 
 import numpy as np
+from pathlib import Path
 
 from sklearn.base import TransformerMixin, ClassifierMixin, ClusterMixin
+from ..preprocessor.base_preprocessor import Preprocessor
 
 
 def _wrap_preprocessor_class(cls):
 
-    class SklearnWrappedPreprocessor(cls, Node):
+    class SklearnWrappedPreprocessor(cls, Node, Preprocessor):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
@@ -48,27 +50,30 @@ def _wrap_preprocessor_class(cls):
             transformed_data = cls.transform(self, flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
-        def serialize(self) -> dict:
+        def serialize(self, data_dir: Path) -> dict:
             data_independent = cls.get_params(self)
             data_dependend = {
                 attr: getattr(self, attr)
                 for attr in dir(self)
-                if attr.endswith("_") and not callable(getattr(self, attr)) and not attr.startswith("__")
+                if attr.endswith("_")
+                and not callable(getattr(self, attr))
+                and not attr.startswith("__")
+                and not attr[:-1] in data_independent.keys()
             }
-            return data_independent | data_dependend
+            return {'params': data_independent, 'state': data_dependend}
 
         def load(self, params: dict) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
 
             data_dependent_keys = {
-                key for key in params.keys() if key not in data_independent_keys and key.endswith("_")}
+                key for key in params['state'].keys()}
 
-            params_independent = {key: params[key]
+            params_independent = {key: params['params'][key]
                                   for key in data_independent_keys}
 
             cls.set_params(self, **params_independent)
 
-            params_dependent = {key: params[key]
+            params_dependent = {key: params['state'][key]
                                 for key in data_dependent_keys}
 
             for k, v in params_dependent.items():
@@ -117,7 +122,7 @@ def _wrap_supervised_class(cls):
             transformed_data = cls.transform(self, flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
-        def serialize(self) -> dict:
+        def serialize(self, data_dir: Path) -> dict:
             data_independent = cls.get_params(self)
             data_dependend = {
                 attr: getattr(self, attr)
@@ -184,7 +189,7 @@ def _wrap_unsupervised_class(cls):
             prediction_data = cls.predict(self, flattened_data)
             return unflatten_batch_and_spatial(prediction_data, X.shape)
 
-        def serialize(self) -> dict:
+        def serialize(self, data_dir: Path) -> dict:
             data_independent = cls.get_params(self)
             data_dependend = {
                 attr: getattr(self, attr)

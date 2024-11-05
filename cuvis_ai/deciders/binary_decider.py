@@ -71,7 +71,7 @@ class BinaryDecider(BaseDecider):
             "type": type(self).__name__,
             "threshold": self.threshold,
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
     def load(self, filepath: str, params: Dict):
         """Load this node from a serialized graph."""

@@ -1,7 +1,9 @@
 from cuvis_ai.node.wrap import node
 
-from sklearn.decomposition import PCA, NMF
-from sklearn.cluster import KMeans, MeanShift
+# from sklearn.decomposition import PCA, NMF
+# from sklearn.cluster import KMeans, MeanShift
+
+from cuvis_ai.preprocessor import PCA, NMF
 
 from cuvis_ai.utils.test import get_np_dummy_data
 

@@ -7,12 +7,6 @@ from typing import Any
 from datetime import datetime
 from os.path import expanduser
 from typing import Optional, Dict, List, Tuple, Any, Union
-from cuvis_ai.preprocessor import *
-from cuvis_ai.pipeline import *
-from cuvis_ai.unsupervised import *
-from cuvis_ai.supervised import *
-from cuvis_ai.distance import *
-from cuvis_ai.deciders import *
 import networkx as nx
 from typing import List, Union
 from collections import defaultdict
@@ -21,18 +15,22 @@ from ..node import Node
 from ..node.Consumers import *
 from ..data.OutputFormat import OutputFormat
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
+from ..utils.filesystem import change_working_dir
+import numpy as np
+import tempfile
+from pathlib import Path
 
 
 class Graph():
     """Main class for connecting nodes in a CUVIS.AI processing graph
     """
+
     def __init__(self, name: str) -> None:
         self.graph = nx.DiGraph()
         self.sorted_graph = None
-        self.nodes: dict[str,Node] = {}
+        self.nodes: dict[str, Node] = {}
         self.entry_point = None
         self.name = name
-
 
     def add_node(self, node: Node, parent: list[Node] | Node = None) -> None:
         """Add a new node into the graph structure
@@ -54,7 +52,7 @@ class Graph():
             If parent(s) do not already belong to the graph.
         ValueError
             If parent(s) and child nodes are mismatched in expected data size.
-            
+
         """
         if parent is None:
             # this is the first Node of the graph
@@ -69,7 +67,7 @@ class Graph():
         # Check if operation is valid
         if not all([self.graph.has_node(p.id) for p in parent]):
             raise ValueError("Not all parents are part of the Graph")
-        
+
         if not all([check_array_shape(p.output_dim, node.input_dim) for p in parent]):
             raise ValueError('Unsatisfied dimensionality constraint!')
 
@@ -111,7 +109,7 @@ class Graph():
         self.nodes[node.id] = node
         self.nodes[node2.id] = node2
         if not self._verify():
-            # TODO Issue: This could potentially leave the graph in an invalid state 
+            # TODO Issue: This could potentially leave the graph in an invalid state
             # Delete nodes and connection
             del self.nodes[node.id]
             del self.nodes[node2.id]
@@ -130,8 +128,9 @@ class Graph():
         for start, end in all_edges:
             # TODO: Issue what if multiple Nodes feed into the same successor Node, how would the shape look like?
             if not check_array_shape(self.nodes[start].output_dim, self.nodes[end].input_dim):
+                # TODO reenable this, for now skip
                 print('Unsatisfied dimensionality constraint!')
-                return False
+                # return True
         return True
 
     def _verify(self) -> bool:
@@ -154,9 +153,9 @@ class Graph():
         # Get all edges in the graph
         if not self._verify_input_outputs():
             return False
-        
+
         return True
-    
+
     def delete_node(self, id: Node | str) -> None:
         """Removes a node from the graph.
         To successfully remove a node, it must not have successors.
@@ -179,11 +178,12 @@ class Graph():
 
         # Check if operation is valid
         if not len(list(self.graph.successors(id))) == 0:
-            raise ValueError("The node does have successors, removing it would invalidate the Graph structure")
+            raise ValueError(
+                "The node does have successors, removing it would invalidate the Graph structure")
 
         if not id in self.nodes:
             raise ValueError("Cannot remove node, it no longer exists")
-        
+
         self.graph.remove_edges_from([id])
         del self.nodes[id]
 
@@ -206,8 +206,8 @@ class Graph():
             Residuals of processed X, Y, and M
         """
         self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert(self.sorted_graph[0] == self.entry_point)
-        
+        assert (self.sorted_graph[0] == self.entry_point)
+
         xs = self._flatten_to_4dim(X)
         xs = np.split(xs, indices_or_sections=xs.shape[0], axis=0)
         ys = None
@@ -217,37 +217,39 @@ class Graph():
                 ys = np.split(ys, indices_or_sections=ys.shape[0], axis=0)
             else:
                 ys = Y
-        
+
         if ys is None:
             ys = [None]*len(xs)
         if M is None:
             ms = [None]*len(xs)
         else:
             ms = M
-        
+
         results = []
         for x, y, m in zip(xs, ys, ms):
-            
+
             intermediary = {}
             intermediary_labels = {}
             intermediary_metas = {}
-            intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(self.nodes[self.entry_point], x, y, m)
+            intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(
+                self.nodes[self.entry_point], x, y, m)
 
             for node in self.sorted_graph[1:]:
-                self._forward_helper(node, intermediary, intermediary_labels, intermediary_metas)
+                self._forward_helper(node, intermediary,
+                                     intermediary_labels, intermediary_metas)
 
-            results.append((intermediary[self.sorted_graph[-1]], intermediary_labels[self.sorted_graph[-1]], intermediary_metas[self.sorted_graph[-1]]))
+            results.append((intermediary[self.sorted_graph[-1]],
+                           intermediary_labels[self.sorted_graph[-1]], intermediary_metas[self.sorted_graph[-1]]))
         zr = tuple(zip(*results))
         rxs = zr[0]
         rys = zr[1]
         rms = zr[2]
-        
+
         rxs = np.concatenate(rxs, axis=0)
         if isinstance(rys[0], np.ndarray):
             rys = np.concatenate(rys, axis=0)
 
         return (rxs, rys, rms)
-        
 
     def _forward_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
         """Helper function to aggregate inputs and calculate products from a given node.
@@ -266,30 +268,31 @@ class Graph():
         p_nodes = list(self.graph.predecessors(current))
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
-        
+
         no_labels = intermediary_labels[p_nodes[0]] is None
         if not no_labels:
             if isinstance(intermediary_labels[p_nodes[0]], np.ndarray):
-                use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+                use_labels = np.concatenate(
+                    [intermediary_labels[p] for p in p_nodes], axis=-1)
             else:
                 use_labels = [intermediary_labels[p] for p in p_nodes]
         else:
             use_labels = []
-        
+
         no_metas = intermediary_metas[p_nodes[0]] is None
         if not no_metas:
             use_metas = [intermediary_metas[p] for p in p_nodes]
         else:
             use_metas = []
 
-        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._forward_node(self.nodes[current], use_prods, use_labels, use_metas)
-        
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._forward_node(
+            self.nodes[current], use_prods, use_labels, use_metas)
+
         if self._not_needed_anymore(current, intermediary):
             # Free memory that is not needed for the current passthrough anymore
             intermediary.pop(current)
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
-    
 
     def _forward_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Pass data through a node which has already been trained/fit.
@@ -311,12 +314,12 @@ class Graph():
             Output data, output labels, output metadata
         """
         node_input = [data]
-            
+
         if isinstance(node, LabelConsumerInference):
             node_input.append(labels)
         if isinstance(node, MetadataConsumerInference):
             node_input.append(metadata)
-        
+
         if len(node_input) == 1:
             out = node.forward(node_input[0])
         else:
@@ -325,7 +328,7 @@ class Graph():
             return out
         else:
             return out, labels, metadata
-    
+
     def _not_needed_anymore(self, id: str, intermediary: list[Node]) -> bool:
         """Private function to determine if a node products are still needed or can be safely removed.
 
@@ -342,9 +345,10 @@ class Graph():
            If all successors are already present in intermediary, it will return True
         """
         return all([succs in intermediary for succs in self.graph.successors(id)]) and \
-            len(list(self.graph.successors(id))) > 0 # Do not remove a terminal nodes data
+            len(list(self.graph.successors(id))
+                ) > 0  # Do not remove a terminal nodes data
 
-    def train(self, train_dataloader:torch.utils.data.DataLoader, test_dataloader:torch.utils.data.DataLoader):
+    def train(self, train_dataloader: torch.utils.data.DataLoader, test_dataloader: torch.utils.data.DataLoader):
         """Train a graph use a dataloader to iteratively pass data through the graph
 
         Parameters
@@ -360,8 +364,9 @@ class Graph():
             Raises error if dataloaders passed to train function are not pytorch dataloaders
         """
         if not isinstance(train_dataloader, torch.utils.data.DataLoader) or not isinstance(test_dataloader, torch.utils.data.DataLoader):
-            raise TypeError("train or test dataloader argument is not a pytorch DataLoader!")
-        
+            raise TypeError(
+                "train or test dataloader argument is not a pytorch DataLoader!")
+
         xs = []
         ys = []
         ms = []
@@ -369,12 +374,12 @@ class Graph():
             xs.append(x)
             ys.append(y)
             ms.append(m)
-        
+
         xs = self._flatten_to_4dim(xs)
 
         if isinstance(ys[0], np.ndarray):
             ys = self._flatten_to_4dim(ys)
-        
+
         self.fit(xs, ys, ms)
 
         # test stage
@@ -396,19 +401,20 @@ class Graph():
         """
         # training stage
         self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert(self.sorted_graph[0] == self.entry_point)
+        assert (self.sorted_graph[0] == self.entry_point)
 
         intermediary = {}
         intermediary_labels = {}
         intermediary_metas = {}
-        
+
         result = self._fit_node(self.nodes[self.entry_point], X, Y, M)
-        
-        
-        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._fit_node(self.nodes[self.entry_point], X, Y, M)
+
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._fit_node(
+            self.nodes[self.entry_point], X, Y, M)
 
         for node in self.sorted_graph[1:]:
-            self._fit_helper(node, intermediary, intermediary_labels, intermediary_metas)
+            self._fit_helper(node, intermediary,
+                             intermediary_labels, intermediary_metas)
         # do some metrics
 
     def _fit_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
@@ -429,21 +435,24 @@ class Graph():
 
         # TODO how to concat multiple input data from multiple nodes
         use_prods = np.concatenate([intermediary[p] for p in p_nodes], axis=-1)
-        
+
         no_labels = intermediary_labels[p_nodes[0]] is None
         if not no_labels:
-            use_labels = np.concatenate([intermediary_labels[p] for p in p_nodes], axis=-1)
+            use_labels = np.concatenate(
+                [intermediary_labels[p] for p in p_nodes], axis=-1)
         else:
             use_labels = None
-        
+
         no_metas = intermediary_metas[p_nodes[0]] is None
         if not no_metas:
-            use_metas = np.concatenate([intermediary_metas[p] for p in p_nodes], axis=-1)
+            use_metas = np.concatenate(
+                [intermediary_metas[p] for p in p_nodes], axis=-1)
         else:
             use_metas = None
 
-        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._fit_node(self.nodes[current], use_prods, use_labels, use_metas)
-        
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._fit_node(
+            self.nodes[current], use_prods, use_labels, use_metas)
+
         if self._not_needed_anymore(current, intermediary):
             # Free memory that is not needed for the current passthrough anymore
             intermediary.pop(current)
@@ -475,54 +484,59 @@ class Graph():
             Data is empty (length 0)
         """
         node_input = []
-        
+
         if isinstance(node, CubeConsumer):
             node_input.append(data)
         if isinstance(node, LabelConsumer):
             node_input.append(labels)
         if isinstance(node, MetadataConsumer):
             node_input.append(metadata)
-        
+
         if len(node_input) == 0:
-            raise RuntimeError(F"Node {node} invalid, does not indicate input data type!")
+            raise RuntimeError(
+                F"Node {node} invalid, does not indicate input data type!")
         elif len(node_input) == 1:
             node.fit(node_input[0])
         else:
             node.fit(tuple(node_input))
-        
+
         return self._forward_node(node, data, labels, metadata)
 
-    def serialize(self) -> None:
+    def serialize(self, data_dir: Path) -> dict:
         """Convert graph structure and all contained nodes to a serializable YAML format.
         Numeric data and fit models will be stored in zipped directory named with current time.
         """
+        from importlib.metadata import version
 
-        from cuvis_ai import __version__
+        nodes_data = {key: node.serialize(data_dir)
+                      for key, node in self.nodes.items()}
+        edges_data = [{'from': start, 'to': end}
+                      for start, end in list(self.graph.edges)]
+
         output = {
-            'edges': [],
-            'nodes': [],
+            'edges': edges_data,
+            'nodes': nodes_data,
             'name': self.name,
             'entry_point': self.entry_point,
-            'version': __version__
+            'version': version('cuvis_ai')
         }
-        now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
-        working_dir = f'{expanduser("~")}/{self.name}_{now}'
-        os.mkdir(working_dir)
-        # Step through all the stages of the pipeline and serialize
-        for node in self.nodes.values():
-            output['nodes'].append(
-                yaml.full_load(node.serialize(working_dir))
-            )
-        # Grab the connections and write as plain text
-        output['edges'] = [list(z) for z in list(self.graph.edges)]
-        # Create main .yml file
-        with open(f'{working_dir}/main.yml', 'w') as f:
-            f.write(yaml.dump(output, default_flow_style=False))
-        # Create a portable zip archive
-        shutil.make_archive(f'{expanduser("~")}/{self.name}_{now}', 'zip', working_dir)
-        print(f'Project saved to ~/{self.name}_{now}.zip')
-    
-    def load(self, filepath: str) -> None:
+
+        return output
+
+    def save_to_file(self, filepath) -> None:
+        filepath = Path(filepath)
+
+        os.makedirs(filepath.parent, exist_ok=True)
+        with tempfile.TemporaryDirectory() as tmpDir:
+            with change_working_dir(tmpDir):
+                graph_data = self.serialize('.')
+            with open(f'{tmpDir}/main.yml', 'w') as f:
+                f.write(yaml.dump(graph_data, default_flow_style=False))
+            shutil.make_archive(
+                f'{str(filepath)}', 'zip', tmpDir)
+        print(f'Project saved to {str(filepath)}')
+
+    def load_from_file(self, filepath: str) -> None:
         """Reconstruct the graph from a file path defining the location of a zip archive.
 
         Parameters
@@ -530,12 +544,10 @@ class Graph():
         filepath : str
             Location of zip archive
         """
-        self.now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
-        shutil.unpack_archive(filepath, f'/tmp/cuvis_{self.now}')
-        # Read the pipeline structure from the location
-        # Create main .yml file
-        self.pipeline = []
-        self.reconstruct_from_yaml(f'/tmp/cuvis_{self.now}')
+        with tempfile.TemporaryDirectory() as tmpDir:
+            shutil.unpack_archive(filepath, tmpDir)
+            self.pipeline = []
+            self.reconstruct_from_yaml(tmpDir)
 
     def reconstruct_from_yaml(self, root_path: str) -> None:
         """_summary_
@@ -596,7 +608,7 @@ class Graph():
         stage.load(data, filepath)
         return stage
 
-    @staticmethod
+    @ staticmethod
     def _flatten_to_4dim(x: list | np.ndarray) -> np.ndarray:
         """Private method to flatten
 

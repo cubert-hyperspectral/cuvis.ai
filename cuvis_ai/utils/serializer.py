@@ -3,6 +3,73 @@ import numpy as np
 import pickle as pk
 import os
 from pathlib import Path
+from abc import ABC, abstractmethod
+
+# TODO make yaml serializer
+
+
+class Serializer(ABC):
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+
+    @abstractmethod
+    def serialize(self, data: dict) -> None:
+        pass
+
+    @abstractmethod
+    def load(self) -> dict:
+        pass
+
+
+class CuvisYamlDumper(yaml.SafeDumper):
+    pass
+
+
+class CuvisYamlLoader(yaml.SafeLoader):
+    pass
+
+
+def numpy_array_representer(dumper, data):
+    return dumper.represent_scalar('!numpy.ndarray', np.array2string(data, separator=','))
+
+
+def numpy_arrray_constructor(loader, node):
+    value = loader.construct_scalar(node)
+    return np.fromstring(value.strip('[]'), sep=',')
+
+
+def numpy_float32_representer(dumper, data):
+    return dumper.represent_scalar('!numpy.float32', str(float(data)))
+
+
+def numpy_float32_constructor(loader, node):
+    value = loader.construct_scalar(node)
+    return np.float32(value)
+
+
+CuvisYamlDumper.add_representer(np.ndarray, numpy_array_representer)
+CuvisYamlDumper.add_representer(np.float32, numpy_float32_representer)
+CuvisYamlLoader.add_constructor('!numpy.ndarray', numpy_arrray_constructor)
+CuvisYamlLoader.add_constructor('!numpy.float32', numpy_float32_constructor)
+
+
+class YamlSerializer(Serializer):
+
+    def __init__(self, data_dir: Path, filename: str = 'main') -> None:
+        super().__init__(data_dir)
+
+        self.filename = filename
+
+    def serialize(self, data: dict) -> None:
+        with open(f'{self.data_dir}/{self.filename}.yml', 'w') as f:
+            yaml.dump(data, f, Dumper=CuvisYamlDumper,
+                      default_flow_style=False)
+
+    def load(self) -> dict:
+        with open(f'{self.data_dir}/{self.filename}.yml') as f:
+            data = yaml.load(f, Loader=CuvisYamlLoader)
+        return data
 
 
 class Serializer:

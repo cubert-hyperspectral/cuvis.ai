@@ -16,9 +16,11 @@ from ..node.Consumers import *
 from ..data.OutputFormat import OutputFormat
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 from ..utils.filesystem import change_working_dir
+from ..utils.serializer import YamlSerializer
 import numpy as np
 import tempfile
 from pathlib import Path
+from importlib import import_module
 
 
 class Graph():
@@ -508,8 +510,11 @@ class Graph():
         """
         from importlib.metadata import version
 
-        nodes_data = {key: node.serialize(data_dir)
-                      for key, node in self.nodes.items()}
+        nodes_data = {
+            key: {'__node_module__': str(node.__module__),
+                  '__node_class__': str(node.__class__.__name__),
+                  **node.serialize(data_dir)}
+            for key, node in self.nodes.items()}
         edges_data = [{'from': start, 'to': end}
                       for start, end in list(self.graph.edges)]
 
@@ -523,60 +528,26 @@ class Graph():
 
         return output
 
-    def save_to_file(self, filepath) -> None:
-        filepath = Path(filepath)
-
-        os.makedirs(filepath.parent, exist_ok=True)
-        with tempfile.TemporaryDirectory() as tmpDir:
-            with change_working_dir(tmpDir):
-                graph_data = self.serialize('.')
-            with open(f'{tmpDir}/main.yml', 'w') as f:
-                f.write(yaml.dump(graph_data, default_flow_style=False))
-            shutil.make_archive(
-                f'{str(filepath)}', 'zip', tmpDir)
-        print(f'Project saved to {str(filepath)}')
-
-    def load_from_file(self, filepath: str) -> None:
-        """Reconstruct the graph from a file path defining the location of a zip archive.
-
-        Parameters
-        ----------
-        filepath : str
-            Location of zip archive
-        """
-        with tempfile.TemporaryDirectory() as tmpDir:
-            shutil.unpack_archive(filepath, tmpDir)
-            self.pipeline = []
-            self.reconstruct_from_yaml(tmpDir)
-
-    def reconstruct_from_yaml(self, root_path: str) -> None:
-        """_summary_
-
-        Parameters
-        ----------
-        root_path : str
-            Path to unzipped graph archive directory.
-
-        Raises
-        ------
-        Exception
-            Currently installed version of CUVIS.AI does not match version model was saved with
-        """
-        with open(f'{root_path}/main.yml') as f:
-            structure = yaml.safe_load(f)
-        # We now have a dictionary defining the pipeline
+    def load(self, structure: dict, data_dir: Path) -> None:
         self.name = structure.get('name')
-        # Check the version of serialization matches currently installed version
-        print(structure)
-        if pkg_resources.require('cuvis_ai')[0].version != structure.get('version'):
-            print(pkg_resources.require('cuvis_ai')[0].version)
-            print(structure.get('version'))
-            raise Exception('Incorrect version of cuvis_ai package')
+
+        installed_cuvis_version = pkg_resources.require('cuvis_ai')[0].version
+        serialized_cuvis_version = structure.get('version')
+
+        if installed_cuvis_version != serialized_cuvis_version:
+            raise ValueError(f'Incorrect version of cuvis_ai package. Installed {installed_cuvis_version} but serialized with {serialized_cuvis_version}')  # nopep8
         if not structure.get('nodes'):
             print('No node information available!')
-        for stage in structure.get('nodes'):
-            t = self.reconstruct_stage(stage, root_path)
-            self.nodes[t.id] = t
+        for key, params in structure.get('nodes').items():
+
+            node_module = params.get('__node_module__')
+            node_class = params.get('__node_class__')
+
+            cls = getattr(import_module(node_module), node_class)
+            stage = cls()
+            stage.load(params, data_dir)
+            self.nodes[key] = stage
+
         # Set the entry point
         self.entry_point = structure.get('entry_point')
         # Create the graph instance
@@ -584,31 +555,47 @@ class Graph():
         # Handle base case where there is only one node
         if len(structure.get('nodes')) > 1:
             # Graph has at least one valid edge
-            self.graph.add_edges_from(structure.get('edges'))
+            for edge in structure.get('edges'):
+                self.graph.add_edge(edge.get('from'), edge.get('to'))
         else:
             # Only single node exists, add it into the graph
             self.add_base_node(list(self.nodes.values())[0])
 
-    def reconstruct_stage(self, data: dict, filepath: str) -> Node:
-        """Function to rebuild each node in the graph.
+    def save_to_file(self, filepath) -> None:
+        filepath = Path(filepath)
+
+        os.makedirs(filepath.parent, exist_ok=True)
+        with tempfile.TemporaryDirectory() as tmpDir:
+            with change_working_dir(tmpDir):
+                graph_data = self.serialize('.')
+
+            serial = YamlSerializer(tmpDir, 'main')
+            serial.serialize(graph_data)
+
+            shutil.make_archive(
+                f'{str(filepath)}', 'zip', tmpDir)
+            print(f'Project saved to {str(filepath)}')
+
+    @classmethod
+    def load_from_file(cls, filepath: str) -> None:
+        """Reconstruct the graph from a file path defining the location of a zip archive.
 
         Parameters
         ----------
-        data : dict
-            Parameters defining the values to initialize the node
         filepath : str
-            Path to any associated models or numeric data to initialize the node
-
-        Returns
-        -------
-        Node
-            Fully initialized node
+            Location of zip archive
         """
-        stage = globals()[data.get('type')]()
-        stage.load(data, filepath)
-        return stage
+        new_graph = cls('Loaded')
+        with tempfile.TemporaryDirectory() as tmpDir:
+            shutil.unpack_archive(filepath, tmpDir)
 
-    @ staticmethod
+            serial = YamlSerializer(tmpDir, 'main')
+            graph_data = serial.load()
+
+            with change_working_dir(tmpDir):
+                new_graph.load(graph_data, '.')
+
+    @staticmethod
     def _flatten_to_4dim(x: list | np.ndarray) -> np.ndarray:
         """Private method to flatten
 

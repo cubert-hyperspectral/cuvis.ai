@@ -4,7 +4,6 @@ from .base_decider import BaseDecider
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 
 import numpy as np
-from typing import Any, Dict
 
 
 class BinaryDecider(BaseDecider):
@@ -16,7 +15,7 @@ class BinaryDecider(BaseDecider):
         The threshold to use for classification: result = (input >= threshold)
     """
 
-    def __init__(self, threshold: Any) -> None:
+    def __init__(self, threshold: float = 1.0) -> None:
         super().__init__()
         self.threshold = threshold
 
@@ -73,7 +72,7 @@ class BinaryDecider(BaseDecider):
         }
         return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, filepath: str):
         """Load this node from a serialized graph."""
         try:
             self.threshold = float(params["threshold"])

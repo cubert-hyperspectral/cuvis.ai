@@ -82,9 +82,9 @@ class CombiningDecider(BaseDecider):
             "class_count": self.n,
             "rules_file": os.path.join(directory, dump_path)
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, filepath: str):
         """Load this node from a serialized graph."""
         try:
             self.n = int(params["class_count"])

@@ -24,6 +24,7 @@ def _wrap_preprocessor_class(cls):
         def __init__(self, *args, **kwargs):
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             cls.__init__(self, *args, **kwargs)
+            __name__ = cls.__name__
             self.input_size = (-1, -1, -1)
             self.output_size = (-1, -1, -1)
             self.initialized = False
@@ -62,7 +63,7 @@ def _wrap_preprocessor_class(cls):
             }
             return {'params': data_independent, 'state': data_dependend}
 
-        def load(self, params: dict) -> None:
+        def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
 
             data_dependent_keys = {
@@ -79,6 +80,7 @@ def _wrap_preprocessor_class(cls):
             for k, v in params_dependent.items():
                 setattr(self, k, v)
 
+    SklearnWrappedPreprocessor.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedPreprocessor.__init__, cls.__init__)
     return SklearnWrappedPreprocessor
 
@@ -94,6 +96,7 @@ def _wrap_supervised_class(cls):
         def __init__(self, *args, **kwargs):
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             cls.__init__(self, *args, **kwargs)
+            __name__ = cls.__name__
             self.input_size = (-1, -1, -1)
             self.output_size = (-1, -1, -1)
             self.initialized = False
@@ -131,7 +134,7 @@ def _wrap_supervised_class(cls):
             }
             return data_independent | data_dependend
 
-        def load(self, params: dict) -> None:
+        def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
 
             data_dependent_keys = {
@@ -148,6 +151,7 @@ def _wrap_supervised_class(cls):
             for k, v in params_dependent.items():
                 setattr(self, k, v)
 
+    SklearnWrappedSupervised.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedSupervised.__init__, cls.__init__)
     return SklearnWrappedSupervised
 
@@ -163,6 +167,7 @@ def _wrap_unsupervised_class(cls):
         def __init__(self, *args, **kwargs):
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             cls.__init__(self, *args, **kwargs)
+            __name__ = cls.__name__
             self.input_size = (-1, -1, -1)
             self.output_size = (-1, -1, -1)
             self.initialized = False
@@ -198,7 +203,7 @@ def _wrap_unsupervised_class(cls):
             }
             return data_independent | data_dependend
 
-        def load(self, params: dict) -> None:
+        def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
 
             data_dependent_keys = {
@@ -215,6 +220,7 @@ def _wrap_unsupervised_class(cls):
             for k, v in params_dependent.items():
                 setattr(self, k, v)
 
+    SklearnWrappedUnsupervised.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedUnsupervised.__init__, cls.__init__)
     return SklearnWrappedUnsupervised
 

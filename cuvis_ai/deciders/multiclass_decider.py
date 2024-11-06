@@ -5,7 +5,6 @@ from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
-from typing import Dict
 
 
 class MultiClassDecider(BaseDecider):
@@ -65,9 +64,9 @@ class MultiClassDecider(BaseDecider):
             "type": type(self).__name__,
             "class_count": self.n,
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, filepath: str):
         """Load this node from a serialized graph."""
         try:
             self.n = int(params["class_count"])

@@ -36,8 +36,8 @@ class Cascaded(BaseDecider):
         data = {
             "type": type(self).__name__,
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, filepath: str):
         """Load this node from a serialized graph."""
         pass  # No attributes

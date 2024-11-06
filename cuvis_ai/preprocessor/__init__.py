@@ -2,15 +2,15 @@
 # from .nmf import *
 
 import sklearn.decomposition
-from ..node.wrap import node
+from ..node.wrap import make_node
 import sklearn
 
 
-@node
+@make_node
 class PCA(sklearn.decomposition.PCA):
     pass
 
 
-@node
+@make_node
 class NMF(sklearn.decomposition.NMF):
     pass

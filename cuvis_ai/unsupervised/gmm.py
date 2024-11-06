@@ -6,7 +6,7 @@ import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
-from .base_unsupervised import BaseUnsupervised
+from ..node.base import BaseUnsupervised
 from sklearn.mixture import GaussianMixture as sk_gmm
 
 

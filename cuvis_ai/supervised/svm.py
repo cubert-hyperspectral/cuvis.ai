@@ -1,4 +1,4 @@
-from .base_supervised import BaseSupervised
+from ..node.base import BaseSupervised
 from sklearn import svm as sk_svm
 
 from ..node import Node

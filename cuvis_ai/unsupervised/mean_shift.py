@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from typing import Union, Optional, Callable
-from .base_unsupervised import BaseUnsupervised
+from ..node.base import BaseUnsupervised
 from sklearn.cluster import MeanShift as sk_meanshift
 
 

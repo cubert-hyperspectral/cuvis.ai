@@ -1,4 +1,4 @@
-from .base_supervised import BaseSupervised
+from ..node.base import BaseSupervised
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as sk_qda
 
 from ..node import Node

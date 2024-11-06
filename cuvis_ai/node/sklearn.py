@@ -10,7 +10,7 @@ import numpy as np
 from pathlib import Path
 
 from sklearn.base import TransformerMixin, ClassifierMixin, ClusterMixin
-from ..preprocessor.base_preprocessor import Preprocessor
+from .base import Preprocessor
 
 
 def _wrap_preprocessor_class(cls):

@@ -1,4 +1,4 @@
-from .base_supervised import BaseSupervised
+from ..node.base import BaseSupervised
 from sklearn.neural_network import MLPClassifier as sk_mlp
 from ..utils.nn_config import Optimizer
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch

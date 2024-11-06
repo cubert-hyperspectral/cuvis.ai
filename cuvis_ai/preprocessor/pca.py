@@ -5,7 +5,7 @@ import numpy as np
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
 
-from .base_preprocessor import Preprocessor
+from ..node.base import Preprocessor
 from sklearn.decomposition import PCA as sk_pca
 
 

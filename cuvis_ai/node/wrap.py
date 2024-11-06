@@ -28,7 +28,7 @@ def _wrap_instance(obj):
         raise ValueError("Called on unsupported object")
 
 
-def node(wrapped):
+def make_node(wrapped):
     """Node Wrapper / Decorator. Use to wrap a specific module into a node."""
 
     if isinstance(wrapped, ModuleType):

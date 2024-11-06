@@ -1,4 +1,4 @@
-from .base_supervised import BaseSupervised
+from ..node.base import BaseSupervised
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as sk_lda
 
 from ..node import Node

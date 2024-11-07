@@ -67,7 +67,6 @@ class BinaryDecider(BaseDecider):
         Convert the class into a serialized representation
         """
         data = {
-            "type": type(self).__name__,
             "threshold": self.threshold,
         }
         return data

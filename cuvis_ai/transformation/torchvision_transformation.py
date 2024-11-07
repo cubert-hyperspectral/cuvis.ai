@@ -66,7 +66,6 @@ class TorchVisionTransformation(Node, BaseTransformation):
 
         data = {
             'id': self.id,
-            "type": type(self).__name__,
             "tv_transform": blobfile_name,
         }
         return data

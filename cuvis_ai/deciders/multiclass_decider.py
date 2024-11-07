@@ -61,7 +61,6 @@ class MultiClassDecider(BaseDecider):
         Convert the class into a serialized representation
         """
         data = {
-            "type": type(self).__name__,
             "class_count": self.n,
         }
         return data

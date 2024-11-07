@@ -111,7 +111,6 @@ class KMeans(Node, BaseUnsupervised):
             pk.dump(self.fit_kmeans, f)
 
         data = {
-            'type': type(self).__name__,
             'id': self.id,
             'n_clusters': self.n_clusters,
             'input_size': self.input_size,

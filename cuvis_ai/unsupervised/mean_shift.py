@@ -106,7 +106,6 @@ class MeanShift(Node, BaseUnsupervised):
             pk.dump(self.fit_meanshift, f)
 
         data = {
-            'type': type(self).__name__,
             'id': self.id,
             'input_size': self.input_size,
             'output_size': self.output_size,

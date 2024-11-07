@@ -56,7 +56,6 @@ class QDA(Node, BaseSupervised):
             pk.dump(self.qda, f)
 
         data = {
-            'type': type(self).__name__,
             'id': self.id,
             'input_size': self.input_size,
             'output_size': self.output_size,

@@ -89,7 +89,6 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
         """Serialize this node."""
         data = {
             'id': self.id,
-            "type": type(self).__name__,
             "lower": self.lower_bound,
             "upper": self.upper_bound,
         }

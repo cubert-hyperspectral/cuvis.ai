@@ -18,6 +18,7 @@ from ..data.OutputFormat import OutputFormat
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 from ..utils.filesystem import change_working_dir
 from ..utils.serializer import YamlSerializer
+from ..utils.dependencies import get_installed_packages_str
 import numpy as np
 import tempfile
 from pathlib import Path
@@ -524,7 +525,8 @@ class Graph():
             'nodes': nodes_data,
             'name': self.name,
             'entry_point': self.entry_point,
-            'version': version('cuvis_ai')
+            'version': version('cuvis_ai'),
+            'packages': get_installed_packages_str()
         }
 
         return output

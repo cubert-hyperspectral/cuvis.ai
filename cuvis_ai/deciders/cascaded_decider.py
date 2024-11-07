@@ -34,7 +34,6 @@ class Cascaded(BaseDecider):
         Convert the class into a serialized representation
         """
         data = {
-            "type": type(self).__name__,
         }
         return data
 

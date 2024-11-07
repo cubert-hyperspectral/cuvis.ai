@@ -57,7 +57,6 @@ class LDA(Node, BaseSupervised):
             pk.dump(self.lda, f)
 
         data = {
-            'type': type(self).__name__,
             'id': self.id,
             'n_components': self.n_components,
             'input_size': self.input_size,

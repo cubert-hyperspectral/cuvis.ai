@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import torch
-import uuid
 import numpy as np
 from torchvision.datasets import VisionDataset
 from typing import Optional, Callable, Union, Dict, Tuple, Any

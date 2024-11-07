@@ -1,11 +1,11 @@
-import yaml
+
 import torch
-import os
-import uuid
+
 import numpy as np
 from typing import Optional, Any, Dict, Callable, Tuple, Union, Iterable
 from ..node.base import BaseTransformation
 from ..node import Node
+from pathlib import Path
 
 
 class TorchVisionTransformation(Node, BaseTransformation):
@@ -62,17 +62,18 @@ class TorchVisionTransformation(Node, BaseTransformation):
             return
 
         blobfile_name = F"{hash(self.tv_transform)}_tvtransformation.zip"
-        blobfile_path = os.path.join(serial_dir, blobfile_name)
-        torch.save(self.tv_transform, blobfile_path)
+        torch.save(self.tv_transform, Path(serial_dir) / blobfile_name)
 
         data = {
+            'id': self.id,
             "type": type(self).__name__,
             "tv_transform": blobfile_name,
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, serial_dir: str):
         """Load this node from a serialized graph."""
-        blobfile_path = os.path.join(filepath, params.get("tv_transform"))
-        self.tv_transform = torch.load(blobfile_path)
+        self.id = params.get('id')
+        self.tv_transform = torch.load(
+            Path(serial_dir) / params.get("tv_transform"))
         self.initialized = True

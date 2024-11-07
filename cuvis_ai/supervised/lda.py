@@ -3,10 +3,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as sk_lda
 
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
-import yaml
 import numpy as np
 import pickle as pk
-import os
+from pathlib import Path
 
 from dataclasses import dataclass
 
@@ -49,13 +48,14 @@ class LDA(Node, BaseSupervised):
         predictions = unflatten_batch_and_spatial(predictions, X.shape)
         return predictions
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> dict:
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.lda, open(os.path.join(
-            serial_dir, f"{hash(self.lda)}_lda.pkl"), "wb"))
+        with open(Path(serial_dir) / f"{hash(self.lda)}_lda.pkl", "wb") as f:
+            pk.dump(self.lda, f)
+
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -65,13 +65,13 @@ class LDA(Node, BaseSupervised):
             'lda_object': f"{hash(self.lda)}_lda.pkl"
         }
         # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, params: dict, filepath: str):
+    def load(self, params: dict, serial_dir: str):
         self.id = params.get('id')
-        self.input_size = params.get('input_size')
-        self.output_size = params.get('output_size')
+        self.input_size = tuple(params.get('input_size'))
+        self.output_size = tuple(params.get('output_size'))
         self.n_components = params.get('n_components')
-        self.lda = pk.load(
-            open(os.path.join(filepath, params.get('lda_object')), 'rb'))
+        with open(Path(serial_dir) / params.get('lda_object'), 'rb') as f:
+            self.lda = pk.load(f)
         self.initialized = True

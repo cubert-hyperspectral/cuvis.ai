@@ -3,9 +3,8 @@ import cuvis
 import numpy as np
 import glob
 import copy
-from typing import Optional, Callable, Dict
+from typing import Optional, Callable
 import torch
-import uuid
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 

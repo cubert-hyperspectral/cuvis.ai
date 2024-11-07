@@ -1,5 +1,4 @@
-import os
-import yaml
+
 import pickle as pk
 import numpy as np
 from ..node import Node
@@ -7,6 +6,7 @@ from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_s
 
 from ..node.base import Preprocessor
 from sklearn.decomposition import PCA as sk_pca
+from pathlib import Path
 
 
 class PCA(Node, Preprocessor):
@@ -64,7 +64,7 @@ class PCA(Node, Preprocessor):
     def output_dim(self):
         return self.output_size
 
-    def serialize(self, serial_dir: str) -> str:
+    def serialize(self, serial_dir: str) -> dict:
         '''
         This method should dump parameters to a yaml file format
         '''
@@ -72,8 +72,9 @@ class PCA(Node, Preprocessor):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_pca, open(os.path.join(
-            serial_dir, f"{hash(self.fit_pca)}_pca.pkl"), "wb"))
+        with open(Path(serial_dir) / f"{hash(self.fit_pca)}_pca.pkl", "wb") as f:
+            pk.dump(self.fit_pca, f)
+
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -82,17 +83,16 @@ class PCA(Node, Preprocessor):
             'output_size': self.output_size,
             'pca_object': f"{hash(self.fit_pca)}_pca.pkl"
         }
-        # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, params: dict, filepath: str):
+    def load(self, params: dict, serial_dir: str):
         '''
         Load dumped parameters to recreate the pca object
         '''
         self.id = params.get('id')
-        self.input_size = params.get('input_size')
+        self.input_size = tuple(params.get('input_size'))
         self.n_components = params.get('n_components')
-        self.output_size = params.get('output_size')
-        self.fit_pca = pk.load(
-            open(os.path.join(filepath, params.get('pca_object')), 'rb'))
+        self.output_size = tuple(params.get('output_size'))
+        with open(Path(serial_dir) / params.get('pca_object'), 'rb') as f:
+            self.fit_pca = pk.load(f)
         self.initialized = True

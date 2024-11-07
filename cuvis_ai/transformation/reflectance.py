@@ -1,7 +1,6 @@
 from ..node.base import BaseTransformation
 from ..node import MetadataConsumer, MetadataConsumerInference, Node
 import numpy as np
-import uuid
 import yaml
 from typing import Dict, Iterable, Any, Tuple, List
 import torch
@@ -86,17 +85,19 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
     def input_dim(self) -> Tuple[int, int, int]:
         return (-1, -1, -1)
 
-    def serialize(self, serial_dir: str) -> str:
+    def serialize(self, serial_dir: str) -> dict:
         """Serialize this node."""
         data = {
+            'id': self.id,
             "type": type(self).__name__,
             "lower": self.lower_bound,
             "upper": self.upper_bound,
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, serial_dir: str) -> None:
         """Load this node from a serialized graph."""
+        self.id = params.get('id')
         try:
             self.lower_bound = float(params["lower"])
         except:

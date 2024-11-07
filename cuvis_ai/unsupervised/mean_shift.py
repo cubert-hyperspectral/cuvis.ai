@@ -1,6 +1,3 @@
-import os
-import yaml
-import uuid
 import numpy as np
 import pickle as pk
 import matplotlib.pyplot as plt
@@ -9,6 +6,7 @@ from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_s
 from typing import Union, Optional, Callable
 from ..node.base import BaseUnsupervised
 from sklearn.cluster import MeanShift as sk_meanshift
+from pathlib import Path
 
 
 class MeanShift(Node, BaseUnsupervised):
@@ -87,7 +85,7 @@ class MeanShift(Node, BaseUnsupervised):
         data = self.fit_meanshift.predict(image_2d)
         return unflatten_batch_and_spatial(data, X.shape)
 
-    def serialize(self, serial_dir: str) -> str:
+    def serialize(self, serial_dir: str) -> dict:
         """Write the model parameters to a YAML format and save Mean Shift weights
 
         Parameters
@@ -104,8 +102,9 @@ class MeanShift(Node, BaseUnsupervised):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_meanshift, open(os.path.join(
-            serial_dir, f"{hash(self.fit_meanshift)}_mean_shift.pkl"), "wb"))
+        with open(Path(serial_dir) / f"{hash(self.fit_meanshift)}_mean_shift.pkl", "wb") as f:
+            pk.dump(self.fit_meanshift, f)
+
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -113,10 +112,9 @@ class MeanShift(Node, BaseUnsupervised):
             'output_size': self.output_size,
             'mean_shift_object': f"{hash(self.fit_meanshift)}_mean_shift.pkl"
         }
-        # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, params: dict, filepath: str):
+    def load(self, params: dict, serial_dir: str):
         """_summary_
 
         Parameters
@@ -127,8 +125,8 @@ class MeanShift(Node, BaseUnsupervised):
             Path to unzipped directory containing stored matrices and weights.
         """
         self.id = params.get('id')
-        self.input_size = params.get('input_size')
-        self.output_size = params.get('output_size')
-        self.fit_meanshift = pk.load(
-            open(os.path.join(filepath, params.get('mean_shift_object')), 'rb'))
+        self.input_size = tuple(params.get('input_size'))
+        self.output_size = tuple(params.get('output_size'))
+        with open(Path(serial_dir) / params.get('mean_shift_object'), 'rb') as f:
+            self.fit_meanshift = pk.load(f)
         self.initialized = True

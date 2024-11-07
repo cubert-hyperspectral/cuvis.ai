@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
@@ -5,18 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.pipeline.graph &mdash; Cuvis AI 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -85,12 +83,6 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">cuvis_ai.preprocessor</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">cuvis_ai.pipeline</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">cuvis_ai.unsupervised</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">cuvis_ai.supervised</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">cuvis_ai.distance</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">cuvis_ai.deciders</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
@@ -99,6 +91,12 @@
 <span class="kn">from</span> <span class="nn">..node.Consumers</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">..data.OutputFormat</span> <span class="kn">import</span> <span class="n">OutputFormat</span>
 <span class="kn">from</span> <span class="nn">..utils.numpy_utils</span> <span class="kn">import</span> <span class="n">get_shape_without_batch</span><span class="p">,</span> <span class="n">check_array_shape</span>
+<span class="kn">from</span> <span class="nn">..utils.filesystem</span> <span class="kn">import</span> <span class="n">change_working_dir</span>
+<span class="kn">from</span> <span class="nn">..utils.serializer</span> <span class="kn">import</span> <span class="n">YamlSerializer</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
 
 
 <div class="viewcode-block" id="Graph">
@@ -106,15 +104,15 @@
 <span class="k">class</span> <span class="nc">Graph</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Main class for connecting nodes in a CUVIS.AI processing graph</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="Graph.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
-
 
 
 <div class="viewcode-block" id="Graph.add_node">
@@ -139,7 +137,7 @@
 <span class="sd">            If parent(s) do not already belong to the graph.</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If parent(s) and child nodes are mismatched in expected data size.</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># this is the first Node of the graph</span>
@@ -154,7 +152,7 @@
         <span class="c1"># Check if operation is valid</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parent</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not all parents are part of the Graph&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">check_array_shape</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parent</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsatisfied dimensionality constraint!&#39;</span><span class="p">)</span>
 
@@ -202,7 +200,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node2</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node2</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify</span><span class="p">():</span>
-            <span class="c1"># TODO Issue: This could potentially leave the graph in an invalid state </span>
+            <span class="c1"># TODO Issue: This could potentially leave the graph in an invalid state</span>
             <span class="c1"># Delete nodes and connection</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node2</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
@@ -222,8 +220,9 @@
         <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">all_edges</span><span class="p">:</span>
             <span class="c1"># TODO: Issue what if multiple Nodes feed into the same successor Node, how would the shape look like?</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">check_array_shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">input_dim</span><span class="p">):</span>
+                <span class="c1"># TODO reenable this, for now skip</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Unsatisfied dimensionality constraint!&#39;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">False</span>
+                <span class="c1"># return True</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_verify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -246,9 +245,9 @@
         <span class="c1"># Get all edges in the graph</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify_input_outputs</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
-        
+
         <span class="k">return</span> <span class="kc">True</span>
-    
+
 <div class="viewcode-block" id="Graph.delete_node">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.delete_node">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Node</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -273,11 +272,12 @@
 
         <span class="c1"># Check if operation is valid</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="nb">id</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The node does have successors, removing it would invalidate the Graph structure&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The node does have successors, removing it would invalidate the Graph structure&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot remove node, it no longer exists&quot;</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_edges_from</span><span class="p">([</span><span class="nb">id</span><span class="p">])</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span></div>
 
@@ -303,8 +303,8 @@
 <span class="sd">            Residuals of processed X, Y, and M</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">))</span>
-        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
-        
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
+
         <span class="n">xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_to_4dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="o">=</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="kc">None</span>
@@ -314,38 +314,40 @@
                 <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="o">=</span><span class="n">ys</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ys</span> <span class="o">=</span> <span class="n">Y</span>
-        
+
         <span class="k">if</span> <span class="n">ys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ms</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ms</span> <span class="o">=</span> <span class="n">M</span>
-        
+
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
-            
+
             <span class="n">intermediary</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">intermediary_labels</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">intermediary_metas</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">intermediary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+            <span class="n">intermediary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_node</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_forward_helper</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">,</span> <span class="n">intermediary_labels</span><span class="p">,</span> <span class="n">intermediary_metas</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_forward_helper</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">,</span>
+                                     <span class="n">intermediary_labels</span><span class="p">,</span> <span class="n">intermediary_metas</span><span class="p">)</span>
 
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">intermediary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]))</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">intermediary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
+                           <span class="n">intermediary_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]))</span>
         <span class="n">zr</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">))</span>
         <span class="n">rxs</span> <span class="o">=</span> <span class="n">zr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">rys</span> <span class="o">=</span> <span class="n">zr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">rms</span> <span class="o">=</span> <span class="n">zr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        
+
         <span class="n">rxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">rxs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rys</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">rys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">rys</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="n">rxs</span><span class="p">,</span> <span class="n">rys</span><span class="p">,</span> <span class="n">rms</span><span class="p">)</span></div>
 
-        
 
     <span class="k">def</span> <span class="nf">_forward_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">intermediary_labels</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">intermediary_metas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to aggregate inputs and calculate products from a given node.</span>
@@ -364,30 +366,31 @@
         <span class="n">p_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
         <span class="c1"># TODO how to concat multiple input data from multiple nodes</span>
         <span class="n">use_prods</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">intermediary</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        
+
         <span class="n">no_labels</span> <span class="o">=</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">no_labels</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-                <span class="n">use_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">use_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">use_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">use_labels</span> <span class="o">=</span> <span class="p">[]</span>
-        
+
         <span class="n">no_metas</span> <span class="o">=</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="n">p_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">no_metas</span><span class="p">:</span>
             <span class="n">use_metas</span> <span class="o">=</span> <span class="p">[</span><span class="n">intermediary_metas</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">use_metas</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">intermediary</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="n">current</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">use_prods</span><span class="p">,</span> <span class="n">use_labels</span><span class="p">,</span> <span class="n">use_metas</span><span class="p">)</span>
-        
+        <span class="n">intermediary</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="n">current</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_node</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">use_prods</span><span class="p">,</span> <span class="n">use_labels</span><span class="p">,</span> <span class="n">use_metas</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_not_needed_anymore</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">):</span>
             <span class="c1"># Free memory that is not needed for the current passthrough anymore</span>
             <span class="n">intermediary</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
             <span class="n">intermediary_labels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
             <span class="n">intermediary_metas</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
-    
 
     <span class="k">def</span> <span class="nf">_forward_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass data through a node which has already been trained/fit.</span>
@@ -409,12 +412,12 @@
 <span class="sd">            Output data, output labels, output metadata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">node_input</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
-            
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">LabelConsumerInference</span><span class="p">):</span>
             <span class="n">node_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">MetadataConsumerInference</span><span class="p">):</span>
             <span class="n">node_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">node_input</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -423,7 +426,7 @@
             <span class="k">return</span> <span class="n">out</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">metadata</span>
-    
+
     <span class="k">def</span> <span class="nf">_not_needed_anymore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Private function to determine if a node products are still needed or can be safely removed.</span>
 
@@ -440,11 +443,12 @@
 <span class="sd">           If all successors are already present in intermediary, it will return True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">succs</span> <span class="ow">in</span> <span class="n">intermediary</span> <span class="k">for</span> <span class="n">succs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="nb">id</span><span class="p">)])</span> <span class="ow">and</span> \
-            <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="nb">id</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="c1"># Do not remove a terminal nodes data</span>
+            <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+                <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>  <span class="c1"># Do not remove a terminal nodes data</span>
 
 <div class="viewcode-block" id="Graph.train">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.train">[docs]</a>
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">test_dataloader</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">test_dataloader</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Train a graph use a dataloader to iteratively pass data through the graph</span>
 
 <span class="sd">        Parameters</span>
@@ -460,8 +464,9 @@
 <span class="sd">            Raises error if dataloaders passed to train function are not pytorch dataloaders</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_dataloader</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;train or test dataloader argument is not a pytorch DataLoader!&quot;</span><span class="p">)</span>
-        
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;train or test dataloader argument is not a pytorch DataLoader!&quot;</span><span class="p">)</span>
+
         <span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="p">[]</span>
@@ -469,12 +474,12 @@
             <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
             <span class="n">ms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-        
+
         <span class="n">xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_to_4dim</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ys</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_to_4dim</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">ms</span><span class="p">)</span>
 
         <span class="c1"># test stage</span>
@@ -499,19 +504,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># training stage</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">))</span>
-        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
 
         <span class="n">intermediary</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">intermediary_labels</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">intermediary_metas</span> <span class="o">=</span> <span class="p">{}</span>
-        
+
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
-        
-        
-        <span class="n">intermediary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+
+        <span class="n">intermediary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_node</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_helper</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">,</span> <span class="n">intermediary_labels</span><span class="p">,</span> <span class="n">intermediary_metas</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_helper</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">,</span>
+                             <span class="n">intermediary_labels</span><span class="p">,</span> <span class="n">intermediary_metas</span><span class="p">)</span></div>
 
         <span class="c1"># do some metrics</span>
 
@@ -533,21 +539,24 @@
 
         <span class="c1"># TODO how to concat multiple input data from multiple nodes</span>
         <span class="n">use_prods</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">intermediary</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        
+
         <span class="n">no_labels</span> <span class="o">=</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">no_labels</span><span class="p">:</span>
-            <span class="n">use_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">use_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">intermediary_labels</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">use_labels</span> <span class="o">=</span> <span class="kc">None</span>
-        
+
         <span class="n">no_metas</span> <span class="o">=</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="n">p_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">no_metas</span><span class="p">:</span>
-            <span class="n">use_metas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">intermediary_metas</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">use_metas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">intermediary_metas</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_nodes</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">use_metas</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">intermediary</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="n">current</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">use_prods</span><span class="p">,</span> <span class="n">use_labels</span><span class="p">,</span> <span class="n">use_metas</span><span class="p">)</span>
-        
+        <span class="n">intermediary</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_labels</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">intermediary_metas</span><span class="p">[</span><span class="n">current</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_node</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="n">use_prods</span><span class="p">,</span> <span class="n">use_labels</span><span class="p">,</span> <span class="n">use_metas</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_not_needed_anymore</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">intermediary</span><span class="p">):</span>
             <span class="c1"># Free memory that is not needed for the current passthrough anymore</span>
             <span class="n">intermediary</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
@@ -579,104 +588,73 @@
 <span class="sd">            Data is empty (length 0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">node_input</span> <span class="o">=</span> <span class="p">[]</span>
-        
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
             <span class="n">node_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">LabelConsumer</span><span class="p">):</span>
             <span class="n">node_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">MetadataConsumer</span><span class="p">):</span>
             <span class="n">node_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">F</span><span class="s2">&quot;Node </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2"> invalid, does not indicate input data type!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">F</span><span class="s2">&quot;Node </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2"> invalid, does not indicate input data type!&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">node_input</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">node_input</span><span class="p">))</span>
-        
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Graph.serialize">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.serialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert graph structure and all contained nodes to a serializable YAML format.</span>
 <span class="sd">        Numeric data and fit models will be stored in zipped directory named with current time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">version</span>
 
-        <span class="kn">from</span> <span class="nn">cuvis_ai</span> <span class="kn">import</span> <span class="n">__version__</span>
+        <span class="n">nodes_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;__node_module__&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="vm">__module__</span><span class="p">),</span>
+                  <span class="s1">&#39;__node_class__&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+                  <span class="o">**</span><span class="n">node</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">edges_data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;from&#39;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">:</span> <span class="n">end</span><span class="p">}</span>
+                      <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">)]</span>
+
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;edges&#39;</span><span class="p">:</span> <span class="n">edges_data</span><span class="p">,</span>
+            <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="n">nodes_data</span><span class="p">,</span>
             <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="s1">&#39;entry_point&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">,</span>
-            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">__version__</span>
+            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">version</span><span class="p">(</span><span class="s1">&#39;cuvis_ai&#39;</span><span class="p">)</span>
         <span class="p">}</span>
-        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y_%m_</span><span class="si">%d</span><span class="s1">_%H_%M_%S&#39;</span><span class="p">)</span>
-        <span class="n">working_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">working_dir</span><span class="p">)</span>
-        <span class="c1"># Step through all the stages of the pipeline and serialize</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">output</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">yaml</span><span class="o">.</span><span class="n">full_load</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">working_dir</span><span class="p">))</span>
-            <span class="p">)</span>
-        <span class="c1"># Grab the connections and write as plain text</span>
-        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">)]</span>
-        <span class="c1"># Create main .yml file</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">working_dir</span><span class="si">}</span><span class="s1">/main.yml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-        <span class="c1"># Create a portable zip archive</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Project saved to ~/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s1">.zip&#39;</span><span class="p">)</span></div>
 
-    
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
 <div class="viewcode-block" id="Graph.load">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct the graph from a file path defining the location of a zip archive.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        filepath : str</span>
-<span class="sd">            Location of zip archive</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y_%m_</span><span class="si">%d</span><span class="s1">_%H_%M_%S&#39;</span><span class="p">)</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;/tmp/cuvis_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">now</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="c1"># Read the pipeline structure from the location</span>
-        <span class="c1"># Create main .yml file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reconstruct_from_yaml</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/tmp/cuvis_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">now</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Graph.reconstruct_from_yaml">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.reconstruct_from_yaml">[docs]</a>
-    <span class="k">def</span> <span class="nf">reconstruct_from_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;_summary_</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        root_path : str</span>
-<span class="sd">            Path to unzipped graph archive directory.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        Exception</span>
-<span class="sd">            Currently installed version of CUVIS.AI does not match version model was saved with</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">root_path</span><span class="si">}</span><span class="s1">/main.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">structure</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="c1"># We now have a dictionary defining the pipeline</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
-        <span class="c1"># Check the version of serialization matches currently installed version</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s1">&#39;cuvis_ai&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span> <span class="o">!=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s1">&#39;cuvis_ai&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Incorrect version of cuvis_ai package&#39;</span><span class="p">)</span>
+
+        <span class="n">installed_cuvis_version</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s1">&#39;cuvis_ai&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span>
+        <span class="n">serialized_cuvis_version</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">installed_cuvis_version</span> <span class="o">!=</span> <span class="n">serialized_cuvis_version</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Incorrect version of cuvis_ai package. Installed </span><span class="si">{</span><span class="n">installed_cuvis_version</span><span class="si">}</span><span class="s1"> but serialized with </span><span class="si">{</span><span class="n">serialized_cuvis_version</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># nopep8</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No node information available!&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">):</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconstruct_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">root_path</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">node_module</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__node_module__&#39;</span><span class="p">)</span>
+            <span class="n">node_class</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__node_class__&#39;</span><span class="p">)</span>
+
+            <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="n">node_module</span><span class="p">),</span> <span class="n">node_class</span><span class="p">)</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+            <span class="n">stage</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage</span>
+
         <span class="c1"># Set the entry point</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;entry_point&#39;</span><span class="p">)</span>
         <span class="c1"># Create the graph instance</span>
@@ -684,32 +662,51 @@
         <span class="c1"># Handle base case where there is only one node</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Graph has at least one valid edge</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edges&#39;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edges&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from&#39;</span><span class="p">),</span> <span class="n">edge</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Only single node exists, add it into the graph</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_base_node</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="Graph.reconstruct_stage">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.reconstruct_stage">[docs]</a>
-    <span class="k">def</span> <span class="nf">reconstruct_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to rebuild each node in the graph.</span>
+<div class="viewcode-block" id="Graph.save_to_file">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.save_to_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">filepath</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpDir</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">change_working_dir</span><span class="p">(</span><span class="n">tmpDir</span><span class="p">):</span>
+                <span class="n">graph_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+            <span class="n">serial</span> <span class="o">=</span> <span class="n">YamlSerializer</span><span class="p">(</span><span class="n">tmpDir</span><span class="p">,</span> <span class="s1">&#39;main&#39;</span><span class="p">)</span>
+            <span class="n">serial</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">graph_data</span><span class="p">)</span>
+
+            <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="n">tmpDir</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Project saved to </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Graph.load_from_file">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.load_from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct the graph from a file path defining the location of a zip archive.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : dict</span>
-<span class="sd">            Parameters defining the values to initialize the node</span>
 <span class="sd">        filepath : str</span>
-<span class="sd">            Path to any associated models or numeric data to initialize the node</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Node</span>
-<span class="sd">            Fully initialized node</span>
+<span class="sd">            Location of zip archive</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stage</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)]()</span>
-        <span class="n">stage</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">stage</span></div>
+        <span class="n">new_graph</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="s1">&#39;Loaded&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpDir</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">tmpDir</span><span class="p">)</span>
+
+            <span class="n">serial</span> <span class="o">=</span> <span class="n">YamlSerializer</span><span class="p">(</span><span class="n">tmpDir</span><span class="p">,</span> <span class="s1">&#39;main&#39;</span><span class="p">)</span>
+            <span class="n">graph_data</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+            <span class="k">with</span> <span class="n">change_working_dir</span><span class="p">(</span><span class="n">tmpDir</span><span class="p">):</span>
+                <span class="n">new_graph</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">graph_data</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>

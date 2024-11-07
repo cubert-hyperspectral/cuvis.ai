@@ -1,0 +1,6 @@
+cuvis\_ai.utils.filesystem.change\_working\_dir
+===============================================
+
+.. currentmodule:: cuvis_ai.utils.filesystem
+
+.. autofunction:: change_working_dir

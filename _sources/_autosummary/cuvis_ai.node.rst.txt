@@ -29,5 +29,9 @@ cuvis\_ai.node
    :recursive:
 
    Consumers
+   base
    node
+   sklearn
+   torch
+   wrap
 

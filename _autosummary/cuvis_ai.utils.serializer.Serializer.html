@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
@@ -6,23 +8,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.utils.serializer.Serializer &mdash; Cuvis AI 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=01f34227"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cuvis_ai.utils.test" href="cuvis_ai.utils.test.html" />
-    <link rel="prev" title="cuvis_ai.utils.serializer" href="cuvis_ai.utils.serializer.html" /> 
+    <link rel="next" title="cuvis_ai.utils.serializer.YamlSerializer" href="cuvis_ai.utils.serializer.YamlSerializer.html" />
+    <link rel="prev" title="cuvis_ai.utils.serializer.CuvisYamlLoader" href="cuvis_ai.utils.serializer.CuvisYamlLoader.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,10 +62,18 @@
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.tv_transforms.html">cuvis_ai.tv_transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.utils.html">cuvis_ai.utils</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.filesystem.html">cuvis_ai.utils.filesystem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.nn_config.html">cuvis_ai.utils.nn_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.numpy_utils.html">cuvis_ai.utils.numpy_utils</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.utils.serializer.html">cuvis_ai.utils.serializer</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.numpy_array_representer.html">cuvis_ai.utils.serializer.numpy_array_representer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.numpy_arrray_constructor.html">cuvis_ai.utils.serializer.numpy_arrray_constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.numpy_float32_constructor.html">cuvis_ai.utils.serializer.numpy_float32_constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.numpy_float32_representer.html">cuvis_ai.utils.serializer.numpy_float32_representer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.CuvisYamlDumper.html">cuvis_ai.utils.serializer.CuvisYamlDumper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.CuvisYamlLoader.html">cuvis_ai.utils.serializer.CuvisYamlLoader</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.utils.serializer.Serializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.serializer.YamlSerializer.html">cuvis_ai.utils.serializer.YamlSerializer</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.test.html">cuvis_ai.utils.test</a></li>
@@ -110,10 +116,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="cuvis_ai.utils.serializer.Serializer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.utils.serializer.</span></span><span class="sig-name descname"><span class="pre">Serializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pickle_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.utils.serializer.Serializer.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pickle_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pickle_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer.__init__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -132,12 +138,12 @@
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.utils.serializer.Serializer.load_node">
-<span class="sig-name descname"><span class="pre">load_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer.load_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer.load_node" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer.load_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer.load_node" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.utils.serializer.Serializer.serialize_node">
-<span class="sig-name descname"><span class="pre">serialize_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer.serialize_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer.serialize_node" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">serialize_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/utils/serializer.html#Serializer.serialize_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.serializer.Serializer.serialize_node" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -148,8 +154,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuvis_ai.utils.serializer.html" class="btn btn-neutral float-left" title="cuvis_ai.utils.serializer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuvis_ai.utils.test.html" class="btn btn-neutral float-right" title="cuvis_ai.utils.test" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuvis_ai.utils.serializer.CuvisYamlLoader.html" class="btn btn-neutral float-left" title="cuvis_ai.utils.serializer.CuvisYamlLoader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.utils.serializer.YamlSerializer.html" class="btn btn-neutral float-right" title="cuvis_ai.utils.serializer.YamlSerializer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -25,8 +25,8 @@ cuvis\_ai.pipeline.graph.Graph
       ~Graph.fit
       ~Graph.forward
       ~Graph.load
-      ~Graph.reconstruct_from_yaml
-      ~Graph.reconstruct_stage
+      ~Graph.load_from_file
+      ~Graph.save_to_file
       ~Graph.serialize
       ~Graph.train
    

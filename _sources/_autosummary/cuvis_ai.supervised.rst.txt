@@ -28,7 +28,6 @@ cuvis\_ai.supervised
    :template: custom-module-template.rst                
    :recursive:
 
-   base_supervised
    lda
    qda
    simple_mlp

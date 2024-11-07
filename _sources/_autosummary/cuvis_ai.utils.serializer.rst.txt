@@ -9,6 +9,16 @@ cuvis\_ai.utils.serializer
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                          
+   
+      numpy_array_representer
+      numpy_arrray_constructor
+      numpy_float32_constructor
+      numpy_float32_representer
+   
    
 
    
@@ -19,7 +29,10 @@ cuvis\_ai.utils.serializer
       :toctree:                                          
       :template: custom-class-template.rst               
    
+      CuvisYamlDumper
+      CuvisYamlLoader
       Serializer
+      YamlSerializer
    
    
 

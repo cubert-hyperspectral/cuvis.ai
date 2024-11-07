@@ -28,7 +28,6 @@ cuvis\_ai.transformation
    :template: custom-module-template.rst                
    :recursive:
 
-   base_transformation
    reflectance
    torch_transformation
    torchvision_transformation

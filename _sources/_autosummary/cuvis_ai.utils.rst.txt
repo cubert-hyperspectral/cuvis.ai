@@ -28,6 +28,7 @@ cuvis\_ai.utils
    :template: custom-module-template.rst                
    :recursive:
 
+   filesystem
    nn_config
    numpy_utils
    serializer

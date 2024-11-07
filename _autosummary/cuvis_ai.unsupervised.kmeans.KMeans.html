@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
@@ -6,18 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.unsupervised.kmeans.KMeans &mdash; Cuvis AI 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=01f34227"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -63,7 +61,6 @@
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.transformation.html">cuvis_ai.transformation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.tv_transforms.html">cuvis_ai.tv_transforms</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.unsupervised.base_unsupervised.html">cuvis_ai.unsupervised.base_unsupervised</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.unsupervised.gmm.html">cuvis_ai.unsupervised.gmm</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.unsupervised.kmeans.html">cuvis_ai.unsupervised.kmeans</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.unsupervised.kmeans.KMeans</a></li>
@@ -108,8 +105,8 @@
 <h1>cuvis_ai.unsupervised.kmeans.KMeans<a class="headerlink" href="#cuvis-ai-unsupervised-kmeans-kmeans" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.unsupervised.kmeans.</span></span><span class="sig-name descname"><span class="pre">KMeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.unsupervised.base_unsupervised.BaseUnsupervised.html#cuvis_ai.unsupervised.base_unsupervised.BaseUnsupervised" title="cuvis_ai.unsupervised.base_unsupervised.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.unsupervised.kmeans.</span></span><span class="sig-name descname"><span class="pre">KMeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised" title="cuvis_ai.node.base.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a></p>
 <p>K-Means classifier</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -121,11 +118,11 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize a K-Means unsupervised classifier</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n_clusters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>optional</em>) – number of clusters to seed for k-means clustering, by default None</p>
+<dd class="field-odd"><p><strong>n_clusters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – number of clusters to seed for k-means clustering, by default None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -148,7 +145,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.kmeans.KMeans.forward" title="cuvis_ai.unsupervised.kmeans.KMeans.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
 <td><p>Apply K-Mean classifier to new data</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.kmeans.KMeans.load" title="cuvis_ai.unsupervised.kmeans.KMeans.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, filepath)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.kmeans.KMeans.load" title="cuvis_ai.unsupervised.kmeans.KMeans.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, serial_dir)</p></td>
 <td><p>_summary_</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.kmeans.KMeans.serialize" title="cuvis_ai.unsupervised.kmeans.KMeans.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(serial_dir)</p></td>
@@ -191,7 +188,7 @@ X (array-like): Input data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.fit" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.fit" title="Link to this definition"></a></dt>
 <dd><p>Train the K-Means classifier given a sample datacube.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -202,7 +199,7 @@ X (array-like): Input data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.forward" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.forward" title="Link to this definition"></a></dt>
 <dd><p>Apply K-Mean classifier to new data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -219,27 +216,27 @@ X (array-like): Input data.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.input_dim">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.input_dim" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.input_dim" title="Link to this definition"></a></dt>
 <dd><p>Get required input dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Number of channels</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.load">
-<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.load" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.load" title="Link to this definition"></a></dt>
 <dd><p>_summary_</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Parameters loaded form YAML file</p></li>
-<li><p><strong>filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Path to unzipped directory containing stored matrices and weights.</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Parameters loaded form YAML file</p></li>
+<li><p><strong>filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to unzipped directory containing stored matrices and weights.</p></li>
 </ul>
 </dd>
 </dl>
@@ -247,7 +244,7 @@ X (array-like): Input data.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.output_dim">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.output_dim" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.output_dim" title="Link to this definition"></a></dt>
 <dd><p>Get required output dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -261,17 +258,17 @@ X (array-like): Input data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.kmeans.KMeans.serialize">
-<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.serialize" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/kmeans.html#KMeans.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.kmeans.KMeans.serialize" title="Link to this definition"></a></dt>
 <dd><p>Write the model parameters to a YAML format and save K-Means weights</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>serial_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Path to where weights should be saved</p>
+<dd class="field-odd"><p><strong>serial_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to where weights should be saved</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>YAML formatted string which will can be safely written to file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
 </dd>
 </dl>
 </dd></dl>

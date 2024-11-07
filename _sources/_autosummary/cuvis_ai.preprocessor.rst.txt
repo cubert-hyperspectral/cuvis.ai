@@ -28,7 +28,6 @@ cuvis\_ai.preprocessor
    :template: custom-module-template.rst                
    :recursive:
 
-   base_preprocessor
    nmf
    pca
 

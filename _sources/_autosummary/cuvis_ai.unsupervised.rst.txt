@@ -28,7 +28,6 @@ cuvis\_ai.unsupervised
    :template: custom-module-template.rst                
    :recursive:
 
-   base_unsupervised
    gmm
    kmeans
    mean_shift

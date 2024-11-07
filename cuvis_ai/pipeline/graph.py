@@ -12,6 +12,7 @@ from typing import List, Union
 from collections import defaultdict
 import pkg_resources  # part of setuptools
 from ..node import Node
+from ..node.wrap import make_node
 from ..node.Consumers import *
 from ..data.OutputFormat import OutputFormat
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
@@ -544,6 +545,8 @@ class Graph():
             node_class = params.get('__node_class__')
 
             cls = getattr(import_module(node_module), node_class)
+            if not issubclass(cls, Node):
+                cls = make_node(cls)
             stage = cls()
             stage.load(params, data_dir)
             self.nodes[key] = stage
@@ -569,8 +572,8 @@ class Graph():
             with change_working_dir(tmpDir):
                 graph_data = self.serialize('.')
 
-            serial = YamlSerializer(tmpDir, 'main')
-            serial.serialize(graph_data)
+                serial = YamlSerializer(tmpDir, 'main')
+                serial.serialize(graph_data)
 
             shutil.make_archive(
                 f'{str(filepath)}', 'zip', tmpDir)
@@ -589,10 +592,10 @@ class Graph():
         with tempfile.TemporaryDirectory() as tmpDir:
             shutil.unpack_archive(filepath, tmpDir)
 
-            serial = YamlSerializer(tmpDir, 'main')
-            graph_data = serial.load()
-
             with change_working_dir(tmpDir):
+                serial = YamlSerializer(tmpDir, 'main')
+                graph_data = serial.load()
+
                 new_graph.load(graph_data, '.')
 
     @staticmethod

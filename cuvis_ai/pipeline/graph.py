@@ -500,7 +500,7 @@ class Graph():
         elif len(node_input) == 1:
             node.fit(node_input[0])
         else:
-            node.fit(tuple(node_input))
+            node.fit(*node_input)
 
         return self._forward_node(node, data, labels, metadata)
 

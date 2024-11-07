@@ -5,7 +5,7 @@ import torch
 import sklearn
 
 from .sklearn import _wrap_sklearn_class, _wrap_sklearn_instance
-from .torch import _wrap_torch_class, _wrap_torch_instance
+from .skorch import _wrap_torch_class, _wrap_torch_instance
 
 
 def _wrap_class(cls):

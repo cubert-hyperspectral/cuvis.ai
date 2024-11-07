@@ -4,7 +4,7 @@ import os
 import uuid
 import numpy as np
 from typing import Optional, Any, Dict, Callable, Tuple, Union, Iterable
-from . import BaseTransformation
+from ..node.base import BaseTransformation
 from ..node import Node
 
 

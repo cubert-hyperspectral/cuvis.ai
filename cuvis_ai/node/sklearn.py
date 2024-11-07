@@ -56,6 +56,8 @@ def _wrap_preprocessor_class(cls):
 
         def serialize(self, data_dir: Path) -> dict:
             data_independent = cls.get_params(self)
+            if not self.initialized:
+                return {'params': data_independent}
             data_dependend = {
                 attr: getattr(self, attr)
                 for attr in dir(self)
@@ -64,24 +66,29 @@ def _wrap_preprocessor_class(cls):
                 and not attr.startswith("__")
                 and not attr[:-1] in data_independent.keys()
             }
+            # data_dependend['_n_features_out'] = self._n_features_out
             return {'params': data_independent, 'state': data_dependend}
 
         def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
-
-            data_dependent_keys = {
-                key for key in params['state'].keys()}
 
             params_independent = {key: params['params'][key]
                                   for key in data_independent_keys}
 
             cls.set_params(self, **params_independent)
 
+            if 'state' not in params.keys():
+                return
+
+            data_dependent_keys = {
+                key for key in params['state'].keys()}
+
             params_dependent = {key: params['state'][key]
                                 for key in data_dependent_keys}
 
             for k, v in params_dependent.items():
                 setattr(self, k, v)
+            self.initialized = True
             self._derive_values()
 
     SklearnWrappedPreprocessor.__name__ = cls.__name__
@@ -133,6 +140,8 @@ def _wrap_supervised_class(cls):
 
         def serialize(self, data_dir: Path) -> dict:
             data_independent = cls.get_params(self)
+            if not self.initialized:
+                return {'params': data_independent}
             data_dependend = {
                 attr: getattr(self, attr)
                 for attr in dir(self)
@@ -146,19 +155,23 @@ def _wrap_supervised_class(cls):
         def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
 
-            data_dependent_keys = {
-                key for key in params['state'].keys()}
-
             params_independent = {key: params['params'][key]
                                   for key in data_independent_keys}
 
             cls.set_params(self, **params_independent)
+
+            if 'state' not in params.keys():
+                return
+
+            data_dependent_keys = {
+                key for key in params['state'].keys()}
 
             params_dependent = {key: params['state'][key]
                                 for key in data_dependent_keys}
 
             for k, v in params_dependent.items():
                 setattr(self, k, v)
+            self.initialized = True
             self._derive_values()
 
     SklearnWrappedSupervised.__name__ = cls.__name__
@@ -209,6 +222,8 @@ def _wrap_unsupervised_class(cls):
 
         def serialize(self, data_dir: Path) -> dict:
             data_independent = cls.get_params(self)
+            if not self.initialized:
+                return {'params': data_independent}
             data_dependend = {
                 attr: getattr(self, attr)
                 for attr in dir(self)
@@ -222,19 +237,23 @@ def _wrap_unsupervised_class(cls):
         def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(cls.get_params(self).keys())
 
-            data_dependent_keys = {
-                key for key in params['state'].keys()}
-
             params_independent = {key: params['params'][key]
                                   for key in data_independent_keys}
 
             cls.set_params(self, **params_independent)
+
+            if 'state' not in params.keys():
+                return
+
+            data_dependent_keys = {
+                key for key in params['state'].keys()}
 
             params_dependent = {key: params['state'][key]
                                 for key in data_dependent_keys}
 
             for k, v in params_dependent.items():
                 setattr(self, k, v)
+            self.initialized = True
             self._derive_values()
 
     SklearnWrappedUnsupervised.__name__ = cls.__name__

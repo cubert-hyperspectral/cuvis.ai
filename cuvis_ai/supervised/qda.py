@@ -1,13 +1,12 @@
-from .base_supervised import BaseSupervised
+from ..node.base import BaseSupervised
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as sk_qda
 
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
 
-import os
-import yaml
 import numpy as np
 import pickle as pk
+from pathlib import Path
 
 from dataclasses import dataclass
 
@@ -48,13 +47,14 @@ class QDA(Node, BaseSupervised):
         predictions = unflatten_batch_and_spatial(predictions, X.shape)
         return predictions
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> dict:
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.qda, open(os.path.join(
-            serial_dir, f"{hash(self.qda)}_qda.pkl"), "wb"))
+        with open(Path(serial_dir) / f"{hash(self.qda)}_qda.pkl", "wb") as f:
+            pk.dump(self.qda, f)
+
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -63,12 +63,12 @@ class QDA(Node, BaseSupervised):
             'qda_object': f"{hash(self.qda)}_qda.pkl"
         }
         # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, params: dict, filepath: str):
+    def load(self, params: dict, serial_dir: str):
         self.id = params.get('id')
-        self.input_size = params.get('input_size')
-        self.output_size = params.get('output_size')
-        self.qda = pk.load(
-            open(os.path.join(filepath, params.get('qda_object')), 'rb'))
+        self.input_size = tuple(params.get('input_size'))
+        self.output_size = tuple(params.get('output_size'))
+        with open(Path(serial_dir) / params.get('qda_object'), 'rb') as f:
+            self.qda = pk.load(f)
         self.initialized = True

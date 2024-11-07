@@ -1,12 +1,10 @@
 from typing import Optional, Any, Dict, Iterable, Tuple
-import yaml
 import pickle as pk
 import torch
-import uuid
-import os
 import numpy as np
 from ..node import Node
-from . import BaseTransformation
+from ..node.base import BaseTransformation
+from pathlib import Path
 
 
 class TorchTransformation(Node, BaseTransformation):
@@ -100,23 +98,22 @@ class TorchTransformation(Node, BaseTransformation):
 
         blob = (self.b, self.fun_kwargs)
         blobfile_name = F"{hash(str(blob))}_torchtransformation.pkl"
-        blobfile_path = os.path.join(serial_dir, blobfile_name)
-        with open(blobfile_path, "wb") as blobfile:
-            pk.dump(blob, blobfile)
+        with open(Path(serial_dir) / blobfile_name, 'wb') as f:
+            pk.dump(blob, f)
 
         data = {
+            'id': self.id,
             "type": type(self).__name__,
             "op_name": self.op_name,
             "transformation_blob": blobfile_name,
         }
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, filepath: str, params: Dict):
+    def load(self, params: dict, serial_dir: str):
         """Load this node from a serialized graph."""
-        blobfile_path = os.path.join(
-            filepath, params.get("transformation_blob"))
-        with open(blobfile_path, "rb") as blobfile:
-            self.b, self.fun_kwargs = pk.load(blobfile)
+        self.id = params.get('id')
+        with open(Path(serial_dir) / params.get("transformation_blob"), "rb") as f:
+            self.b, self.fun_kwargs = pk.load(f)
         self.op_name = params.get("op_name")
         self.fun = getattr(torch, self.op_name)
         self.initialized = True

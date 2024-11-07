@@ -9,9 +9,10 @@ from ..unsupervised import GMM, KMeans, MeanShift
 from ..transformation import Reflectance, TorchTransformation, TorchVisionTransformation
 from ..supervised import SVM, QDA, LDA
 from ..tv_transforms import Bandpass
+from ..utils.serializer import YamlSerializer
 
 
-TYPES_TO_CHECK = (int, float, str, bool, list, tuple)
+TYPES_TO_CHECK = (int, float, str, bool, list, tuple, np.ndarray)
 TEST_DIR = "./test/temp"
 
 
@@ -20,25 +21,24 @@ class TestNodeSerialization():
     def test_serialization(self):
         os.makedirs(TEST_DIR, exist_ok=True)
 
-        if self.node.serialize.__code__.co_argcount == 2:
-            node_yaml = self.node.serialize(TEST_DIR)
-        else:
-            node_yaml = self.node.serialize()
+        node_params = self.node.serialize(TEST_DIR)
 
-        node_dict = yaml.full_load(node_yaml)
+        serializer = YamlSerializer(TEST_DIR, 'test_node')
+        serializer.serialize(node_params)
+
+        node_dict = serializer.load()
+
         lnode = self.node.__class__()
 
-        if lnode.load.__code__.co_argcount == 3:
-            lnode.load(params=node_dict, filepath=TEST_DIR)
-        else:
-            lnode.load(params=node_dict)
+        lnode.load(node_dict, TEST_DIR)
 
         load_ok = True
         for attr in lnode.__dict__.keys():
             if type(getattr(lnode, attr)) not in TYPES_TO_CHECK:
                 continue
             if getattr(lnode, attr) != getattr(self.node, attr):
-                print(F"Attribute '{attr}' not equal!")
+                print(f"Attribute '{attr}' not equal! "
+                      f"{getattr(lnode, attr)} != {getattr(self.node, attr)}")
                 load_ok = False
         shutil.rmtree(TEST_DIR)
 

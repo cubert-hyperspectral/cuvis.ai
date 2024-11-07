@@ -5,7 +5,7 @@ import os
 class PublicDataSets:
 
     @classmethod
-    def download_dataset(cls, dataset_name, *, download_path: str = "", entries: list = None) -> bool:
+    def download_dataset(cls, dataset_name, *, download_path: str = ".", entries: list = None) -> bool:
         try:
             dset = cls._datasets[dataset_name]
         except KeyError:

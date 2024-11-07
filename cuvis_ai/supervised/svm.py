@@ -1,14 +1,12 @@
-from .base_supervised import BaseSupervised
+from ..node.base import BaseSupervised
 from sklearn import svm as sk_svm
 
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
-import yaml
-import numpy as np
 import pickle as pk
-import os
+from pathlib import Path
 
 
 class SVM(Node, BaseSupervised):
@@ -45,13 +43,14 @@ class SVM(Node, BaseSupervised):
         predictions = unflatten_batch_and_spatial(predictions, X.shape)
         return predictions
 
-    def serialize(self, serial_dir: str):
+    def serialize(self, serial_dir: str) -> dict:
         if not self.initialized:
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.svm, open(os.path.join(
-            serial_dir, f"{hash(self.svm)}_svm.pkl"), "wb"))
+        with open(Path(serial_dir) / f"{hash(self.svm)}_svm.pkl", "wb") as f:
+            pk.dump(self.svm, f)
+
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -60,12 +59,12 @@ class SVM(Node, BaseSupervised):
             'svm_object': f"{hash(self.svm)}_svm.pkl"
         }
         # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, params: dict, filepath: str):
+    def load(self, params: dict, serial_dir: str):
         self.id = params.get('id')
-        self.input_size = params.get('input_size')
-        self.output_size = params.get('output_size')
-        self.svm = pk.load(
-            open(os.path.join(filepath, params.get('svm_object')), 'rb'))
+        self.input_size = tuple(params.get('input_size'))
+        self.output_size = tuple(params.get('output_size'))
+        with open(Path(serial_dir) / params.get('svm_object'), 'rb') as f:
+            self.svm = pk.load(f)
         self.initialized = True

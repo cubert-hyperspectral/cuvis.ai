@@ -1,13 +1,11 @@
-import os
-import yaml
-import uuid
 import numpy as np
 import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
 from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
-from .base_unsupervised import BaseUnsupervised
+from ..node.base import BaseUnsupervised
 from sklearn.cluster import KMeans as sk_kmeans
+from pathlib import Path
 
 
 class KMeans(Node, BaseUnsupervised):
@@ -92,7 +90,7 @@ class KMeans(Node, BaseUnsupervised):
         data = self.fit_kmeans.predict(image_2d)
         return unflatten_batch_and_spatial(data, X.shape)
 
-    def serialize(self, serial_dir: str) -> str:
+    def serialize(self, serial_dir: str) -> dict:
         """Write the model parameters to a YAML format and save K-Means weights
 
         Parameters
@@ -109,8 +107,9 @@ class KMeans(Node, BaseUnsupervised):
             print('Module not fully initialized, skipping output!')
             return
         # Write pickle object to file
-        pk.dump(self.fit_kmeans, open(os.path.join(
-            serial_dir, f"{hash(self.fit_kmeans)}_kmeans.pkl"), "wb"))
+        with open(Path(serial_dir) / f"{hash(self.fit_kmeans)}_kmeans.pkl", "wb") as f:
+            pk.dump(self.fit_kmeans, f)
+
         data = {
             'type': type(self).__name__,
             'id': self.id,
@@ -120,9 +119,9 @@ class KMeans(Node, BaseUnsupervised):
             'kmeans_object': f"{hash(self.fit_kmeans)}_kmeans.pkl"
         }
         # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
+        return data
 
-    def load(self, params: dict, filepath: str):
+    def load(self, params: dict, serial_dir: str):
         """_summary_
 
         Parameters
@@ -133,9 +132,9 @@ class KMeans(Node, BaseUnsupervised):
             Path to unzipped directory containing stored matrices and weights.
         """
         self.id = params.get('id')
-        self.input_size = params.get('input_size')
-        self.output_size = params.get('output_size')
+        self.input_size = tuple(params.get('input_size'))
+        self.output_size = tuple(params.get('output_size'))
         self.n_clusters = params.get('n_clusters')
-        self.fit_kmeans = pk.load(
-            open(os.path.join(filepath, params.get('kmeans_object')), 'rb'))
+        with open(Path(serial_dir) / params.get('kmeans_object'), 'rb') as f:
+            self.fit_kmeans = pk.load(f)
         self.initialized = True

@@ -5,12 +5,14 @@ import uuid
 
 from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
 
+
 class Node(ABC):
     """
     Abstract class for data preprocessing.
     """
+
     def __init__(self):
-        self.id =  f'{type(self).__name__}-{str(uuid.uuid4())}'
+        self.id = f'{type(self).__name__}-{str(uuid.uuid4())}'
 
     @abstractmethod
     def forward(self, X):
@@ -53,7 +55,7 @@ class Node(ABC):
 
     @property
     @abstractmethod
-    def input_dim(self) -> tuple[int,int,int]:
+    def input_dim(self) -> tuple[int, int, int]:
         """
         Returns the needed shape for the input data.
         If a dimension is not important, it will return -1 in the specific position.
@@ -65,7 +67,7 @@ class Node(ABC):
 
     @property
     @abstractmethod
-    def output_dim(self) -> tuple[int,int,int]:
+    def output_dim(self) -> tuple[int, int, int]:
         """
         Returns the shape for the output data.
         If a dimension is dependent on the input, it will return -1 in the specific position.
@@ -76,14 +78,14 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def serialize(self):
+    def serialize(self, serial_dir: str) -> dict:
         """
         Convert the class into a serialized representation
         """
         pass
 
     @abstractmethod
-    def load(self):
+    def load(self, params: dict, serial_dir: str) -> None:
         """
         Load from serialized format into an object
         """

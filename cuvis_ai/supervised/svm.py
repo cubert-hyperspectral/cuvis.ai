@@ -2,7 +2,7 @@ from ..node.base import BaseSupervised
 from sklearn import svm as sk_svm
 
 from ..node import Node
-from ..utils.numpy_utils import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
+from ..utils.numpy import flatten_batch_and_spatial, flatten_batch_and_labels, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
 import pickle as pk

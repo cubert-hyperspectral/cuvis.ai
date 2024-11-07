@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from ..node import Node, CubeConsumer
-from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
+from ..utils.numpy import flatten_spatial, flatten_labels, unflatten_spatial
 import numpy as np
 import typing
 import uuid

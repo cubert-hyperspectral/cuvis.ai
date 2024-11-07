@@ -1,7 +1,7 @@
 from ..node.base import BaseSupervised
 from skorch import NeuralNetClassifier
 from ..utils.nn_config import Optimizer
-from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
+from ..utils.numpy import flatten_spatial, flatten_labels, unflatten_spatial
 import numpy as np
 from torch import nn
 from typing import Union

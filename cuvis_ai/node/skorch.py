@@ -2,8 +2,8 @@
 import functools
 import torch
 
-from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial, flatten_batch_and_labels
-from ..utils.numpy_utils import flatten_spatial, flatten_labels, unflatten_spatial
+from ..utils.numpy import *
+from ..utils.torch import InputDimension, guess_input_dimensionalty
 from .node import Node
 from .base import BaseSupervised, BaseUnsupervised
 
@@ -38,10 +38,11 @@ def _wrap_supervised_class(cls):
 
             self.criterion = criterion
 
+            self.expected_dim = guess_input_dimensionalty(
+                cls(**self.model_args_no_prefix))
+
             self.net = skorch.NeuralNetClassifier(
                 module=cls,
-                module__num_units=100,
-                module__dropout=0.5,
                 criterion=self.criterion,
             )
 
@@ -56,10 +57,14 @@ def _wrap_supervised_class(cls):
             return self.output_size
 
         def fit(self, X: np.ndarray, Y: np.ndarray):
-            flattened_data = flatten_spatial(X)
-            flattened_label = flatten_labels(Y)
+            if self.expected_dim == InputDimension.One:
+                flattened_data = flatten_batch_and_spatial(X)
+                flattened_label = flatten_labels(Y)
+            elif self.expected_dim == InputDimension.Two:
+                flattened_data = flatten_spatial(X)
+                flattened_label = flatten_labels(Y)
 
-            self.net.fit(self, flattened_data, flattened_label)
+            self.net.fit(flattened_data, flattened_label)
 
             self.input_size = (-1, -1, self.n_features_in_)
             self.output_size = (-1, -1, self._n_features_out)
@@ -67,7 +72,7 @@ def _wrap_supervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self.net.transform(self, flattened_data)
+            transformed_data = self.net.predict(self, flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self) -> dict:
@@ -108,10 +113,10 @@ def _wrap_unsupervised_class(cls):
         __doc__ = cls.__doc__
         __module__ = cls.__module__
 
-        def __init__(self, *args, criterion=torch.nn.NLLLoss, **kwargs):
+        def __init__(self, *args, criterion, **kwargs):
             super().__init__()
-            self.input_size = (-1, -1, -1)
-            self.output_size = (-1, -1, -1)
+            self._input_size = (-1, -1, -1)
+            self._output_size = (-1, -1, -1)
 
             self.model_args = {f'module__{k}': v for k,
                                v in kwargs.items()}
@@ -121,36 +126,49 @@ def _wrap_unsupervised_class(cls):
 
             self.criterion = criterion
 
-            self.net = skorch.NeuralNetClassifier(
+            self.expected_dim = guess_input_dimensionalty(
+                cls(**self.model_args_no_prefix))
+
+            self.net = skorch.NeuralNet(
                 module=cls,
-                module__num_units=100,
-                module__dropout=0.5,
                 criterion=self.criterion,
+                **self.model_args
             )
 
             self.initialized = False
 
         @Node.input_dim.getter
         def input_dim(self):
-            return self.input_size
+            return self._input_size
 
         @Node.output_dim.getter
         def output_dim(self):
-            return self.output_size
+            return self._output_size
 
         def fit(self, X: np.ndarray):
-            flattened_data = flatten_spatial(X)
 
-            self.net.fit(self, flattened_data)
+            if self.expected_dim == InputDimension.One:
+                flattened_data = flatten_batch_and_spatial(X)
+            elif self.expected_dim == InputDimension.Three:
+                flattened_data = np.moveaxis(X, -1, -3)
 
-            self.input_size = (-1, -1, self.n_features_in_)
-            self.output_size = (-1, -1, self._n_features_out)
+            # y can be set to None, in that case it will be derived from X
+            self.net.fit(flattened_data, flattened_data)
+
+            self._input_size = X.shape
+            self._output_size = X.shape
             self.initialized = True
 
         def forward(self, X: np.ndarray):
-            flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self.net.transform(self, flattened_data)
-            return unflatten_batch_and_spatial(transformed_data, X.shape)
+            if self.expected_dim == InputDimension.One:
+                flattened_data = flatten_batch_and_spatial(X)
+            elif self.expected_dim == InputDimension.Three:
+                flattened_data = np.moveaxis(X, -1, -3)
+            transformed_data = self.net.predict(flattened_data)
+            if self.expected_dim == InputDimension.One:
+                return unflatten_batch_and_spatial(transformed_data, X.shape)
+            elif self.expected_dim == InputDimension.Three:
+                return np.moveaxis(X, -1, -3)
 
         def serialize(self) -> dict:
             data_independent = self.net.get_params(self)
@@ -185,7 +203,7 @@ def _wrap_unsupervised_class(cls):
 
 def _wrap_torch_class(cls):
     if issubclass(cls, nn.Module):
-        return _wrap_supervised_class(cls)
+        return _wrap_unsupervised_class(cls)
     else:
         raise ValueError("Called on unsupported class")
 

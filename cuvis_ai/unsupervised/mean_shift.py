@@ -2,7 +2,7 @@ import numpy as np
 import pickle as pk
 import matplotlib.pyplot as plt
 from ..node import Node
-from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
+from ..utils.numpy import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from typing import Union, Optional, Callable
 from ..node.base import BaseUnsupervised
 from sklearn.cluster import MeanShift as sk_meanshift

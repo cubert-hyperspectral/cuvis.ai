@@ -2,7 +2,7 @@
 
 import functools
 
-from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial, flatten_batch_and_labels
+from ..utils.numpy import flatten_batch_and_spatial, unflatten_batch_and_spatial, flatten_batch_and_labels
 from .node import Node
 import uuid
 
@@ -108,17 +108,17 @@ def _wrap_supervised_class(cls):
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             cls.__init__(self, *args, **kwargs)
             __name__ = cls.__name__
-            self.input_size = (-1, -1, -1)
-            self.output_size = (-1, -1, -1)
+            self._input_size = (-1, -1, -1)
+            self._output_size = (-1, -1, -1)
             self.initialized = False
 
         @Node.input_dim.getter
         def input_dim(self):
-            return self.input_size
+            return self._input_size
 
         @Node.output_dim.getter
         def output_dim(self):
-            return self.output_size
+            return self._output_size
 
         def fit(self, X: np.ndarray, Y: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
@@ -191,17 +191,17 @@ def _wrap_unsupervised_class(cls):
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             cls.__init__(self, *args, **kwargs)
             __name__ = cls.__name__
-            self.input_size = (-1, -1, -1)
-            self.output_size = (-1, -1, -1)
+            self._input_size = (-1, -1, -1)
+            self._output_size = (-1, -1, -1)
             self.initialized = False
 
         @Node.input_dim.getter
         def input_dim(self):
-            return self.input_size
+            return self._input_size
 
         @Node.output_dim.getter
         def output_dim(self):
-            return self.output_size
+            return self._output_size
 
         def fit(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)

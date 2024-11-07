@@ -2,7 +2,7 @@
 from .base_decider import BaseDecider
 from typing import Callable, Dict
 
-from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
+from ..utils.numpy import flatten_batch_and_spatial, unflatten_batch_and_spatial
 
 import numpy as np
 

@@ -6,7 +6,7 @@ import uuid
 import os
 import numpy as np
 from ..node import Node
-from . import BaseTransformation
+from ..node.base import BaseTransformation
 
 
 class TorchTransformation(Node, BaseTransformation):

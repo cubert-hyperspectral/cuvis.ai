@@ -37,8 +37,8 @@ class TestNodeSerialization():
             if type(getattr(lnode, attr)) not in TYPES_TO_CHECK:
                 continue
             if getattr(lnode, attr) != getattr(self.node, attr):
-                print(F"Attribute '{attr}' not equal! {
-                      getattr(lnode, attr)} != {getattr(self.node, attr)}")
+                print(f"Attribute '{attr}' not equal! "
+                      f"{getattr(lnode, attr)} != {getattr(self.node, attr)}")
                 load_ok = False
         shutil.rmtree(TEST_DIR)
 

@@ -2,7 +2,7 @@
 from .base_decider import BaseDecider
 from ..node import Node
 
-from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial, get_shape_without_batch
+from ..utils.numpy import flatten_batch_and_spatial, unflatten_batch_and_spatial, get_shape_without_batch
 
 import numpy as np
 

@@ -1,7 +1,7 @@
 import pickle as pk
 import numpy as np
 from ..node import Node
-from ..utils.numpy_utils import flatten_batch_and_spatial, unflatten_batch_and_spatial
+from ..utils.numpy import flatten_batch_and_spatial, unflatten_batch_and_spatial
 from ..node.base import Preprocessor
 from sklearn.decomposition import NMF as sk_nmf
 from pathlib import Path

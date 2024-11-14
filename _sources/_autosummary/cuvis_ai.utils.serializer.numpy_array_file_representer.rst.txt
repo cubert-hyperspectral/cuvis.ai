@@ -1,0 +1,6 @@
+cuvis\_ai.utils.serializer.numpy\_array\_file\_representer
+==========================================================
+
+.. currentmodule:: cuvis_ai.utils.serializer
+
+.. autofunction:: numpy_array_file_representer

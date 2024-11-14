@@ -18,8 +18,8 @@ cuvis\_ai.utils.serializer.Serializer
    .. autosummary::
    
       ~Serializer.__init__
-      ~Serializer.load_node
-      ~Serializer.serialize_node
+      ~Serializer.load
+      ~Serializer.serialize
    
    
 

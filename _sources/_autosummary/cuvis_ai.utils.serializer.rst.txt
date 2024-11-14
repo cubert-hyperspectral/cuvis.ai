@@ -14,8 +14,11 @@ cuvis\_ai.utils.serializer
    .. autosummary::
       :toctree:                                          
    
-      numpy_array_representer
-      numpy_arrray_constructor
+      numpy_array_binary_representer
+      numpy_array_file_representer
+      numpy_array_string_representer
+      numpy_arrray_file_constructor
+      numpy_arrray_string_constructor
       numpy_float32_constructor
       numpy_float32_representer
    
@@ -31,6 +34,7 @@ cuvis\_ai.utils.serializer
    
       CuvisYamlDumper
       CuvisYamlLoader
+      OldSerializer
       Serializer
       YamlSerializer
    

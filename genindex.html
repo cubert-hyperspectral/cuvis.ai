@@ -153,8 +153,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.__init__">(cuvis_ai.node.node.Node method)</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.__init__">(cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF.__init__">(cuvis_ai.preprocessor.nmf.NMF method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.pca.PCA.html#cuvis_ai.preprocessor.pca.PCA.__init__">(cuvis_ai.preprocessor.pca.PCA method)</a>
@@ -227,6 +225,8 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.__init__">(cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
+        <li><a href="_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer.__init__">(cuvis_ai.utils.serializer.OldSerializer method)</a>
+</li>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.__init__">(cuvis_ai.utils.serializer.Serializer method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer.__init__">(cuvis_ai.utils.serializer.YamlSerializer method)</a>
@@ -242,11 +242,7 @@
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.nn_config.Adam.html#cuvis_ai.utils.nn_config.Adam">Adam (class in cuvis_ai.utils.nn_config)</a>
 </li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.add_base_node">add_base_node() (cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.add_constructor">add_constructor() (cuvis_ai.utils.serializer.CuvisYamlLoader class method)</a>
-</li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.add_edge">add_edge() (cuvis_ai.pipeline.graph.Graph method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.add_implicit_resolver">add_implicit_resolver() (cuvis_ai.utils.serializer.CuvisYamlDumper class method)</a>
 
@@ -259,8 +255,6 @@
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.add_multi_constructor">add_multi_constructor() (cuvis_ai.utils.serializer.CuvisYamlLoader class method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.add_multi_representer">add_multi_representer() (cuvis_ai.utils.serializer.CuvisYamlDumper class method)</a>
-</li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.add_node">add_node() (cuvis_ai.pipeline.graph.Graph method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.add_path_resolver">add_path_resolver() (cuvis_ai.utils.serializer.CuvisYamlDumper class method)</a>
 
@@ -2128,6 +2122,8 @@
       </ul></li>
       <li><a href="_autosummary/cuvis_ai.node.Consumers.CubeConsumer.html#cuvis_ai.node.Consumers.CubeConsumer">CubeConsumer (class in cuvis_ai.node.Consumers)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cuvis_ai
 
@@ -2135,8 +2131,6 @@
         <li><a href="_autosummary/cuvis_ai.html#module-cuvis_ai">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cuvis_ai.data
 
@@ -2310,20 +2304,6 @@
 
       <ul>
         <li><a href="_autosummary/cuvis_ai.node.wrap.html#module-cuvis_ai.node.wrap">module</a>
-</li>
-      </ul></li>
-      <li>
-    cuvis_ai.pipeline
-
-      <ul>
-        <li><a href="_autosummary/cuvis_ai.pipeline.html#module-cuvis_ai.pipeline">module</a>
-</li>
-      </ul></li>
-      <li>
-    cuvis_ai.pipeline.graph
-
-      <ul>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.html#module-cuvis_ai.pipeline.graph">module</a>
 </li>
       </ul></li>
       <li>
@@ -2530,6 +2510,13 @@
 </li>
       </ul></li>
       <li>
+    cuvis_ai.utils.dependencies
+
+      <ul>
+        <li><a href="_autosummary/cuvis_ai.utils.dependencies.html#module-cuvis_ai.utils.dependencies">module</a>
+</li>
+      </ul></li>
+      <li>
     cuvis_ai.utils.filesystem
 
       <ul>
@@ -2673,16 +2660,14 @@
         <li><a href="_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.defaultTestResult">(cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans method)</a>
 </li>
       </ul></li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.delete_node">delete_node() (cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.descend_resolver">descend_resolver() (cuvis_ai.utils.serializer.CuvisYamlDumper method)</a>
 
       <ul>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.descend_resolver">(cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.determine_block_hints">determine_block_hints() (cuvis_ai.utils.serializer.CuvisYamlDumper method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.determine_encoding">determine_encoding() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
@@ -3252,8 +3237,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.node.base.Preprocessor.html#cuvis_ai.node.base.Preprocessor.fit">(cuvis_ai.node.base.Preprocessor method)</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.fit">(cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF.fit">(cuvis_ai.preprocessor.nmf.NMF method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.pca.PCA.html#cuvis_ai.preprocessor.pca.PCA.fit">(cuvis_ai.preprocessor.pca.PCA method)</a>
@@ -3328,8 +3311,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.forward">(cuvis_ai.node.node.Node method)</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.forward">(cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF.forward">(cuvis_ai.preprocessor.nmf.NMF method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.pca.PCA.html#cuvis_ai.preprocessor.pca.PCA.forward">(cuvis_ai.preprocessor.pca.PCA method)</a>
@@ -3375,12 +3356,16 @@
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.get_event">get_event() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
+      <li><a href="_autosummary/cuvis_ai.utils.dependencies.get_installed_packages.html#cuvis_ai.utils.dependencies.get_installed_packages">get_installed_packages() (in module cuvis_ai.utils.dependencies)</a>
+</li>
+      <li><a href="_autosummary/cuvis_ai.utils.dependencies.get_installed_packages_str.html#cuvis_ai.utils.dependencies.get_installed_packages_str">get_installed_packages_str() (in module cuvis_ai.utils.dependencies)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.get_mark">get_mark() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.get_node">get_node() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.utils.test.get_np_dummy_data.html#cuvis_ai.utils.test.get_np_dummy_data">get_np_dummy_data() (in module cuvis_ai.utils.test)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.numpy_utils.get_shape_without_batch.html#cuvis_ai.utils.numpy_utils.get_shape_without_batch">get_shape_without_batch() (in module cuvis_ai.utils.numpy_utils)</a>
@@ -3394,8 +3379,6 @@
       <li><a href="_autosummary/cuvis_ai.distance.distance.GFC.html#cuvis_ai.distance.distance.GFC">GFC (class in cuvis_ai.distance.distance)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.unsupervised.gmm.GMM.html#cuvis_ai.unsupervised.gmm.GMM">GMM (class in cuvis_ai.unsupervised.gmm)</a>
-</li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph">Graph (class in cuvis_ai.pipeline.graph)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -3558,8 +3541,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.load">(cuvis_ai.node.node.Node method)</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.load">(cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF.load">(cuvis_ai.preprocessor.nmf.NMF method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.pca.PCA.html#cuvis_ai.preprocessor.pca.PCA.load">(cuvis_ai.preprocessor.pca.PCA method)</a>
@@ -3584,14 +3565,14 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.unsupervised.mean_shift.MeanShift.html#cuvis_ai.unsupervised.mean_shift.MeanShift.load">(cuvis_ai.unsupervised.mean_shift.MeanShift method)</a>
 </li>
+        <li><a href="_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.load">(cuvis_ai.utils.serializer.Serializer method)</a>
+</li>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer.load">(cuvis_ai.utils.serializer.YamlSerializer method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.load_from_file">load_from_file() (cuvis_ai.pipeline.graph.Graph class method)</a>
-</li>
-      <li><a href="_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.load_node">load_node() (cuvis_ai.utils.serializer.Serializer method)</a>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer.load_node">load_node() (cuvis_ai.utils.serializer.OldSerializer method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.test.test_numpy_utils.TestNumpyUtils.html#cuvis_ai.test.test_numpy_utils.TestNumpyUtils.longMessage">longMessage (cuvis_ai.test.test_numpy_utils.TestNumpyUtils attribute)</a>
 
@@ -3747,10 +3728,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.node.wrap.html#module-cuvis_ai.node.wrap">cuvis_ai.node.wrap</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.html#module-cuvis_ai.pipeline">cuvis_ai.pipeline</a>
-</li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.html#module-cuvis_ai.pipeline.graph">cuvis_ai.pipeline.graph</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.html#module-cuvis_ai.preprocessor">cuvis_ai.preprocessor</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.html#module-cuvis_ai.preprocessor.nmf">cuvis_ai.preprocessor.nmf</a>
@@ -3809,6 +3786,8 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.utils.html#module-cuvis_ai.utils">cuvis_ai.utils</a>
 </li>
+        <li><a href="_autosummary/cuvis_ai.utils.dependencies.html#module-cuvis_ai.utils.dependencies">cuvis_ai.utils.dependencies</a>
+</li>
         <li><a href="_autosummary/cuvis_ai.utils.filesystem.html#module-cuvis_ai.utils.filesystem">cuvis_ai.utils.filesystem</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.utils.nn_config.html#module-cuvis_ai.utils.nn_config">cuvis_ai.utils.nn_config</a>
@@ -3852,21 +3831,27 @@
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.need_more_tokens">need_more_tokens() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.utils.nn_config.SGD.html#cuvis_ai.utils.nn_config.SGD.nesterov">nesterov (cuvis_ai.utils.nn_config.SGD attribute)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.next_possible_simple_key">next_possible_simple_key() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF">NMF (class in cuvis_ai.preprocessor.nmf)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node">Node (class in cuvis_ai.node.node)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.NON_PRINTABLE">NON_PRINTABLE (cuvis_ai.utils.serializer.CuvisYamlLoader attribute)</a>
 </li>
-      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_array_representer.html#cuvis_ai.utils.serializer.numpy_array_representer">numpy_array_representer() (in module cuvis_ai.utils.serializer)</a>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_array_binary_representer.html#cuvis_ai.utils.serializer.numpy_array_binary_representer">numpy_array_binary_representer() (in module cuvis_ai.utils.serializer)</a>
 </li>
-      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_arrray_constructor.html#cuvis_ai.utils.serializer.numpy_arrray_constructor">numpy_arrray_constructor() (in module cuvis_ai.utils.serializer)</a>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_array_file_representer.html#cuvis_ai.utils.serializer.numpy_array_file_representer">numpy_array_file_representer() (in module cuvis_ai.utils.serializer)</a>
+</li>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_array_string_representer.html#cuvis_ai.utils.serializer.numpy_array_string_representer">numpy_array_string_representer() (in module cuvis_ai.utils.serializer)</a>
+</li>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_arrray_file_constructor.html#cuvis_ai.utils.serializer.numpy_arrray_file_constructor">numpy_arrray_file_constructor() (in module cuvis_ai.utils.serializer)</a>
+</li>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_arrray_string_constructor.html#cuvis_ai.utils.serializer.numpy_arrray_string_constructor">numpy_arrray_string_constructor() (in module cuvis_ai.utils.serializer)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.numpy_float32_constructor.html#cuvis_ai.utils.serializer.numpy_float32_constructor">numpy_float32_constructor() (in module cuvis_ai.utils.serializer)</a>
 </li>
@@ -3878,6 +3863,8 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer">OldSerializer (class in cuvis_ai.utils.serializer)</a>
+</li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.open">open() (cuvis_ai.utils.serializer.CuvisYamlDumper method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.nn_config.Optimizer.html#cuvis_ai.utils.nn_config.Optimizer">Optimizer (class in cuvis_ai.utils.nn_config)</a>
@@ -4146,8 +4133,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.save_possible_simple_key">save_possible_simple_key() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.save_to_file">save_to_file() (cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.scan_anchor">scan_anchor() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader.scan_block_scalar">scan_block_scalar() (cuvis_ai.utils.serializer.CuvisYamlLoader method)</a>
@@ -4251,8 +4236,6 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.serialize">(cuvis_ai.node.node.Node method)</a>
 </li>
-        <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.serialize">(cuvis_ai.pipeline.graph.Graph method)</a>
-</li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.nmf.NMF.html#cuvis_ai.preprocessor.nmf.NMF.serialize">(cuvis_ai.preprocessor.nmf.NMF method)</a>
 </li>
         <li><a href="_autosummary/cuvis_ai.preprocessor.pca.PCA.html#cuvis_ai.preprocessor.pca.PCA.serialize">(cuvis_ai.preprocessor.pca.PCA method)</a>
@@ -4279,13 +4262,15 @@
 </li>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.serialize">(cuvis_ai.utils.serializer.CuvisYamlDumper method)</a>
 </li>
+        <li><a href="_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.serialize">(cuvis_ai.utils.serializer.Serializer method)</a>
+</li>
         <li><a href="_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer.serialize">(cuvis_ai.utils.serializer.YamlSerializer method)</a>
 </li>
       </ul></li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper.serialize_node">serialize_node() (cuvis_ai.utils.serializer.CuvisYamlDumper method)</a>
 
       <ul>
-        <li><a href="_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.serialize_node">(cuvis_ai.utils.serializer.Serializer method)</a>
+        <li><a href="_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer.serialize_node">(cuvis_ai.utils.serializer.OldSerializer method)</a>
 </li>
       </ul></li>
       <li><a href="_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer">Serializer (class in cuvis_ai.utils.serializer)</a>
@@ -4727,8 +4712,6 @@
       <li><a href="_autosummary/cuvis_ai.transformation.torch_transformation.TorchTransformation.html#cuvis_ai.transformation.torch_transformation.TorchTransformation">TorchTransformation (class in cuvis_ai.transformation.torch_transformation)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.transformation.torchvision_transformation.TorchVisionTransformation.html#cuvis_ai.transformation.torchvision_transformation.TorchVisionTransformation">TorchVisionTransformation (class in cuvis_ai.transformation.torchvision_transformation)</a>
-</li>
-      <li><a href="_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.train">train() (cuvis_ai.pipeline.graph.Graph method)</a>
 </li>
       <li><a href="_autosummary/cuvis_ai.tv_transforms.Bandpass.training.html#cuvis_ai.tv_transforms.Bandpass.training">training (cuvis_ai.tv_transforms.Bandpass attribute)</a>
 

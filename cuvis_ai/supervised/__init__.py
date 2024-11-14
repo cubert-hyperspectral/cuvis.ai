@@ -1,5 +1,1 @@
-from .svm import SVM
-from .qda import QDA
-from .lda import LDA
-# from .simple_mlp import MLP
-# from .skorch_supervised import SkorchSupervised
+from .sklearn_wrapped import QDA, LDA, SVM, MLP

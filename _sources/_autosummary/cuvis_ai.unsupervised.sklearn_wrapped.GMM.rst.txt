@@ -1,0 +1,50 @@
+cuvis\_ai.unsupervised.sklearn\_wrapped.GMM
+===========================================
+
+.. currentmodule:: cuvis_ai.unsupervised.sklearn_wrapped
+
+.. autoclass:: GMM
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GMM.__init__
+      ~GMM.aic
+      ~GMM.bic
+      ~GMM.check_input_dim
+      ~GMM.check_output_dim
+      ~GMM.fit
+      ~GMM.fit_predict
+      ~GMM.forward
+      ~GMM.get_metadata_routing
+      ~GMM.get_params
+      ~GMM.load
+      ~GMM.predict
+      ~GMM.predict_proba
+      ~GMM.sample
+      ~GMM.score
+      ~GMM.score_samples
+      ~GMM.serialize
+      ~GMM.set_params
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GMM.input_dim
+      ~GMM.output_dim
+   
+   

@@ -109,12 +109,22 @@
         <span class="n">node_dict</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 
         <span class="n">lnode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
+        <span class="n">lnode</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">id</span>
 
         <span class="n">lnode</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">node_dict</span><span class="p">,</span> <span class="n">TEST_DIR</span><span class="p">)</span>
 
         <span class="n">load_ok</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">lnode</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">lnode</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TYPES_TO_CHECK</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">lnode</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="c1"># special check for numpy arrays</span>
+                <span class="n">not_equal</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">lnode</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span>
+                             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">not_equal</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute &#39;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">&#39; not equal! &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">lnode</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">load_ok</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">lnode</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute &#39;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">&#39; not equal! &quot;</span>
@@ -231,32 +241,20 @@
 
 
 
-<div class="viewcode-block" id="TestSupervisedSVM">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestSupervisedSVM.html#cuvis_ai.test.test_serialization.TestSupervisedSVM">[docs]</a>
-<span class="k">class</span> <span class="nc">TestSupervisedSVM</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-
-<div class="viewcode-block" id="TestSupervisedSVM.setUp">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestSupervisedSVM.html#cuvis_ai.test.test_serialization.TestSupervisedSVM.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">SVM</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span>
-                      <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
-</div>
+<span class="c1"># class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):</span>
+<span class="c1">#</span>
+<span class="c1">#    def setUp(self):</span>
+<span class="c1">#        self.node = SVM()</span>
+<span class="c1">#        self.node.fit(get_np_dummy_data((15, 20, 25)),</span>
+<span class="c1">#                      np.where(get_np_dummy_data((15, 20, 1)) &gt; 0.5, 1, 0))</span>
 
 
-
-<div class="viewcode-block" id="TestSupervisedQDA">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestSupervisedQDA.html#cuvis_ai.test.test_serialization.TestSupervisedQDA">[docs]</a>
-<span class="k">class</span> <span class="nc">TestSupervisedQDA</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-
-<div class="viewcode-block" id="TestSupervisedQDA.setUp">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestSupervisedQDA.html#cuvis_ai.test.test_serialization.TestSupervisedQDA.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">QDA</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span>
-                      <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
-</div>
-
+<span class="c1"># class TestSupervisedQDA(TestNodeSerialization, unittest.TestCase):</span>
+<span class="c1">#</span>
+<span class="c1">#    def setUp(self):</span>
+<span class="c1">#        self.node = QDA()</span>
+<span class="c1">#        self.node.fit(get_np_dummy_data((15, 20, 25)),</span>
+<span class="c1">#                      np.where(get_np_dummy_data((15, 20, 1)) &gt; 0.5, 1, 0))</span>
 
 
 <div class="viewcode-block" id="TestSupervisedLDA">

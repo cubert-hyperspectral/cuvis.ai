@@ -1,0 +1,52 @@
+cuvis\_ai.supervised.sklearn\_wrapped.LDA
+=========================================
+
+.. currentmodule:: cuvis_ai.supervised.sklearn_wrapped
+
+.. autoclass:: LDA
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LDA.__init__
+      ~LDA.check_input_dim
+      ~LDA.check_output_dim
+      ~LDA.decision_function
+      ~LDA.fit
+      ~LDA.fit_transform
+      ~LDA.forward
+      ~LDA.get_feature_names_out
+      ~LDA.get_metadata_routing
+      ~LDA.get_params
+      ~LDA.load
+      ~LDA.predict
+      ~LDA.predict_log_proba
+      ~LDA.predict_proba
+      ~LDA.score
+      ~LDA.serialize
+      ~LDA.set_output
+      ~LDA.set_params
+      ~LDA.set_score_request
+      ~LDA.transform
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LDA.input_dim
+      ~LDA.output_dim
+   
+   

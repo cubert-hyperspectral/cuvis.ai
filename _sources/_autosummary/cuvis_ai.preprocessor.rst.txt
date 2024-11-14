@@ -28,6 +28,5 @@ cuvis\_ai.preprocessor
    :template: custom-module-template.rst                
    :recursive:
 
-   nmf
-   pca
+   sklearn_wrapped
 

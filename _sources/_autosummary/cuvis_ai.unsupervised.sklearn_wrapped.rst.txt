@@ -1,0 +1,33 @@
+cuvis\_ai.unsupervised.sklearn\_wrapped
+=======================================
+
+.. automodule:: cuvis_ai.unsupervised.sklearn_wrapped
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      GMM
+      KMeans
+      MeanShift
+   
+   
+
+   
+   
+   
+
+
+

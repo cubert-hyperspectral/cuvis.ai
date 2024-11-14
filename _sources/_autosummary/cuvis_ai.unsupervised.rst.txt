@@ -28,7 +28,5 @@ cuvis\_ai.unsupervised
    :template: custom-module-template.rst                
    :recursive:
 
-   gmm
-   kmeans
-   mean_shift
+   sklearn_wrapped
 

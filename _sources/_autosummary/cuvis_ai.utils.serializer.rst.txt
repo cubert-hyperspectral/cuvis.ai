@@ -21,6 +21,8 @@ cuvis\_ai.utils.serializer
       numpy_arrray_string_constructor
       numpy_float32_constructor
       numpy_float32_representer
+      numpy_float64_constructor
+      numpy_float64_representer
    
    
 

@@ -23,8 +23,6 @@ cuvis\_ai.test.test\_serialization
       TestPreprocessorNMF
       TestPreprocessorPCA
       TestSupervisedLDA
-      TestSupervisedQDA
-      TestSupervisedSVM
       TestTransformationReflectance
       TestTransformationTorch
       TestTransformationTorchVision

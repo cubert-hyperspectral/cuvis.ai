@@ -28,9 +28,6 @@ cuvis\_ai.supervised
    :template: custom-module-template.rst                
    :recursive:
 
-   lda
-   qda
-   simple_mlp
+   sklearn_wrapped
    skorch_supervised
-   svm
 

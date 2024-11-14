@@ -1,0 +1,44 @@
+cuvis\_ai.unsupervised.sklearn\_wrapped.MeanShift
+=================================================
+
+.. currentmodule:: cuvis_ai.unsupervised.sklearn_wrapped
+
+.. autoclass:: MeanShift
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MeanShift.__init__
+      ~MeanShift.check_input_dim
+      ~MeanShift.check_output_dim
+      ~MeanShift.fit
+      ~MeanShift.fit_predict
+      ~MeanShift.forward
+      ~MeanShift.get_metadata_routing
+      ~MeanShift.get_params
+      ~MeanShift.load
+      ~MeanShift.predict
+      ~MeanShift.serialize
+      ~MeanShift.set_params
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MeanShift.input_dim
+      ~MeanShift.output_dim
+   
+   

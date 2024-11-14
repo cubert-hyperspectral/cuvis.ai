@@ -3,7 +3,7 @@ import numpy as np
 import typing
 import uuid
 
-from ..utils.numpy_utils import get_shape_without_batch, check_array_shape
+from ..utils.numpy import get_shape_without_batch, check_array_shape
 
 
 class Node(ABC):

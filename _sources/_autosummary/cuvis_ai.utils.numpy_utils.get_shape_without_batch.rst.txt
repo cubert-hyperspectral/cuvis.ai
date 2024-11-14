@@ -1,6 +1,0 @@
-cuvis\_ai.utils.numpy\_utils.get\_shape\_without\_batch
-=======================================================
-
-.. currentmodule:: cuvis_ai.utils.numpy_utils
-
-.. autofunction:: get_shape_without_batch

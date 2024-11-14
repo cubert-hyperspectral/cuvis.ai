@@ -1,6 +1,0 @@
-cuvis\_ai.utils.numpy\_utils.check\_array\_shape
-================================================
-
-.. currentmodule:: cuvis_ai.utils.numpy_utils
-
-.. autofunction:: check_array_shape

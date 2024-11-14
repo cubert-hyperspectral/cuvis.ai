@@ -32,6 +32,7 @@ cuvis\_ai.node
    base
    node
    sklearn
+   skorch
    torch
    wrap
 

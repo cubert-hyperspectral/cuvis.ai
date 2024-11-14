@@ -23,6 +23,7 @@ import numpy as np
 import tempfile
 from pathlib import Path
 from importlib import import_module
+from .executor import MemoryExecutor
 
 
 class Graph():

@@ -1,6 +1,6 @@
 import unittest
 
-from ..utils.numpy_utils import *
+from ..utils.numpy import *
 from ..utils.test import get_np_dummy_data
 
 

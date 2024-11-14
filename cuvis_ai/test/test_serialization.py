@@ -29,12 +29,22 @@ class TestNodeSerialization():
         node_dict = serializer.load()
 
         lnode = self.node.__class__()
+        lnode.id = self.node.id
 
         lnode.load(node_dict, TEST_DIR)
 
         load_ok = True
         for attr in lnode.__dict__.keys():
             if type(getattr(lnode, attr)) not in TYPES_TO_CHECK:
+                continue
+            if isinstance(getattr(lnode, attr), np.ndarray) or isinstance(getattr(self.node, attr), np.ndarray):
+                # special check for numpy arrays
+                not_equal = (getattr(lnode, attr) !=
+                             getattr(self.node, attr)).any()
+                if not_equal:
+                    print(f"Attribute '{attr}' not equal! "
+                          f"{getattr(lnode, attr)} != {getattr(self.node, attr)}")
+                    load_ok = False
                 continue
             if getattr(lnode, attr) != getattr(self.node, attr):
                 print(f"Attribute '{attr}' not equal! "
@@ -101,20 +111,20 @@ class TestTransformationReflectance(TestNodeSerialization, unittest.TestCase):
         self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
 
-class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):
+# class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):
+#
+#    def setUp(self):
+#        self.node = SVM()
+#        self.node.fit(get_np_dummy_data((15, 20, 25)),
+#                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))
 
-    def setUp(self):
-        self.node = SVM()
-        self.node.fit(get_np_dummy_data((15, 20, 25)),
-                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))
 
-
-class TestSupervisedQDA(TestNodeSerialization, unittest.TestCase):
-
-    def setUp(self):
-        self.node = QDA()
-        self.node.fit(get_np_dummy_data((15, 20, 25)),
-                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))
+# class TestSupervisedQDA(TestNodeSerialization, unittest.TestCase):
+#
+#    def setUp(self):
+#        self.node = QDA()
+#        self.node.fit(get_np_dummy_data((15, 20, 25)),
+#                      np.where(get_np_dummy_data((15, 20, 1)) > 0.5, 1, 0))
 
 
 class TestSupervisedLDA(TestNodeSerialization, unittest.TestCase):

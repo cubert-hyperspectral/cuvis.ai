@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 from abc import ABC, abstractmethod
 import uuid
-
+from .filesystem import change_working_dir
 # TODO make yaml serializer
 
 
@@ -66,13 +66,24 @@ def numpy_float32_constructor(loader, node):
     return np.float32(value)
 
 
+def numpy_float64_representer(dumper, data):
+    return dumper.represent_scalar('!numpy.float64', str(float(data)))
+
+
+def numpy_float64_constructor(loader, node):
+    value = loader.construct_scalar(node)
+    return np.float64(value)
+
+
 CuvisYamlDumper.add_representer(np.ndarray, numpy_array_file_representer)
 CuvisYamlDumper.add_representer(np.float32, numpy_float32_representer)
+CuvisYamlDumper.add_representer(np.float64, numpy_float64_representer)
 CuvisYamlLoader.add_constructor(
     '!numpy.ndarray.str', numpy_arrray_string_constructor)
 CuvisYamlLoader.add_constructor(
     '!numpy.ndarray.file', numpy_arrray_file_constructor)
 CuvisYamlLoader.add_constructor('!numpy.float32', numpy_float32_constructor)
+CuvisYamlLoader.add_constructor('!numpy.float64', numpy_float64_constructor)
 
 
 class YamlSerializer(Serializer):
@@ -83,13 +94,15 @@ class YamlSerializer(Serializer):
         self.filename = filename
 
     def serialize(self, data: dict) -> None:
-        with open(f'{self.data_dir}/{self.filename}.yml', 'w') as f:
-            yaml.dump(data, f, Dumper=CuvisYamlDumper,
-                      default_flow_style=False)
+        with change_working_dir(self.data_dir):
+            with open(f'{self.filename}.yml', 'w') as f:
+                yaml.dump(data, f, Dumper=CuvisYamlDumper,
+                          default_flow_style=False)
 
     def load(self) -> dict:
-        with open(f'{self.data_dir}/{self.filename}.yml') as f:
-            data = yaml.load(f, Loader=CuvisYamlLoader)
+        with change_working_dir(self.data_dir):
+            with open(f'{self.filename}.yml') as f:
+                data = yaml.load(f, Loader=CuvisYamlLoader)
         return data
 
 

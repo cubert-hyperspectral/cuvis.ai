@@ -14,5 +14,5 @@ class MeanShift(sklearn.cluster.MeanShift):
 
 
 @make_node
-class GMM(sklearn.cluster.GaussianMixture):
+class GMM(sklearn.mixture.GaussianMixture):
     pass

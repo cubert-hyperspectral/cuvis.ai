@@ -1,61 +1,39 @@
-from cuvis_ai.node.wrap import node
+
 
 # from sklearn.decomposition import PCA, NMF
 # from sklearn.cluster import KMeans, MeanShift
 
 from cuvis_ai.preprocessor import PCA, NMF
+from cuvis_ai.unsupervised import KMeans, GMM, MeanShift
+from cuvis_ai.supervised import SVM, LDA, QDA
 
 from cuvis_ai.utils.test import get_np_dummy_data
 
 import numpy as np
 
-WrappedPCA = node(PCA)
-
-WrappedNMF = node(NMF)
-
-
-WrappedKMeans = node(KMeans)
-
-WrappedMeanShift = node(MeanShift)
-
+TEST_DIR = 'test/tmp'
 
 if __name__ == '__main__':
     testPCA = PCA(n_components=3)
 
     testNMF = NMF(n_components=3)
-    params = testPCA.get_params()
 
-    wrappedPCAInstance = node(testPCA)
-    help(wrappedPCAInstance)
+    testSVM = SVM()
 
-    wrappedPCAInstance2 = WrappedPCA(n_components=3)
+    testQDA = QDA()
+    params = testNMF.serialize(TEST_DIR)
 
-    data = get_np_dummy_data((10, 10))
-
-    moreData = get_np_dummy_data((10, 10, 10, 10))
-
-    wrappedPCAInstance2.fit(moreData)
-
-    testPCA.fit(data)
+    data = get_np_dummy_data((10, 10, 10, 10))
+    labels = np.where(get_np_dummy_data((10, 10, 10)) > 0.5, 1, 0)
 
     testNMF.fit(data)
 
-    kmeansInstance = WrappedKMeans(n_clusters=3)
+    testSVM.fit(data, labels)
 
-    kmeansInstance.fit(moreData)
+    testQDA.fit(data, labels)
 
-    predictions = kmeansInstance.forward(moreData)
+    svmParams = testSVM.serialize(TEST_DIR)
 
-    serializedData = wrappedPCAInstance2.serialize()
+    qdaParams = testQDA.serialize(TEST_DIR)
 
-    newPCA = WrappedPCA(n_components=3)
-
-    newPCA.load(serializedData)
-
-    oldTransformed = wrappedPCAInstance2.forward(moreData)
-
-    newTransformed = newPCA.forward(moreData)
-
-    is_same = np.all(oldTransformed == newTransformed)
-
-    print(params)
+    kmeansInstance = KMeans(n_clusters=3)

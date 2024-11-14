@@ -78,7 +78,6 @@ class CombiningDecider(BaseDecider):
         dump_file = f"{hash(self.rule)}_pca.pkl"
         pk.dump(self.rule, open(dump_path, "wb"))
         data = {
-            "type": type(self).__name__,
             "class_count": self.n,
             "rules_file": os.path.join(directory, dump_path)
         }

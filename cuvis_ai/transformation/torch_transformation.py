@@ -103,7 +103,6 @@ class TorchTransformation(Node, BaseTransformation):
 
         data = {
             'id': self.id,
-            "type": type(self).__name__,
             "op_name": self.op_name,
             "transformation_blob": blobfile_name,
         }

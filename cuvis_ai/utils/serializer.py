@@ -4,6 +4,7 @@ import pickle as pk
 import os
 from pathlib import Path
 from abc import ABC, abstractmethod
+import uuid
 
 # TODO make yaml serializer
 
@@ -30,13 +31,30 @@ class CuvisYamlLoader(yaml.SafeLoader):
     pass
 
 
-def numpy_array_representer(dumper, data):
-    return dumper.represent_scalar('!numpy.ndarray', np.array2string(data, separator=','))
+def numpy_array_string_representer(dumper, data):
+    return dumper.represent_scalar('!numpy.ndarray.str', np.array2string(data, separator=','))
 
 
-def numpy_arrray_constructor(loader, node):
+def numpy_array_binary_representer(dumper, data):
+    return dumper.represent_scalar('!numpy.ndarray.bin', np.array2string(data, separator=','))
+
+
+def numpy_array_file_representer(dumper, data):
+    tmp_filename = f'{uuid.uuid4()}.npy'
+
+    np.save(tmp_filename, data)
+
+    return dumper.represent_scalar('!numpy.ndarray.file', tmp_filename)
+
+
+def numpy_arrray_string_constructor(loader, node):
     value = loader.construct_scalar(node)
     return np.fromstring(value.strip('[]'), sep=',')
+
+
+def numpy_arrray_file_constructor(loader, node):
+    value = loader.construct_scalar(node)
+    return np.load(value)
 
 
 def numpy_float32_representer(dumper, data):
@@ -48,9 +66,12 @@ def numpy_float32_constructor(loader, node):
     return np.float32(value)
 
 
-CuvisYamlDumper.add_representer(np.ndarray, numpy_array_representer)
+CuvisYamlDumper.add_representer(np.ndarray, numpy_array_file_representer)
 CuvisYamlDumper.add_representer(np.float32, numpy_float32_representer)
-CuvisYamlLoader.add_constructor('!numpy.ndarray', numpy_arrray_constructor)
+CuvisYamlLoader.add_constructor(
+    '!numpy.ndarray.str', numpy_arrray_string_constructor)
+CuvisYamlLoader.add_constructor(
+    '!numpy.ndarray.file', numpy_arrray_file_constructor)
 CuvisYamlLoader.add_constructor('!numpy.float32', numpy_float32_constructor)
 
 
@@ -72,7 +93,7 @@ class YamlSerializer(Serializer):
         return data
 
 
-class Serializer:
+class OldSerializer:
 
     def __init__(self, serial_dir, *, pickle_inner=True) -> None:
         self.serial_dir = Path(serial_dir)

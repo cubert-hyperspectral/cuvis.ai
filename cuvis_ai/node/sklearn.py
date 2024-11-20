@@ -10,7 +10,7 @@ import numpy as np
 from pathlib import Path
 
 from sklearn.base import TransformerMixin, ClassifierMixin, ClusterMixin, DensityMixin
-from .base import Preprocessor
+from .base import Preprocessor, BaseUnsupervised, BaseSupervised
 
 
 def _serialize_sklearn_model(obj, cls, data_dir: Path) -> dict:
@@ -117,7 +117,7 @@ def _wrap_preprocessor_class(cls):
 
 def _wrap_supervised_class(cls):
 
-    class SklearnWrappedSupervised(cls, Node):
+    class SklearnWrappedSupervised(cls, Node, BaseSupervised):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
@@ -170,7 +170,7 @@ def _wrap_supervised_class(cls):
 
 def _wrap_unsupervised_class(cls):
 
-    class SklearnWrappedUnsupervised(cls, Node):
+    class SklearnWrappedUnsupervised(cls, Node, BaseUnsupervised):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__

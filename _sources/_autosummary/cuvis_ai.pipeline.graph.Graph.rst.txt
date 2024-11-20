@@ -22,6 +22,8 @@ cuvis\_ai.pipeline.graph.Graph
       ~Graph.add_edge
       ~Graph.add_node
       ~Graph.delete_node
+      ~Graph.fit
+      ~Graph.forward
       ~Graph.load
       ~Graph.load_from_file
       ~Graph.save_to_file

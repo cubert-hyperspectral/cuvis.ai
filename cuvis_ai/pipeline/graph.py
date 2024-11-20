@@ -284,25 +284,10 @@ class Graph():
 
                 new_graph.load(graph_data, '.')
 
-    @staticmethod
-    def _flatten_to_4dim(x: list | np.ndarray) -> np.ndarray:
-        """Private method to flatten
+    def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
+        return executor.forward(X, Y, M)
 
-        Parameters
-        ----------
-        x : list | np.ndarray
-            Make sure all array like data has 4 dimensions
-
-        Returns
-        -------
-        np.ndarray
-            Flattened array
-        """
-        if isinstance(x, List):
-            if len(x[0].shape) == 5:
-                x = np.concatenate(x, axis=0)
-            else:
-                x = np.stack(x, axis=0)
-        while len(x.shape) >= 5:
-            x = x.reshape((x.shape[0] * x.shape[1], *x.shape[2:]))
-        return x
+    def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
+        executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
+        executor.fit(X, Y, M)

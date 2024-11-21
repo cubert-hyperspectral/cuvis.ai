@@ -85,10 +85,6 @@ class BaseTransformation(CubeConsumer):
         self.output_size = None
 
     @abstractmethod
-    def fit(self, X):
-        pass
-
-    @abstractmethod
     def forward(self, X):
         pass
 

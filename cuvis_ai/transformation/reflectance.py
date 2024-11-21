@@ -1,12 +1,12 @@
 from ..node.base import BaseTransformation
-from ..node import MetadataConsumer, MetadataConsumerInference, Node
+from ..node import MetadataConsumer, Node
 import numpy as np
 import yaml
 from typing import Dict, Iterable, Any, Tuple, List, Optional
 import torch
 
 
-class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerInference):
+class Reflectance(Node, BaseTransformation):
     """Generic reflectance calculus: (data - dark) / (white - dark)
     Requires "Dark" and "White" references to be set in Metadata.
 
@@ -24,11 +24,9 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
         self.upper_bound = upper_bound
         self.input_size = None
         self.output_size = None
+        self.set_forward_meta_request(Dark=True, White=True)
 
-    def fit(self, *X: Tuple):
-        pass
-
-    def forward(self, X: Tuple[np.ndarray, List[Dict]]):
+    def forward(self, X: np.ndarray, White: np.ndarray, Dark: np.ndarray):
         """Apply reflectance calculus to the data.
         Returns the data as percentage values between the "Dark" and "White" references set in the meta-data.
         e.g. A pixel value of 1.0 means that the pixel is as bright as the white reference at this pixel, 1.5 -> 50% brighter, 0.0 -> as bright as the dark reference, -0.2 -> 20% darker than the dark reference.
@@ -59,24 +57,10 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
                 "Reflectance calculation input must be a tuple containing cube data and metadata containing dark and white references.")
 
         cubes = np.split(X[0], indices_or_sections=X[0].shape[0], axis=0)
-        if type(X[1]) not in [tuple, list]:
-            metas = [X[1]]
-        else:
-            metas = X[1]
-        refs = []
-        for cube, meta in zip(cubes, metas):
-            try:
-                dark = meta["references"]["Dark"]
-                white = meta["references"]["White"]
-            except KeyError:
-                pass
-            except AttributeError:
-                pass
-            if dark is None or white is None:
-                raise ValueError(
-                    "Reflectance calculation requires a dark and white references in the metadata to be present.")
-            refs.append(reflectanceCalc(cube, white, dark,
-                        self.upper_bound, self.lower_bound))
+        whites = np.split(White[0], indices_or_sections=X[0].shape[0], axis=0)
+        darks = np.split(Dark[0], indices_or_sections=X[0].shape[0], axis=0)
+        refs = [reflectanceCalc(c, w, d,
+                                self.upper_bound, self.lower_bound) for c, w, d in zip(cubes, whites, darks)]
 
         return np.concatenate(refs, axis=0)
 

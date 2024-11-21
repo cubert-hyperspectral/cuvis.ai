@@ -3,7 +3,7 @@ from ..node.node import Node
 import numpy as np
 from typing import Optional, Union, List, Dict, Tuple
 import torch
-from ..node.Consumers import LabelConsumerInference, MetadataConsumerInference, CubeConsumer, LabelConsumer, MetadataConsumer
+from ..node.Consumers import CubeConsumer, LabelConsumer, MetadataConsumer
 
 
 class MemoryExecutor:
@@ -116,15 +116,30 @@ class MemoryExecutor:
         """
         node_input = [data]
 
-        if isinstance(node, LabelConsumerInference):
-            node_input.append(labels)
-        if isinstance(node, MetadataConsumerInference):
-            node_input.append(metadata)
+        additional_meta = dict()
 
-        if len(node_input) == 1:
-            out = node.forward(node_input[0])
+        requested_meta = node.get_forward_requested_meta()
+
+        for k in requested_meta.keys():
+            additional_meta[k] = list()
+
+        for idx in range(data.shape[0]):
+            for k, v in requested_meta:
+                if not v:
+                    continue
+                if not k in metadata[idx]:
+                    raise RuntimeError(f"Could not find requested metadata {k}")  # nopep8
+
+                additional_meta[k].append(metadata[idx][k])
+
+        for k in requested_meta.keys():
+            if isinstance(additional_meta[k][0], np.ndarray):
+                additional_meta[k] = np.concatenate(additional_meta[k], axis=0)
+
+        if len(additional_meta) > 0:
+            out = node.forward(data, **additional_meta)
         else:
-            out = node.forward(tuple(node_input))
+            out = node.forward(data)
         if isinstance(out, Tuple):
             return out
         else:

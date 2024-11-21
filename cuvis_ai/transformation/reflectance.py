@@ -1,9 +1,6 @@
 from ..node.base import BaseTransformation
-from ..node import MetadataConsumer, Node
+from ..node import Node
 import numpy as np
-import yaml
-from typing import Dict, Iterable, Any, Tuple, List, Optional
-import torch
 
 
 class Reflectance(Node, BaseTransformation):
@@ -33,42 +30,44 @@ class Reflectance(Node, BaseTransformation):
         e.g. A pixel value of 1.0 means that the pixel is as bright as the white reference at this pixel, 1.5 -> 50% brighter, 0.0 -> as bright as the dark reference, -0.2 -> 20% darker than the dark reference.
         The output values can be clamped by setting :attr:`lower_bond` and :attr:`upper_bound`.
 
-
         Parameters
-        ----------
-        X : np.ndarray
-            Data to compute reflectance of. Expects a tuple of (data, meta-data) as (np.ndarray, Dict)
+            ----------
+            X : np.ndarray
+                The input data array for which reflectance is computed. Must have the same shape 
+                as `references__White` and `references__Dark`.
+            references__White : np.ndarray
+                The white reference array. Defines the maximum intensity for each pixel.
+            references__Dark : np.ndarray
+                The dark reference array. Defines the minimum intensity for each pixel.
 
-        Returns
-        -------
-        Tuple
-            Returns the reflectance data in a tuple along with the remaining data passed in.
+            Returns
+            -------
+            np.ndarray
+                An array of reflectance values with the same shape as the input `X`. The reflectance 
+                values are computed as `(X - references__Dark) / (references__White - references__Dark)` 
+                and optionally clamped between the lower and upper bounds.
+
         """
 
-        def reflectanceCalc(cube: np.ndarray, white: np.ndarray, dark: np.ndarray, ub: Optional[float], lb: Optional[float]) -> np.ndarray:
-            ref = np.nan_to_num(np.divide(np.subtract(
-                cube, dark), np.subtract(white, dark)))
-            if not ((self.lower_bound is None) and (self.upper_bound is None)):
-                ref = torch.clamp(torch.as_tensor(
-                    ref), self.lower_bound, self.upper_bound).numpy()
-            return ref
+        numerator = X - references__Dark
+        denominator = references__White - references__Dark
+        # Avoid division by zero
+        reflectance = np.divide(numerator, denominator, where=denominator != 0)
 
-        cubes = np.split(X, indices_or_sections=X.shape[0], axis=0)
-        whites = np.split(
-            references__White, indices_or_sections=X.shape[0], axis=0)
-        darks = np.split(
-            references__Dark, indices_or_sections=X.shape[0], axis=0)
-        refs = [reflectanceCalc(c, w, d,
-                                self.upper_bound, self.lower_bound) for c, w, d in zip(cubes, whites, darks)]
+        # Clamp values if bounds are set
+        if self.lower_bound is not None or self.upper_bound is not None:
+            lower_bound = self.lower_bound if self.lower_bound is not None else -np.inf
+            upper_bound = self.upper_bound if self.upper_bound is not None else np.inf
+            reflectance = np.clip(reflectance, lower_bound, upper_bound)
 
-        return np.concatenate(refs, axis=0)
+        return reflectance
 
     @Node.output_dim.getter
-    def output_dim(self) -> Tuple[int, int, int]:
+    def output_dim(self) -> tuple[int, int, int]:
         return (-1, -1, -1)
 
     @Node.input_dim.getter
-    def input_dim(self) -> Tuple[int, int, int]:
+    def input_dim(self) -> tuple[int, int, int]:
         return (-1, -1, -1)
 
     def serialize(self, serial_dir: str) -> dict:

@@ -35,48 +35,22 @@ class MemoryExecutor:
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert (self.sorted_graph[0] == self.entry_point)
 
-        xs = self._flatten_to_4dim(X)
-        xs = np.split(xs, indices_or_sections=xs.shape[0], axis=0)
-        ys = None
-        if Y is not None:
-            if (isinstance(Y, List) and isinstance(Y[0], np.ndarray)) or isinstance(Y, np.ndarray):
-                ys = self._flatten_to_4dim(Y)
-                ys = np.split(ys, indices_or_sections=ys.shape[0], axis=0)
-            else:
-                ys = Y
+        xs = X
+        ys = Y or [None]*len(xs)
+        ms = M or [None]*len(xs)
 
-        if ys is None:
-            ys = [None]*len(xs)
-        if M is None:
-            ms = [None]*len(xs)
-        else:
-            ms = M
+        intermediary = {}
+        intermediary_labels = {}
+        intermediary_metas = {}
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(
+            self.nodes[self.entry_point], xs, ys, ms)
 
-        results = []
-        for x, y, m in zip(xs, ys, ms):
+        for node in self.sorted_graph[1:]:
+            self._forward_helper(node, intermediary,
+                                 intermediary_labels, intermediary_metas)
 
-            intermediary = {}
-            intermediary_labels = {}
-            intermediary_metas = {}
-            intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(
-                self.nodes[self.entry_point], x, y, m)
-
-            for node in self.sorted_graph[1:]:
-                self._forward_helper(node, intermediary,
-                                     intermediary_labels, intermediary_metas)
-
-            results.append((intermediary[self.sorted_graph[-1]],
-                           intermediary_labels[self.sorted_graph[-1]], intermediary_metas[self.sorted_graph[-1]]))
-        zr = tuple(zip(*results))
-        rxs = zr[0]
-        rys = zr[1]
-        rms = zr[2]
-
-        rxs = np.concatenate(rxs, axis=0)
-        if isinstance(rys[0], np.ndarray):
-            rys = np.concatenate(rys, axis=0)
-
-        return (rxs, rys, rms)
+        results = intermediary[self.sorted_graph[-1]]
+        return results
 
     def _forward_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
         """Helper function to aggregate inputs and calculate products from a given node.
@@ -234,8 +208,6 @@ class MemoryExecutor:
         intermediary_labels = {}
         intermediary_metas = {}
 
-        result = self._fit_node(self.nodes[self.entry_point], X, Y, M)
-
         intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._fit_node(
             self.nodes[self.entry_point], X, Y, M)
 
@@ -321,32 +293,7 @@ class MemoryExecutor:
         if len(node_input) == 0:
             raise RuntimeError(
                 F"Node {node} invalid, does not indicate input data type!")
-        elif len(node_input) == 1:
-            node.fit(node_input[0])
-        else:
-            node.fit(*node_input)
+
+        node.fit(*node_input)
 
         return self._forward_node(node, data, labels, metadata)
-
-    @staticmethod
-    def _flatten_to_4dim(x: list | np.ndarray) -> np.ndarray:
-        """Private method to flatten
-
-        Parameters
-        ----------
-        x : list | np.ndarray
-            Make sure all array like data has 4 dimensions
-
-        Returns
-        -------
-        np.ndarray
-            Flattened array
-        """
-        if isinstance(x, List):
-            if len(x[0].shape) == 5:
-                x = np.concatenate(x, axis=0)
-            else:
-                x = np.stack(x, axis=0)
-        while len(x.shape) >= 5:
-            x = x.reshape((x.shape[0] * x.shape[1], *x.shape[2:]))
-        return x

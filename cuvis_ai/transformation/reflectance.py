@@ -47,7 +47,8 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
         """
 
         def reflectanceCalc(cube: np.ndarray, white: np.ndarray, dark: np.ndarray, ub: Optional[float], lb: Optional[float]) -> np.ndarray:
-            ref = np.nan_to_num(np.divide(np.subtract(cube, dark), np.subtract(white, dark)))
+            ref = np.nan_to_num(np.divide(np.subtract(
+                cube, dark), np.subtract(white, dark)))
             if not ((self.lower_bound is None) and (self.upper_bound is None)):
                 ref = torch.clamp(torch.as_tensor(
                     ref), self.lower_bound, self.upper_bound).numpy()
@@ -77,7 +78,7 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
             refs.append(reflectanceCalc(cube, white, dark,
                         self.upper_bound, self.lower_bound))
 
-        return refs[0]
+        return np.concatenate(refs, axis=0)
 
     @Node.output_dim.getter
     def output_dim(self) -> Tuple[int, int, int]:

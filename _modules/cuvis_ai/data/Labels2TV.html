@@ -106,6 +106,7 @@
             <span class="c1"># print(F&quot;Canvas_size: {size} bbox COCO: {v}&quot;)</span>
             <span class="n">out</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">BoundingBoxes</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;XYWH&quot;</span><span class="p">,</span> <span class="n">canvas_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;segmentation&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">out</span><span class="p">[</span><span class="s2">&quot;segmentation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mask</span><span class="p">(</span><span class="n">RLE2mask</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]))</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>

@@ -4,6 +4,7 @@ import numpy as np
 from typing import Optional, Union, List, Dict, Tuple
 import torch
 from ..node.Consumers import CubeConsumer, LabelConsumer, MetadataConsumer
+from .meta_routing import get_forward_metadata
 
 
 class MemoryExecutor:
@@ -114,35 +115,7 @@ class MemoryExecutor:
         tuple[np.ndarray, np.ndarray, np.ndarray]
             Output data, output labels, output metadata
         """
-        node_input = [data]
-
-        additional_meta = dict()
-
-        requested_meta = node.get_forward_requested_meta()
-
-        for k in requested_meta.keys():
-            additional_meta[k] = list()
-
-        def traverse(obj, route):
-            for r in route:
-                if not r in obj.keys():
-                    return None
-                obj = obj[r]
-            return obj
-
-        for idx in range(data.shape[0]):
-            for k, v in requested_meta.items():
-                if not v:
-                    continue
-                retrieved = traverse(metadata[idx], k.split('__'))
-                if retrieved is None:
-                    raise RuntimeError(f"Could not find requested metadata {k}")  # nopep8
-
-                additional_meta[k].append(retrieved)
-
-        for k in requested_meta.keys():
-            if isinstance(additional_meta[k][0], np.ndarray):
-                additional_meta[k] = np.concatenate(additional_meta[k], axis=0)
+        additional_meta = get_forward_metadata(node, metadata)
 
         if len(additional_meta) > 0:
             out = node.forward(data, **additional_meta)

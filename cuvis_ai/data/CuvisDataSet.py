@@ -202,7 +202,7 @@ class CuvisDataSet(NumpyDataSet):
                 continue
 
             sess_meta["references"][reftype.name] = self._SessionReferenceLoader_(
-                filepath, reftype)
+                str(filepath), reftype)
 
         coco = None
         if labelpath.exists():
@@ -213,7 +213,7 @@ class CuvisDataSet(NumpyDataSet):
             cube_path = F"{filepath}:{idx}"
             self.paths.append(cube_path)
             self.cubes.append(self._SessionCubeLoader_(
-                filepath, idx, self.processing_mode))
+                str(filepath), idx, self.processing_mode))
 
             meta = copy.deepcopy(sess_meta)
 
@@ -222,10 +222,10 @@ class CuvisDataSet(NumpyDataSet):
                     continue
                 if Path(v).suffix == EXTENSION_SESSION:
                     meta['references'][k] = self._SessionCubeLoader_(
-                        v, 0, cuvis.ProcessingMode.Raw)
+                        str(v), 0, cuvis.ProcessingMode.Raw)
                 elif Path(v).suffix == EXTENSION_LEGACY:
                     meta['references'][k] = self._LegacyCubeLoader_(
-                        v, cuvis.ProcessingMode.Raw)
+                        str(v), cuvis.ProcessingMode.Raw)
 
             self.metas.append(meta)
 

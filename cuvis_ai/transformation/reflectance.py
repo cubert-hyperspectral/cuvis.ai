@@ -57,8 +57,8 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
             raise ValueError(
                 "Reflectance calculation input must be a tuple containing cube data and metadata containing dark and white references.")
 
-        cubes = np.split(X[0], axis=0)
-        metas = X[1]
+        cubes = np.split(X[0], indices_or_sections=X[0].shape[0], axis=0)
+        metas = [X[1]]
         refs = []
 
         for cube, meta in zip(cubes, metas):
@@ -75,7 +75,7 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
             refs.append(reflectanceCalc(cube, white, dark,
                         self.upper_bound, self.lower_bound))
 
-        return np.stack(refs, axis=0)
+        return refs[0]
 
     @Node.output_dim.getter
     def output_dim(self) -> Tuple[int, int, int]:

@@ -207,13 +207,6 @@ class NumpyDataSet(BaseDataSet):
         meta = self.get_metadata(idx)
         return self._get_return_shape(data, label, meta)
 
-    def __next__(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        for idx in range(len(self)):
-            yield self[idx]
-
-    def forward(self, X: Any) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        return next(self)
-
     def merge(self, other_dataset):
         """Merge another NumpyData dataset into this dataset."""
         if type(self) is type(other_dataset):
@@ -225,35 +218,9 @@ class NumpyDataSet(BaseDataSet):
             raise TypeError("Cannot merge NumpyData with an object "
                             F"of type {type(other_dataset).__name__}")
 
-    def random_split(self, train_percent, val_percent, test_percent) -> list[torch.utils.data.dataset.Subset]:
-        """Generate three datasets with randomly chosen data from this dataset.
-        Parameters
-        ----------
-        train_percent : float
-            How much of the data to put into the training dataset.
-        val_percent : float
-            How much of the data to put into the validation dataset.
-        test_percent : float
-            How much of the data to put into the testing dataset.
-
-        Returns
-        -------
-        tuple of datasets. Contents depend on the :attr:`output_format` specified.
-        """
-        gen = torch.torch.Generator().manual_seed(time.time_ns())
-        return torch.utils.data.random_split(self, [train_percent, val_percent, test_percent], gen)
-
     def get_dataitems_datatypes(self) -> list:
         """Get a list with all datatypes detected when scanning the root folder."""
         return list(self.data_types)
-
-    def get_all_cubes(self):
-        """Get a list of all cubes in this dataset.
-        Notes
-        -----
-        Not recommended for large sets. All data will be read into RAM!
-        """
-        return [cube(self.provide_datatype) for cube in self.cubes]
 
     def get_data(self, idx: Union[int, slice]):
         """Get the cube at 'idx'."""
@@ -261,21 +228,6 @@ class NumpyDataSet(BaseDataSet):
                             self.cubes[idx]] if isinstance(idx, int) else self.cubes[idx]))
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
         return self._apply_transform(torch.concatenate(loaded_cubes, dim=0).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
-
-    def get_all_items(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        """Get all items of this dataset in the selected :attr:`output_format`.
-        Notes
-        -----
-        Not recommended for large sets. All data will be read into RAM!"""
-        return self[:]
-
-    def get_item(self, idx: Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        """Get item at 'idx' of this dataset in the selected :attr:`output_format`."""
-        return self[idx]
-
-    def get_all_metadata(self):
-        """Get the meta-data for every cube in this dataset."""
-        return [self.get_metadata(idx) for idx in range(len(self.metas))]
 
     def get_metadata(self, idx: Union[int, slice]):
         """Get the meta-data for the cube at 'idx' in this dataset."""
@@ -298,37 +250,8 @@ class NumpyDataSet(BaseDataSet):
             return m_out
         return list(map(transform_meta, [self.metas[idx]] if isinstance(idx, int) else self.metas[idx]))
 
-    def get_all_labels(self):
-        """Get the labels for every cube in this dataset."""
-        return self.get_labels(slice(None))
-
     def get_labels(self, idx: Union[int, slice]):
         """Get the labels for the cube at 'idx' in this dataset."""
         labels = [self.labels[idx]] if isinstance(
             idx, int) else self.labels[idx]
         return list(map(self._apply_transform, labels, [True]*len(labels)))
-
-    def serialize(self, serial_dir: str):
-        """Serialize the parameters of this dataset and store in 'serial_dir'."""
-        if not self.initialized:
-            print('Module not fully initialized, skipping output!')
-            return
-
-        blobname = F"{hash(self.transforms)}_dataset_transforms.zip"
-        torch.save(self.transforms, os.path.join(serial_dir, blobname))
-        data = {
-            'type': type(self).__name__,
-            'root_dir': self.root,
-            'data_type': self.provide_datatype,
-            'transforms': blobname,
-        }
-        # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
-
-    def load(self, params: Dict, filepath: str):
-        """Load dumped parameters to recreate the dataset."""
-        root = params["root_dir"]
-        self.provide_datatype = params["data_type"]
-        self.transforms = torch.load(
-            os.path.join(filepath, params["transforms"]))
-        self.initialize(root)

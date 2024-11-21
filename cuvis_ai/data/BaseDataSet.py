@@ -2,16 +2,14 @@ from abc import ABC, abstractmethod
 import torch
 import numpy as np
 from torchvision.datasets import VisionDataset
-from typing import Optional, Callable, Union, Dict, Tuple, Any
+from typing import Optional, Callable, Union, Dict
 from .OutputFormat import OutputFormat
-from ..node import Node
-
 
 C_SUPPORTED_DTYPES = (np.float64, np.float32, np.float16, np.complex64,
                       np.complex128, np.int64, np.int32, np.int16, np.int8, np.uint8, np.bool_)
 
 
-class BaseDataSet(VisionDataset, Node):
+class BaseDataSet(VisionDataset):
     def __init__(self, root: Optional[str] = None,
                  transforms: Optional[Callable] = None,
                  transform: Optional[Callable] = None,
@@ -80,15 +78,3 @@ class BaseDataSet(VisionDataset, Node):
     def get_datatype(self):
         """Get the current datatype set that all data will be converted into before return."""
         return self.provide_datatype
-
-    @Node.output_dim.getter
-    def output_dim(self) -> Tuple[int, int, int]:
-        return (-1, -1, -1)
-
-    @Node.input_dim.getter
-    def input_dim(self) -> Tuple[int, int, int]:
-        return (-1, -1, -1)
-
-    @abstractmethod
-    def forward(self, X: Any) -> Tuple:
-        pass

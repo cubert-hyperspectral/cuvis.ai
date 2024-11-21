@@ -25,6 +25,7 @@ def convert_COCO2TV(coco, size):
             # print(F"Canvas_size: {size} bbox COCO: {v}")
             out["bbox"] = BoundingBoxes(v, format="XYWH", canvas_size=size)
         elif k == "segmentation":
+            continue
             try:
                 out["segmentation"] = Mask(RLE2mask(v["counts"], v["size"]))
             except KeyError:

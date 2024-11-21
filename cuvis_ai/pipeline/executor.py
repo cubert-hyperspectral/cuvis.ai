@@ -123,14 +123,22 @@ class MemoryExecutor:
         for k in requested_meta.keys():
             additional_meta[k] = list()
 
+        def traverse(obj, route):
+            for r in route:
+                if not r in obj.keys():
+                    return None
+                obj = obj[r]
+            return obj
+
         for idx in range(data.shape[0]):
-            for k, v in requested_meta:
+            for k, v in requested_meta.items():
                 if not v:
                     continue
-                if not k in metadata[idx]:
+                retrieved = traverse(metadata[idx], k.split('__'))
+                if retrieved is None:
                     raise RuntimeError(f"Could not find requested metadata {k}")  # nopep8
 
-                additional_meta[k].append(metadata[idx][k])
+                additional_meta[k].append(retrieved)
 
         for k in requested_meta.keys():
             if isinstance(additional_meta[k][0], np.ndarray):

@@ -24,9 +24,10 @@ class Reflectance(Node, BaseTransformation):
         self.upper_bound = upper_bound
         self.input_size = None
         self.output_size = None
-        self.set_forward_meta_request(Dark=True, White=True)
+        self.set_forward_meta_request(
+            references__Dark=True, references__White=True)
 
-    def forward(self, X: np.ndarray, White: np.ndarray, Dark: np.ndarray):
+    def forward(self, X: np.ndarray, references__White: np.ndarray, references__Dark: np.ndarray):
         """Apply reflectance calculus to the data.
         Returns the data as percentage values between the "Dark" and "White" references set in the meta-data.
         e.g. A pixel value of 1.0 means that the pixel is as bright as the white reference at this pixel, 1.5 -> 50% brighter, 0.0 -> as bright as the dark reference, -0.2 -> 20% darker than the dark reference.
@@ -35,7 +36,7 @@ class Reflectance(Node, BaseTransformation):
 
         Parameters
         ----------
-        X : Tuple
+        X : np.ndarray
             Data to compute reflectance of. Expects a tuple of (data, meta-data) as (np.ndarray, Dict)
 
         Returns
@@ -52,13 +53,11 @@ class Reflectance(Node, BaseTransformation):
                     ref), self.lower_bound, self.upper_bound).numpy()
             return ref
 
-        if not isinstance(X, tuple) or (isinstance(X, tuple) and len(X) != 2):
-            raise ValueError(
-                "Reflectance calculation input must be a tuple containing cube data and metadata containing dark and white references.")
-
-        cubes = np.split(X[0], indices_or_sections=X[0].shape[0], axis=0)
-        whites = np.split(White[0], indices_or_sections=X[0].shape[0], axis=0)
-        darks = np.split(Dark[0], indices_or_sections=X[0].shape[0], axis=0)
+        cubes = np.split(X, indices_or_sections=X.shape[0], axis=0)
+        whites = np.split(
+            references__White, indices_or_sections=X.shape[0], axis=0)
+        darks = np.split(
+            references__Dark, indices_or_sections=X.shape[0], axis=0)
         refs = [reflectanceCalc(c, w, d,
                                 self.upper_bound, self.lower_bound) for c, w, d in zip(cubes, whites, darks)]
 
@@ -75,7 +74,6 @@ class Reflectance(Node, BaseTransformation):
     def serialize(self, serial_dir: str) -> dict:
         """Serialize this node."""
         data = {
-            'id': self.id,
             "lower": self.lower_bound,
             "upper": self.upper_bound,
         }
@@ -83,7 +81,6 @@ class Reflectance(Node, BaseTransformation):
 
     def load(self, params: dict, serial_dir: str) -> None:
         """Load this node from a serialized graph."""
-        self.id = params.get('id')
         try:
             self.lower_bound = float(params["lower"])
         except:

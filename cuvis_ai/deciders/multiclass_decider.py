@@ -12,16 +12,19 @@ class MultiClassDecider(BaseDecider):
     Given a matrix with N channels, chooses the channel with the highest value per spatial location.
     The result will be a single channel matrix with the indices of the chosen channels as values."""
 
-    def __init__(self, n: int) -> None:
+    def __init__(self, n: int, use_min: bool = False) -> None:
         """Create multi-class decider instance
 
         Parameters
         ----------
         n : int
             Number of classes
+        use_min : bool
+            Use the minimizing value to decide
         """
         super().__init__()
         self.n = n
+        self.use_min = use_min
 
     def forward(self, X: np.ndarray) -> np.ndarray:
         """Apply the maximum classification on the data.
@@ -36,7 +39,10 @@ class MultiClassDecider(BaseDecider):
         """
         self._input_dim = get_shape_without_batch(X, ignore=[0, 1])
         flatten_soft_output = flatten_batch_and_spatial(X)
-        decisions = np.argmax(flatten_soft_output, axis=1)
+        if self.use_min:
+            decisions = np.argmin(flatten_soft_output, axis=1)
+        else:
+            decisions = np.argmax(flatten_soft_output, axis=1)
         return unflatten_batch_and_spatial(decisions, X.shape)
 
     @BaseDecider.input_dim.getter

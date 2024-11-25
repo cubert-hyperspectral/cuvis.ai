@@ -53,6 +53,7 @@ class Reflectance(Node, BaseTransformation):
         denominator = references__White - references__Dark
         # Avoid division by zero
         reflectance = np.divide(numerator, denominator, where=denominator != 0)
+        reflectance = np.nan_to_num(reflectance)
 
         # Clamp values if bounds are set
         if self.lower_bound is not None or self.upper_bound is not None:

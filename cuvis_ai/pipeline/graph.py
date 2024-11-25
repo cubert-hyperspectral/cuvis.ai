@@ -21,7 +21,7 @@ import numpy as np
 import tempfile
 from pathlib import Path
 from importlib import import_module
-from .executor import MemoryExecutor
+from .executor import MemoryExecutor, HummingBirdExecutor
 
 
 class Graph():
@@ -288,6 +288,8 @@ class Graph():
         if backend == 'memory':
             executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
         elif backend == 'hummingbird':
+            executor = HummingBirdExecutor(
+                self.graph, self.nodes, self.entry_point)
         else:
             raise ValueError("Unknown Backend")
         return executor.forward(X, Y, M)

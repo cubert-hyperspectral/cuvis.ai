@@ -299,7 +299,7 @@ class MemoryExecutor:
 
 class HummingBirdExecutor:
     def __init__(self, graph: nx.DiGraph, nodes: dict[str, Node], entry_point: str):
-    self.graph = graph
-    self.nodes = nodes
-    self.entry_point = entry_point
-    self.sorted_nodes = list(nx.topological_sort(self.graph))
+        self.graph = graph
+        self.nodes = nodes
+        self.entry_point = entry_point
+        self.sorted_nodes = list(nx.topological_sort(self.graph))

@@ -16,3 +16,4 @@ torchvision
 pycocotools
 scikit-image
 gdown
+hummingbird-ml

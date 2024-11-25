@@ -288,8 +288,19 @@ class Graph():
         if backend == 'memory':
             executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
         elif backend == 'hummingbird':
-            executor = HummingBirdExecutor(
-                self.graph, self.nodes, self.entry_point)
+            from hummingbird.ml import convert
+            from copy import copy
+
+            def convert_node(node):
+                new_node = copy(node)
+                if '_wrapped' in node.__dict__:
+                    new_node._wrapped = convert(node._wrapped, 'torch')
+                return new_node
+
+            nodes = {k: convert_node(v) for k, v in self.nodes.items()}
+
+            executor = MemoryExecutor(
+                self.graph, nodes, self.entry_point)
         else:
             raise ValueError("Unknown Backend")
         return executor.forward(X, Y, M)

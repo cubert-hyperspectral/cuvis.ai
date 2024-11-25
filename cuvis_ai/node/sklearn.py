@@ -65,15 +65,16 @@ def _load_sklearn_model(obj, cls, params: dict, data_dir: Path) -> None:
 
 def _wrap_preprocessor_class(cls):
 
-    class SklearnWrappedPreprocessor(cls, Node, Preprocessor):
+    class SklearnWrappedPreprocessor(Node, Preprocessor):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
+            Node.__init__(self)
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
-            cls.__init__(self, *args, **kwargs)
+            self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
@@ -89,26 +90,26 @@ def _wrap_preprocessor_class(cls):
 
         def fit(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            cls.fit(self, flattened_data)
+            self._wrapped.fit(flattened_data)
             self.initialized = True
             self._derive_values()
 
         def _derive_values(self):
             if not self.initialized:
                 return
-            self._input_size = (-1, -1, self.n_features_in_)
-            self._output_size = (-1, -1, self._n_features_out)
+            self._input_size = (-1, -1, self._wrapped.n_features_in_)
+            self._output_size = (-1, -1, self._wrapped._n_features_out)
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = cls.transform(self, flattened_data)
+            transformed_data = self._wrapped.transform(flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            return _serialize_sklearn_model(self, cls, data_dir)
+            return _serialize_sklearn_model(self._wrapped, cls, data_dir)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            return _load_sklearn_model(self, cls, params, data_dir)
+            return _load_sklearn_model(self._wrapped, cls, params, data_dir)
 
     SklearnWrappedPreprocessor.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedPreprocessor.__init__, cls.__init__)
@@ -117,15 +118,16 @@ def _wrap_preprocessor_class(cls):
 
 def _wrap_supervised_class(cls):
 
-    class SklearnWrappedSupervised(cls, Node, BaseSupervised):
+    class SklearnWrappedSupervised(Node, BaseSupervised):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
+            Node.__init__(self)
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
-            cls.__init__(self, *args, **kwargs)
+            self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
@@ -142,26 +144,26 @@ def _wrap_supervised_class(cls):
         def fit(self, X: np.ndarray, Y: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
             flattened_label = flatten_batch_and_labels(Y)
-            cls.fit(self, flattened_data, flattened_label)
+            self._wrapped.fit(flattened_data, flattened_label)
             self.initialized = True
             self._derive_values()
 
         def _derive_values(self):
             if not self.initialized:
                 return
-            self._input_size = (-1, -1, self.n_features_in_)
+            self._input_size = (-1, -1, self._wrapped.n_features_in_)
             self._output_size = (-1, -1, 1)
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = cls.transform(self, flattened_data)
+            transformed_data = self._wrapped.transform(flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            return _serialize_sklearn_model(self, cls, data_dir)
+            return _serialize_sklearn_model(self._wrapped, cls, data_dir)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            return _load_sklearn_model(self, cls, params, data_dir)
+            return _load_sklearn_model(self._wrapped, cls, params, data_dir)
 
     SklearnWrappedSupervised.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedSupervised.__init__, cls.__init__)
@@ -170,15 +172,16 @@ def _wrap_supervised_class(cls):
 
 def _wrap_unsupervised_class(cls):
 
-    class SklearnWrappedUnsupervised(cls, Node, BaseUnsupervised):
+    class SklearnWrappedUnsupervised(Node, BaseUnsupervised):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
+            Node.__init__(self)
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
-            cls.__init__(self, *args, **kwargs)
+            self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
@@ -194,26 +197,26 @@ def _wrap_unsupervised_class(cls):
 
         def fit(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            cls.fit(self, flattened_data)
+            self._wrapped.fit(flattened_data)
             self.initialized = True
             self._derive_values()
 
         def _derive_values(self):
             if not self.initialized:
                 return
-            self._input_size = (-1, -1, self.n_features_in_)
+            self._input_size = (-1, -1, self._wrapped.n_features_in_)
             self._output_size = (-1, -1, 1)
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            prediction_data = cls.predict(self, flattened_data)
+            prediction_data = self._wrapped.predict(flattened_data)
             return unflatten_batch_and_spatial(prediction_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            return _serialize_sklearn_model(self, cls, data_dir)
+            return _serialize_sklearn_model(self._wrapped, cls, data_dir)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            return _load_sklearn_model(self, cls, params, data_dir)
+            return _load_sklearn_model(self._wrapped, cls, params, data_dir)
 
     SklearnWrappedUnsupervised.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedUnsupervised.__init__, cls.__init__)

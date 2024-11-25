@@ -240,7 +240,7 @@ class MemoryExecutor:
         else:
             use_metas = None
 
-        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._fit_node(
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self.fit_node(
             self.nodes[current], use_prods, use_labels, use_metas)
 
         if self._not_needed_anymore(current, intermediary):
@@ -284,7 +284,7 @@ class MemoryExecutor:
             raise RuntimeError(
                 F"Node {node} invalid, does not indicate input data type!")
 
-        additional_meta = get_fit_metadata()
+        additional_meta = get_fit_metadata(node, metadata)
         if len(additional_meta) > 0:
             node.fit(*node_input, **additional_meta)
         else:

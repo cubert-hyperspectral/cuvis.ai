@@ -25,7 +25,7 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
         self.input_size = None
         self.output_size = None
 
-    def fit(self, X: Tuple):
+    def fit(self, *X: Tuple):
         pass
 
     def forward(self, X: Tuple[np.ndarray, List[Dict]]):
@@ -47,7 +47,7 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
         """
 
         def reflectanceCalc(cube: np.ndarray, white: np.ndarray, dark: np.ndarray, ub: Optional[float], lb: Optional[float]) -> np.ndarray:
-            ref = np.divide(np.subtract(cube, dark), np.subtract(white, dark))
+            ref = np.nan_to_num(np.divide(np.subtract(cube, dark), np.subtract(white, dark)))
             if not ((self.lower_bound is None) and (self.upper_bound is None)):
                 ref = torch.clamp(torch.as_tensor(
                     ref), self.lower_bound, self.upper_bound).numpy()
@@ -58,9 +58,11 @@ class Reflectance(Node, BaseTransformation, MetadataConsumer, MetadataConsumerIn
                 "Reflectance calculation input must be a tuple containing cube data and metadata containing dark and white references.")
 
         cubes = np.split(X[0], indices_or_sections=X[0].shape[0], axis=0)
-        metas = [X[1]]
+        if type(X[1]) not in [tuple, list]:
+            metas = [X[1]]
+        else:
+            metas = X[1]
         refs = []
-
         for cube, meta in zip(cubes, metas):
             try:
                 dark = meta["references"]["Dark"]

@@ -284,8 +284,12 @@ class Graph():
 
                 new_graph.load(graph_data, '.')
 
-    def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
+    def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None, backend: str = 'memory') -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        if backend == 'memory':
+            executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
+        elif backend == 'hummingbird':
+        else:
+            raise ValueError("Unknown Backend")
         return executor.forward(X, Y, M)
 
     def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):

@@ -20,6 +20,11 @@ def get_forward_metadata(node: Node, metadata: dict):
     return get_requested_metadata(requested_meta, metadata)
 
 
+def get_fit_metadata(node: Node, metadata: dict):
+    requested_meta = node.get_fit_requested_meta()
+    return get_requested_metadata(requested_meta, metadata)
+
+
 def get_requested_metadata(requested: dict[str, bool], metadata: dict):
     additional_meta = dict()
     for k in requested.keys():

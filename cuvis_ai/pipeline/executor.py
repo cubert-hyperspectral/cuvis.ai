@@ -3,8 +3,8 @@ from ..node.node import Node
 import numpy as np
 from typing import Optional, Union, List, Dict, Tuple
 import torch
-from ..node.Consumers import CubeConsumer, LabelConsumer, MetadataConsumer
-from .meta_routing import get_forward_metadata
+from ..node.Consumers import CubeConsumer, LabelConsumer
+from .meta_routing import get_forward_metadata, get_fit_metadata
 
 
 class MemoryExecutor:
@@ -43,7 +43,7 @@ class MemoryExecutor:
         intermediary = {}
         intermediary_labels = {}
         intermediary_metas = {}
-        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.forward_node(
             self.nodes[self.entry_point], xs, ys, ms)
 
         for node in self.sorted_graph[1:]:
@@ -87,7 +87,7 @@ class MemoryExecutor:
         else:
             use_metas = []
 
-        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._forward_node(
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self.forward_node(
             self.nodes[current], use_prods, use_labels, use_metas)
 
         if self._not_needed_anymore(current, intermediary):
@@ -96,7 +96,7 @@ class MemoryExecutor:
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
 
-    def _forward_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def forward_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Pass data through a node which has already been trained/fit.
 
         Parameters
@@ -204,7 +204,7 @@ class MemoryExecutor:
         intermediary_labels = {}
         intermediary_metas = {}
 
-        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._fit_node(
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.fit_node(
             self.nodes[self.entry_point], X, Y, M)
 
         for node in self.sorted_graph[1:]:
@@ -253,7 +253,7 @@ class MemoryExecutor:
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
 
-    def _fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> np.ndarray:
+    def fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> np.ndarray:
         """Private function wrapper to call the fit function for an individual node
 
         Parameters
@@ -283,13 +283,23 @@ class MemoryExecutor:
             node_input.append(data)
         if isinstance(node, LabelConsumer):
             node_input.append(labels)
-        if isinstance(node, MetadataConsumer):
-            node_input.append(metadata)
 
         if len(node_input) == 0:
             raise RuntimeError(
                 F"Node {node} invalid, does not indicate input data type!")
 
-        node.fit(*node_input)
+        additional_meta = get_fit_metadata()
+        if len(additional_meta) > 0:
+            node.fit(*node_input, **additional_meta)
+        else:
+            node.fit(*node_input)
 
-        return self._forward_node(node, data, labels, metadata)
+        return self.forward_node(node, data, labels, metadata)
+
+
+class HummingBirdExecutor:
+    def __init__(self, graph: nx.DiGraph, nodes: dict[str, Node], entry_point: str):
+    self.graph = graph
+    self.nodes = nodes
+    self.entry_point = entry_point
+    self.sorted_nodes = list(nx.topological_sort(self.graph))

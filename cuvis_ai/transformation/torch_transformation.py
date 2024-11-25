@@ -70,9 +70,6 @@ class TorchTransformation(Node, BaseTransformation):
             raise RuntimeError(F"TorchTransformation with operation '{self.op_name}' was called with non-matching input and "
                                F"{'constant ' if self.b is not None else ''}second operand shapes!\nPyTorch reports: '{re}'")
 
-    def fit(self, X: Any, Y: Optional[Any] = None):
-        pass
-
     def check_output_dim(self, X: Any, Y: Optional[Any] = None):
         pass
 

@@ -172,16 +172,12 @@ class MemoryExecutor:
             ys.append(y)
             ms.append(m)
 
-        xs = self._flatten_to_4dim(xs)
-
-        if isinstance(ys[0], np.ndarray):
-            ys = self._flatten_to_4dim(ys)
-
         self.fit(xs, ys, ms)
 
         # test stage
+        test_results = []
         for x, y, m in iter(test_dataloader):
-            test_results = self.forward(x, y, m)
+            test_results.append(self.forward(x, y, m))
             # do some metrics
 
     def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):

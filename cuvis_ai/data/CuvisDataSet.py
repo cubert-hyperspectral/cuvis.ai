@@ -5,11 +5,10 @@ import copy
 from typing import Optional, Callable
 import torch
 from torchvision import tv_tensors
-from pycocotools.coco import COCO
+from .cocolabels import COCOData
 
 from cuvis.General import SDKException
 
-from .Labels2TV import convert_COCO2TV
 from .NumpyDataSet import NumpyDataSet
 from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
@@ -169,10 +168,7 @@ class CuvisDataSet(NumpyDataSet):
 
         canvas_size = (sess_meta.shape[0], sess_meta.shape[1])
 
-        coco = None
-        if labelpath.exists():
-            coco = COCO(str(labelpath))
-            ids = list(sorted(coco.imgs.keys()))
+        coco = COCOData.from_path(labelpath) if labelpath.exists() else None
 
         for idx in range(cube_count):
             cube_path = F"{filepath}:{idx}"
@@ -199,12 +195,9 @@ class CuvisDataSet(NumpyDataSet):
 
             l = {}
             if coco is not None:
-                anns = coco.loadAnns(coco.getAnnIds(ids[idx]))[0]
-                try:
-                    anns["wavelength"] = coco.imgs[ids[idx]]["wavelength"]
-                except KeyError:
-                    pass
-                l = convert_COCO2TV(anns, canvas_size)
+                anns = coco.annotations.where(image_id=idx)[0]
+                l = anns.to_torchvision(canvas_size)
+                l['wavelength'] = WavelengthList(coco.images[idx].wavelength)
             self.labels.append(l)
 
     def _load_legacy_file(self, filepath: Path):
@@ -221,14 +214,10 @@ class CuvisDataSet(NumpyDataSet):
 
         l = None
         if labelpath.exists():
-            coco = COCO(labelpath)
-            anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))[0]
-            try:
-                anns["wavelength"] = coco.imgs[0]["wavelength"]
-            except KeyError:
-                pass
-
-            l = convert_COCO2TV(anns, canvas_size)
+            coco = COCOData.from_path(labelpath)
+            anns = coco.annotations.where(image_id=coco.image_ids[0])[0]
+            l = anns.to_torchvision(canvas_size)
+            l['wavelength'] = WavelengthList(coco.images[0].wavelength)
         self.labels.append(l)
 
         self.cubes.append(partial(get_legacy_cube,

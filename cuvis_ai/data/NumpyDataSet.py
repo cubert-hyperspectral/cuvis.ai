@@ -13,7 +13,7 @@ from torchvision import tv_tensors
 from pycocotools.coco import COCO
 
 from .BaseDataSet import BaseDataSet
-from .Labels2TV import convert_COCO2TV
+
 from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
 from functools import lru_cache, partial

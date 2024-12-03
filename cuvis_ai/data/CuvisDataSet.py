@@ -15,8 +15,7 @@ from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
 from pathlib import Path
 from .metadata import Metadata, get_meta_from_session, get_meta_from_mesu, get_meta_from_path
-from functools import lru_cache
-from functools import partial
+from functools import lru_cache, partial
 
 debug_enabled = True
 
@@ -26,7 +25,6 @@ EXTENSION_LEGACY = '.cu3'
 
 
 @lru_cache
-@profile
 def get_session_cube(path, idx, proc_mode, to_dtype: np.dtype):
     sess = cuvis.SessionFile(path)
     mesu = sess.get_measurement(idx)
@@ -52,7 +50,6 @@ def get_session_cube(path, idx, proc_mode, to_dtype: np.dtype):
 
 
 @lru_cache
-@profile
 def get_legacy_cube(path, proc_mode, to_dtype: np.dtype):
     mesu = cuvis.Measurement.load(path)
     need_reprocess = bool(proc_mode is None)
@@ -77,7 +74,6 @@ def get_legacy_cube(path, proc_mode, to_dtype: np.dtype):
 
 
 @lru_cache
-@profile
 def get_session_reference(path, reftype, to_dtype: np.dtype):
     try:
 
@@ -217,16 +213,11 @@ class CuvisDataSet(NumpyDataSet):
         self.paths.append(filepath)
         labelpath = filepath.with_suffix(".json")
 
-        if self.metadata_filepath:
-            meta = Metadata(filepath, self.fileset_metadata)
-        else:
-            meta = Metadata(filepath)
-
         mesu = cuvis.Measurement(filepath)
 
         meta = get_meta_from_mesu(mesu)
 
-        canvas_size = (meta["shape"][0], meta["shape"][1])
+        canvas_size = (meta.shape[0], meta.shape[1])
 
         l = None
         if labelpath.exists():

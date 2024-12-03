@@ -3,11 +3,6 @@ from pathlib import Path
 from dataclass_wizard import YAMLWizard
 import cuvis
 
-
-C_ATTRIB_LIST = ["shape", "wavelengths_nm", "references", "bit_depth",
-                 "integration_time_us", "framerate", "flags", "processing_mode"]
-
-
 CUVIS_NON_CUBE_REFERENCES = (
     cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
 

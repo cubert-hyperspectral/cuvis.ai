@@ -16,8 +16,32 @@ from .BaseDataSet import BaseDataSet
 from .Labels2TV import convert_COCO2TV
 from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
+from functools import lru_cache, partial
+from .metadata import Metadata
 
 debug_enabled = True
+
+
+@lru_cache
+def get_numpy(path, to_dtype: np.dtype):
+    cube = np.load(path)
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+    return cube.to(memory_format=torch.channels_last)
+
+
+@lru_cache
+def get_opencv(path, to_dtype: np.dtype):
+    cube = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+    return cube.to(memory_format=torch.channels_last)
 
 
 class NumpyDataSet(BaseDataSet):
@@ -55,32 +79,6 @@ class NumpyDataSet(BaseDataSet):
 
     If :attr:`root` is not passed in the constructor, the :py:meth:`~NumpyDataSet.initialize` or :py:meth:`~NumpyDataSet.load` method has to be called with a root path before the dataset can be used.
     """
-
-    class _NumpyLoader_:
-        def __init__(self, path):
-            self.path = path
-
-        def __call__(self, to_dtype: np.dtype):
-            cube = np.load(self.path)
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
-
-    class _CVLoader_:
-        def __init__(self, path):
-            self.path = path
-
-        def __call__(self, to_dtype: np.dtype):
-            cube = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
 
     def __init__(self, root: Optional[str] = None,
                  transforms: Optional[Callable] = None,
@@ -152,33 +150,34 @@ class NumpyDataSet(BaseDataSet):
             print("Found file:", filepath)
 
         self.paths.append(filepath)
-        self.cubes.append(self._NumpyLoader_(filepath))
+        self.cubes.append(partial(get_numpy, filepath))
 
-        meta = {}  # metadataInit(filepath, self.fileset_metadata)
+        # meta = {} # metadataInit(filepath, self.fileset_metadata)
+        meta = Metadata()
         try:
-            meta["wavelengths_nm"] = WavelengthList(meta["wavelengths_nm"])
+            meta.wavelengths_nm = WavelengthList(meta.wavelengths_nm)
         except:
             pass
 
         temp_data = np.load(filepath)
-        meta["shape"] = temp_data.shape
-        meta["datatype"] = temp_data.dtype
+        meta.shape = temp_data.shape
+        meta.datatype = temp_data.dtype
         self.data_types.add(temp_data.dtype)
 
         try:
-            refs = meta["references"]
+            refs = meta.references
             for t, v in refs.items():
                 if isinstance(v, str) and os.path.exists(v):
                     if os.path.splitext(v)[-1] == ".npy":
-                        meta["references"][t] = self._NumpyLoader_(v)
+                        meta.references[t] = partial(get_numpy, v)
                     else:
-                        meta["references"][t] = self._CVLoader_(v)
+                        meta.references[t] = partial(get_opencv, v)
         except KeyError:
             pass
         self.metas.append(meta)
 
         labelpath = os.path.splitext(filepath)[0] + ".json"
-        canvas_size = (meta["shape"][0], meta["shape"][1])
+        canvas_size = (meta.shape[0], meta.shape[1])
         if os.path.isfile(labelpath):
             coco = COCO(labelpath)
             anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))

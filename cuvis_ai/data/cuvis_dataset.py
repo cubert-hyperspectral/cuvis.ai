@@ -6,7 +6,6 @@ from .OutputFormat import OutputFormat
 import torch
 from torchvision.datasets import VisionDataset
 import yaml
-from .MetadataUtils import metadataInit
 from ..tv_transforms import WavelengthList
 from pycocotools.coco import COCO
 import copy

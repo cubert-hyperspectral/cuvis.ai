@@ -14,7 +14,6 @@ from pycocotools.coco import COCO
 
 from .BaseDataSet import BaseDataSet
 from .Labels2TV import convert_COCO2TV
-from .MetadataUtils import metadataInit
 from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
 
@@ -155,7 +154,7 @@ class NumpyDataSet(BaseDataSet):
         self.paths.append(filepath)
         self.cubes.append(self._NumpyLoader_(filepath))
 
-        meta = metadataInit(filepath, self.fileset_metadata)
+        meta = {}  # metadataInit(filepath, self.fileset_metadata)
         try:
             meta["wavelengths_nm"] = WavelengthList(meta["wavelengths_nm"])
         except:
@@ -234,11 +233,11 @@ class NumpyDataSet(BaseDataSet):
         def transform_meta(m):
             m_out = deepcopy(m)
             try:
-                m["wavelengths_nm"] = self._apply_transform(
-                    m["wavelengths_nm"], True)
+                m.wavelengths_nm = self._apply_transform(
+                    m.wavelengths_nm, True)
             except:
                 pass
-            for t, v in m["references"].items():
+            for t, v in m.references.items():
                 try:
                     refdata = v(self.provide_datatype)
                 except:
@@ -246,7 +245,7 @@ class NumpyDataSet(BaseDataSet):
                 if isinstance(refdata, torch.Tensor):
                     refdata = self._apply_transform(refdata.permute(
                         [0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
-                m_out["references"][t] = refdata
+                m_out.references[t] = refdata
             return m_out
         return list(map(transform_meta, [self.metas[idx]] if isinstance(idx, int) else self.metas[idx]))
 

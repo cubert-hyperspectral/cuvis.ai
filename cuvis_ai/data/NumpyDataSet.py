@@ -1,14 +1,9 @@
 import cv2
-import glob
-import os
-import time
-import torch
-import torchvision
-import uuid
 import yaml
+import torch
 import numpy as np
 from copy import deepcopy
-from typing import Optional, Callable, Dict, Union, Any, Tuple, List
+from typing import Optional, Callable, Any, Union
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 
@@ -18,8 +13,12 @@ from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
 from functools import lru_cache, partial
 from .metadata import Metadata
+from pathlib import Path
+from .cocolabels import COCOData
 
 debug_enabled = True
+
+NUMPY_EXTENSION = ".npy"
 
 
 @lru_cache
@@ -89,8 +88,6 @@ class NumpyDataSet(BaseDataSet):
                  ):
         super().__init__(root, transforms=transforms, transform=transform,
                          target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
-        self._FILE_EXTENSION = ".npy"
-
         self._clear()
 
         if root is not None:
@@ -113,10 +110,11 @@ class NumpyDataSet(BaseDataSet):
             else:
                 raise RuntimeError(
                     "Cannot initialize an already initialized dataset. Use force=True if this was intended.")
-        self.root = root
+        self.root = Path(root)
 
-        self.metadata_filepath = os.path.join(self.root, "metadata.yaml")
-        if os.path.isfile(self.metadata_filepath):
+        self.metadata_filepath = self.root / "metadata.yaml"
+
+        if self.metadata_filepath.exists():
             self.fileset_metadata = yaml.safe_load(
                 open(self.metadata_filepath, "r"))
         else:
@@ -137,15 +135,14 @@ class NumpyDataSet(BaseDataSet):
         self.initialized = False
 
     def _load_directory(self, dir_path: str):
+        dir_path = Path(dir_path)
         if debug_enabled:
             print("Reading from directory:", dir_path)
-        fileset = glob.glob(os.path.join(
-            dir_path, '**/*' + self._FILE_EXTENSION), recursive=True)
-
+        fileset = dir_path.glob(f'**/*{NUMPY_EXTENSION}')
         for cur_path in fileset:
             self._load_file(cur_path)
 
-    def _load_file(self, filepath: str):
+    def _load_file(self, filepath: Path):
         if debug_enabled:
             print("Found file:", filepath)
 
@@ -167,8 +164,8 @@ class NumpyDataSet(BaseDataSet):
         try:
             refs = meta.references
             for t, v in refs.items():
-                if isinstance(v, str) and os.path.exists(v):
-                    if os.path.splitext(v)[-1] == ".npy":
+                if isinstance(v, str) and Path(v).exists():
+                    if Path(v).suffix == ".npy":
                         meta.references[t] = partial(get_numpy, v)
                     else:
                         meta.references[t] = partial(get_opencv, v)
@@ -176,27 +173,21 @@ class NumpyDataSet(BaseDataSet):
             pass
         self.metas.append(meta)
 
-        labelpath = os.path.splitext(filepath)[0] + ".json"
+        labelpath = filepath.with_suffix('.json')
         canvas_size = (meta.shape[0], meta.shape[1])
-        if os.path.isfile(labelpath):
-            coco = COCO(labelpath)
-            anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))
-            try:
-                anns["wavelength"] = coco.imgs[0]["wavelength"]
-            except KeyError:
-                pass
-
-            l = convert_COCO2TV(anns, canvas_size)
-        else:
-            l = None
-
+        l = None
+        if labelpath.exists():
+            coco = COCOData.from_path(labelpath)
+            anns = coco.annotations.where(image_id=coco.image_ids[0])[0]
+            l = anns.to_torchvision(canvas_size)
+            l['wavelength'] = WavelengthList(coco.images[0].wavelength)
         self.labels.append(l)
 
     def __len__(self) -> int:
         """The number of data elements this data set holds."""
         return len(self.cubes)
 
-    def __getitem__(self, idx: Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
+    def __getitem__(self, idx: Union[int, slice]) -> tuple[np.ndarray, list[dict], list[dict]]:
         """Return data element number 'idx' in the selected :attr:`OutputFormat`.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels):
         """

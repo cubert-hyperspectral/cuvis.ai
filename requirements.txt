@@ -13,6 +13,7 @@ imantics
 networkx
 opencv-python
 torchvision
-pycocotools
 scikit-image
 gdown
+hummingbird-ml
+dataclass-wizard

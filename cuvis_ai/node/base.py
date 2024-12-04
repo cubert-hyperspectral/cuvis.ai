@@ -30,6 +30,10 @@ class Preprocessor(ABC, CubeConsumer):
         """
         pass
 
+    @abstractmethod
+    def forward(self, X):
+        pass
+
 
 class BaseSupervised(ABC, CubeConsumer, LabelConsumer):
 
@@ -85,29 +89,5 @@ class BaseTransformation(CubeConsumer):
         self.output_size = None
 
     @abstractmethod
-    def fit(self, X):
-        pass
-
-    @abstractmethod
     def forward(self, X):
-        pass
-
-    @abstractmethod
-    def output_dim(self) -> tuple[int, int, int]:
-        pass
-
-    @abstractmethod
-    def input_dim(self) -> tuple[int, int, int]:
-        pass
-
-    @abstractmethod
-    def input_dim(self):
-        pass
-
-    @abstractmethod
-    def serialize(self):
-        pass
-
-    @abstractmethod
-    def load(self):
         pass

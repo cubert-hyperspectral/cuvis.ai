@@ -13,6 +13,8 @@ class Node(ABC):
 
     def __init__(self):
         self.id = f'{type(self).__name__}-{str(uuid.uuid4())}'
+        self.__forward_metadata = {}
+        self.__fit_metadata = {}
 
     @abstractmethod
     def forward(self, X):
@@ -52,6 +54,24 @@ class Node(ABC):
         (Bool) Valid data 
         """
         return check_array_shape(get_shape_without_batch(X), self.input_dim)
+
+    def set_forward_meta_request(self, **kwargs):
+        for k, v in kwargs.items():
+            if not isinstance(v, bool):
+                raise ValueError('Invalid usage of Metadata Routing')
+            self.__forward_metadata[k] = v
+
+    def set_fit_meta_request(self, **kwargs):
+        for k, v in kwargs.items():
+            if not isinstance(v, bool):
+                raise ValueError('Invalid usage of Metadata Routing')
+            self.__fit_metadata[k] = v
+
+    def get_forward_requested_meta(self):
+        return self.__forward_metadata
+
+    def get_fit_requested_meta(self):
+        return self.__fit_metadata
 
     @property
     @abstractmethod

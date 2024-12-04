@@ -3,7 +3,8 @@ from ..node.node import Node
 import numpy as np
 from typing import Optional, Union, List, Dict, Tuple
 import torch
-from ..node.Consumers import LabelConsumerInference, MetadataConsumerInference, CubeConsumer, LabelConsumer, MetadataConsumer
+from ..node.Consumers import CubeConsumer, LabelConsumer
+from .meta_routing import get_forward_metadata, get_fit_metadata
 
 
 class MemoryExecutor:
@@ -35,48 +36,22 @@ class MemoryExecutor:
         self.sorted_graph = list(nx.topological_sort(self.graph))
         assert (self.sorted_graph[0] == self.entry_point)
 
-        xs = self._flatten_to_4dim(X)
-        xs = np.split(xs, indices_or_sections=xs.shape[0], axis=0)
-        ys = None
-        if Y is not None:
-            if (isinstance(Y, List) and isinstance(Y[0], np.ndarray)) or isinstance(Y, np.ndarray):
-                ys = self._flatten_to_4dim(Y)
-                ys = np.split(ys, indices_or_sections=ys.shape[0], axis=0)
-            else:
-                ys = Y
+        xs = X
+        ys = Y or [None]*len(xs)
+        ms = M or [None]*len(xs)
 
-        if ys is None:
-            ys = [None]*len(xs)
-        if M is None:
-            ms = [None]*len(xs)
-        else:
-            ms = M
+        intermediary = {}
+        intermediary_labels = {}
+        intermediary_metas = {}
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.forward_node(
+            self.nodes[self.entry_point], xs, ys, ms)
 
-        results = []
-        for x, y, m in zip(xs, ys, ms):
+        for node in self.sorted_graph[1:]:
+            self._forward_helper(node, intermediary,
+                                 intermediary_labels, intermediary_metas)
 
-            intermediary = {}
-            intermediary_labels = {}
-            intermediary_metas = {}
-            intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._forward_node(
-                self.nodes[self.entry_point], x, y, m)
-
-            for node in self.sorted_graph[1:]:
-                self._forward_helper(node, intermediary,
-                                     intermediary_labels, intermediary_metas)
-
-            results.append((intermediary[self.sorted_graph[-1]],
-                           intermediary_labels[self.sorted_graph[-1]], intermediary_metas[self.sorted_graph[-1]]))
-        zr = tuple(zip(*results))
-        rxs = zr[0]
-        rys = zr[1]
-        rms = zr[2]
-
-        rxs = np.concatenate(rxs, axis=0)
-        if isinstance(rys[0], np.ndarray):
-            rys = np.concatenate(rys, axis=0)
-
-        return (rxs, rys, rms)
+        results = intermediary[self.sorted_graph[-1]]
+        return results
 
     def _forward_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
         """Helper function to aggregate inputs and calculate products from a given node.
@@ -112,7 +87,7 @@ class MemoryExecutor:
         else:
             use_metas = []
 
-        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._forward_node(
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self.forward_node(
             self.nodes[current], use_prods, use_labels, use_metas)
 
         if self._not_needed_anymore(current, intermediary):
@@ -121,7 +96,7 @@ class MemoryExecutor:
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
 
-    def _forward_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def forward_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Pass data through a node which has already been trained/fit.
 
         Parameters
@@ -140,17 +115,12 @@ class MemoryExecutor:
         tuple[np.ndarray, np.ndarray, np.ndarray]
             Output data, output labels, output metadata
         """
-        node_input = [data]
+        additional_meta = get_forward_metadata(node, metadata)
 
-        if isinstance(node, LabelConsumerInference):
-            node_input.append(labels)
-        if isinstance(node, MetadataConsumerInference):
-            node_input.append(metadata)
-
-        if len(node_input) == 1:
-            out = node.forward(node_input[0])
+        if len(additional_meta) > 0:
+            out = node.forward(data, **additional_meta)
         else:
-            out = node.forward(tuple(node_input))
+            out = node.forward(data)
         if isinstance(out, Tuple):
             return out
         else:
@@ -202,16 +172,12 @@ class MemoryExecutor:
             ys.append(y)
             ms.append(m)
 
-        xs = self._flatten_to_4dim(xs)
-
-        if isinstance(ys[0], np.ndarray):
-            ys = self._flatten_to_4dim(ys)
-
         self.fit(xs, ys, ms)
 
         # test stage
+        test_results = []
         for x, y, m in iter(test_dataloader):
-            test_results = self.forward(x, y, m)
+            test_results.append(self.forward(x, y, m))
             # do some metrics
 
     def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
@@ -234,9 +200,7 @@ class MemoryExecutor:
         intermediary_labels = {}
         intermediary_metas = {}
 
-        result = self._fit_node(self.nodes[self.entry_point], X, Y, M)
-
-        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self._fit_node(
+        intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.fit_node(
             self.nodes[self.entry_point], X, Y, M)
 
         for node in self.sorted_graph[1:]:
@@ -276,7 +240,7 @@ class MemoryExecutor:
         else:
             use_metas = None
 
-        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self._fit_node(
+        intermediary[current], intermediary_labels[current], intermediary_metas[current] = self.fit_node(
             self.nodes[current], use_prods, use_labels, use_metas)
 
         if self._not_needed_anymore(current, intermediary):
@@ -285,7 +249,7 @@ class MemoryExecutor:
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
 
-    def _fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> np.ndarray:
+    def fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> np.ndarray:
         """Private function wrapper to call the fit function for an individual node
 
         Parameters
@@ -315,38 +279,23 @@ class MemoryExecutor:
             node_input.append(data)
         if isinstance(node, LabelConsumer):
             node_input.append(labels)
-        if isinstance(node, MetadataConsumer):
-            node_input.append(metadata)
 
         if len(node_input) == 0:
             raise RuntimeError(
                 F"Node {node} invalid, does not indicate input data type!")
-        elif len(node_input) == 1:
-            node.fit(node_input[0])
+
+        additional_meta = get_fit_metadata(node, metadata)
+        if len(additional_meta) > 0:
+            node.fit(*node_input, **additional_meta)
         else:
             node.fit(*node_input)
 
-        return self._forward_node(node, data, labels, metadata)
+        return self.forward_node(node, data, labels, metadata)
 
-    @staticmethod
-    def _flatten_to_4dim(x: list | np.ndarray) -> np.ndarray:
-        """Private method to flatten
 
-        Parameters
-        ----------
-        x : list | np.ndarray
-            Make sure all array like data has 4 dimensions
-
-        Returns
-        -------
-        np.ndarray
-            Flattened array
-        """
-        if isinstance(x, List):
-            if len(x[0].shape) == 5:
-                x = np.concatenate(x, axis=0)
-            else:
-                x = np.stack(x, axis=0)
-        while len(x.shape) >= 5:
-            x = x.reshape((x.shape[0] * x.shape[1], *x.shape[2:]))
-        return x
+class HummingBirdExecutor:
+    def __init__(self, graph: nx.DiGraph, nodes: dict[str, Node], entry_point: str):
+        self.graph = graph
+        self.nodes = nodes
+        self.entry_point = entry_point
+        self.sorted_nodes = list(nx.topological_sort(self.graph))

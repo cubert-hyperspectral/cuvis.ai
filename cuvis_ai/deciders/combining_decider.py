@@ -5,6 +5,7 @@ from typing import Callable, Dict
 from ..utils.numpy import flatten_batch_and_spatial, unflatten_batch_and_spatial
 
 import numpy as np
+import pickle as pk
 
 
 def all_agree(decisions: np.ndarray) -> bool:
@@ -76,10 +77,10 @@ class CombiningDecider(BaseDecider):
             return
         # Write pickle object to file
         dump_file = f"{hash(self.rule)}_pca.pkl"
-        pk.dump(self.rule, open(dump_path, "wb"))
+        pk.dump(self.rule, open(dump_file, "wb"))
         data = {
             "class_count": self.n,
-            "rules_file": os.path.join(directory, dump_path)
+            "rules_file": os.path.join(directory, dump_file)
         }
         return data
 

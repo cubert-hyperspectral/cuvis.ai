@@ -35,7 +35,7 @@ __createManifest__([add_il])
 
 setup(
     name=NAME,
-    python_requires='>= 3.9',
+    python_requires='>= 3.10',
     version=VERSION,
     url='https://www.cubert-hyperspectral.com/',
     license='Apache License 2.0',

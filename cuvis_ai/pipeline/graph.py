@@ -22,6 +22,7 @@ import tempfile
 from pathlib import Path
 from importlib import import_module
 from .executor import MemoryExecutor, HummingBirdExecutor
+from copy import copy, deepcopy
 
 
 class Graph():
@@ -30,7 +31,6 @@ class Graph():
 
     def __init__(self, name: str) -> None:
         self.graph = nx.DiGraph()
-        self.sorted_graph = None
         self.nodes: dict[str, Node] = {}
         self.entry_point = None
         self.name = name
@@ -118,6 +118,41 @@ class Graph():
             del self.nodes[node2.id]
             # Remove the nodes from the graph as a whole
             self.graph.remove_nodes_from([node.id, node2.id])
+
+    def custom_copy(self):
+        # Create a new instance of the class
+        new_instance = self.__class__.__new__(self.__class__)
+
+        new_instance.name = deepcopy(self.name)
+        new_instance.graph = deepcopy(self.graph)  # Deep copy
+        new_instance.nodes = copy(self.nodes)  # Shallow copy
+        new_instance.entry_point = deepcopy(self.entry_point)
+
+        return new_instance
+
+    def __rshift__(self, other: Node):
+        """Compose with *other*.
+
+        Example:
+            t = a >> b >> c
+        """
+        new_graph = self.custom_copy()
+        if new_graph.entry_point == None:
+            new_graph.add_base_node(other)
+            return new_graph
+
+        # Get all nodes without successors
+        sink_nodes = [
+            new_graph.nodes[node] for node in new_graph.graph.nodes if new_graph.graph.out_degree(node) == 0]
+        if (len(sink_nodes) == 1):
+            new_graph.add_edge(sink_nodes[0], other)
+        return new_graph
+
+    def __repr__(self) -> str:
+        res = self.name + ":\n"
+        for node in self.nodes:
+            res += f"{node}\n"
+        return res
 
     def _verify_input_outputs(self) -> bool:
         """Private function to validate the integrity of data passed between nodes.

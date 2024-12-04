@@ -44,6 +44,8 @@ def _wrap_supervised_class(cls):
             self.net = skorch.NeuralNetClassifier(
                 module=cls,
                 criterion=self.criterion,
+                train_split=None,
+                **self.model_args
             )
 
             self.initialized = False
@@ -132,6 +134,7 @@ def _wrap_unsupervised_class(cls):
             self.net = skorch.NeuralNet(
                 module=cls,
                 criterion=self.criterion,
+                train_split=None,
                 **self.model_args
             )
 

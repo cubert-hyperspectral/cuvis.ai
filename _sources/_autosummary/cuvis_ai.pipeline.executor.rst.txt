@@ -19,6 +19,7 @@ cuvis\_ai.pipeline.executor
       :toctree:                                          
       :template: custom-class-template.rst               
    
+      HummingBirdExecutor
       MemoryExecutor
    
    

@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.Canberra
       ~Canberra.check_output_dim
       ~Canberra.fit
       ~Canberra.forward
+      ~Canberra.get_fit_requested_meta
+      ~Canberra.get_forward_requested_meta
       ~Canberra.load
       ~Canberra.score
       ~Canberra.serialize
+      ~Canberra.set_fit_meta_request
+      ~Canberra.set_forward_meta_request
       ~Canberra.spectra_to_array
    
    

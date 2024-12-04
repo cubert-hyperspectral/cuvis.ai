@@ -20,10 +20,13 @@ cuvis\_ai.transformation.reflectance.Reflectance
       ~Reflectance.__init__
       ~Reflectance.check_input_dim
       ~Reflectance.check_output_dim
-      ~Reflectance.fit
       ~Reflectance.forward
+      ~Reflectance.get_fit_requested_meta
+      ~Reflectance.get_forward_requested_meta
       ~Reflectance.load
       ~Reflectance.serialize
+      ~Reflectance.set_fit_meta_request
+      ~Reflectance.set_forward_meta_request
    
    
 

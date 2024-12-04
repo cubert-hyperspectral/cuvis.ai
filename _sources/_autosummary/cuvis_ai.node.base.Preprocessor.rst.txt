@@ -19,6 +19,7 @@ cuvis\_ai.node.base.Preprocessor
    
       ~Preprocessor.__init__
       ~Preprocessor.fit
+      ~Preprocessor.forward
    
    
 

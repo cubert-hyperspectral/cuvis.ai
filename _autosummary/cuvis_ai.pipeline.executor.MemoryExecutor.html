@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cuvis_ai.pipeline.graph" href="cuvis_ai.pipeline.graph.html" />
-    <link rel="prev" title="cuvis_ai.pipeline.executor" href="cuvis_ai.pipeline.executor.html" /> 
+    <link rel="prev" title="cuvis_ai.pipeline.executor.HummingBirdExecutor" href="cuvis_ai.pipeline.executor.HummingBirdExecutor.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,15 +50,19 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.pipeline.executor.html">cuvis_ai.pipeline.executor</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.executor.HummingBirdExecutor.html">cuvis_ai.pipeline.executor.HummingBirdExecutor</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.pipeline.executor.MemoryExecutor</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.graph.html">cuvis_ai.pipeline.graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.html">cuvis_ai.pipeline.meta_routing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.validator.html">cuvis_ai.pipeline.validator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.preprocessor.html">cuvis_ai.preprocessor</a></li>
@@ -119,8 +123,14 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.executor.MemoryExecutor.fit" title="cuvis_ai.pipeline.executor.MemoryExecutor.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, Y, M])</p></td>
 <td><p>Take a graph of uninitialized nodes and fit then given a set of inputs and outputs</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.executor.MemoryExecutor.forward" title="cuvis_ai.pipeline.executor.MemoryExecutor.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, Y, M])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.executor.MemoryExecutor.fit_node" title="cuvis_ai.pipeline.executor.MemoryExecutor.fit_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_node</span></code></a>(node, data, labels, metadata)</p></td>
+<td><p>Private function wrapper to call the fit function for an individual node</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.executor.MemoryExecutor.forward" title="cuvis_ai.pipeline.executor.MemoryExecutor.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, Y, M])</p></td>
 <td><p>Pass data through the graph by starting at the root node and flowing through all intermediary stages.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.executor.MemoryExecutor.forward_node" title="cuvis_ai.pipeline.executor.MemoryExecutor.forward_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward_node</span></code></a>(node, data, labels, metadata)</p></td>
+<td><p>Pass data through a node which has already been trained/fit.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.executor.MemoryExecutor.train" title="cuvis_ai.pipeline.executor.MemoryExecutor.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(train_dataloader, test_dataloader)</p></td>
 <td><p>Train a graph use a dataloader to iteratively pass data through the graph</p></td>
@@ -143,6 +153,31 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.pipeline.executor.MemoryExecutor.fit_node">
+<span class="sig-name descname"><span class="pre">fit_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><span class="pre">Node</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/executor.html#MemoryExecutor.fit_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.executor.MemoryExecutor.fit_node" title="Link to this definition"></a></dt>
+<dd><p>Private function wrapper to call the fit function for an individual node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><em>Node</em></a>) – Graph node that will be fit</p></li>
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Training data</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray</em>) – Training labels</p></li>
+<li><p><strong>metadata</strong> (<em>np.ndarray</em>) – Training metadata</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Results of passing data through the fit node</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – Data is empty (length 0)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.pipeline.executor.MemoryExecutor.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/executor.html#MemoryExecutor.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.executor.MemoryExecutor.forward" title="Link to this definition"></a></dt>
 <dd><p>Pass data through the graph by starting at the root node and flowing through all
@@ -157,6 +192,28 @@ intermediary stages.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Residuals of processed X, Y, and M</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>[np.ndarray, np.ndarray, np.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.pipeline.executor.MemoryExecutor.forward_node">
+<span class="sig-name descname"><span class="pre">forward_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><span class="pre">Node</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/executor.html#MemoryExecutor.forward_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.executor.MemoryExecutor.forward_node" title="Link to this definition"></a></dt>
+<dd><p>Pass data through a node which has already been trained/fit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><em>Node</em></a>) – Node within the graph</p></li>
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Data to pass through the nodes</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray</em>) – Labels associated with input data</p></li>
+<li><p><strong>metadata</strong> (<em>np.ndarray</em>) – Metadata needed for forward pass</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output data, output labels, output metadata</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>[np.ndarray, np.ndarray, np.ndarray]</p>
@@ -189,7 +246,7 @@ intermediary stages.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuvis_ai.pipeline.executor.html" class="btn btn-neutral float-left" title="cuvis_ai.pipeline.executor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.pipeline.executor.HummingBirdExecutor.html" class="btn btn-neutral float-left" title="cuvis_ai.pipeline.executor.HummingBirdExecutor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cuvis_ai.pipeline.graph.html" class="btn btn-neutral float-right" title="cuvis_ai.pipeline.graph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

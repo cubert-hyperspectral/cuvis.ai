@@ -50,6 +50,7 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
@@ -133,17 +134,26 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.check_output_dim" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.check_output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_dim</span></code></a>(X[, Y])</p></td>
 <td><p>Check that the parameters for the output data data match user expectations</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.fit" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, Y])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.forward" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, Y])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.forward" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, Y])</p></td>
 <td><p>Apply the pytorch method <a href="#id1"><span class="problematic" id="id2">:arg:`function_name`</span></a> on <a href="#id3"><span class="problematic" id="id4">:arg:`X`</span></a>. This node basically runs <cite>torch.&lt;function_name&gt;(X, Y)</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.load" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, serial_dir)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.get_fit_requested_meta" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.get_forward_requested_meta" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.load" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, serial_dir)</p></td>
 <td><p>Load this node from a serialized graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.serialize" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(serial_dir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.serialize" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(serial_dir)</p></td>
 <td><p>Serialize this node and save to <a href="#id5"><span class="problematic" id="id6">:arg:`serial_dir`</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.set_fit_meta_request" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.set_forward_meta_request" title="cuvis_ai.transformation.torch_transformation.TorchTransformation.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -181,11 +191,6 @@ X (array-like): Input data.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/transformation/torch_transformation.html#TorchTransformation.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.fit" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/transformation/torch_transformation.html#TorchTransformation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.forward" title="Link to this definition"></a></dt>
 <dd><p>Apply the pytorch method <a href="#id7"><span class="problematic" id="id8">:arg:`function_name`</span></a> on <a href="#id9"><span class="problematic" id="id10">:arg:`X`</span></a>.
@@ -205,6 +210,16 @@ This node basically runs <cite>torch.&lt;function_name&gt;(X, Y)</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.input_dim">
@@ -235,6 +250,16 @@ If a dimension is dependent on the input, it will return -1 in the specific posi
 <span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/transformation/torch_transformation.html#TorchTransformation.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.serialize" title="Link to this definition"></a></dt>
 <dd><p>Serialize this node and save to <a href="#id13"><span class="problematic" id="id14">:arg:`serial_dir`</span></a>.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.torch_transformation.TorchTransformation.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.torch_transformation.TorchTransformation.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

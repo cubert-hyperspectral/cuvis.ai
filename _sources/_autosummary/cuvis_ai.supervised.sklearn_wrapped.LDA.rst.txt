@@ -20,23 +20,14 @@ cuvis\_ai.supervised.sklearn\_wrapped.LDA
       ~LDA.__init__
       ~LDA.check_input_dim
       ~LDA.check_output_dim
-      ~LDA.decision_function
       ~LDA.fit
-      ~LDA.fit_transform
       ~LDA.forward
-      ~LDA.get_feature_names_out
-      ~LDA.get_metadata_routing
-      ~LDA.get_params
+      ~LDA.get_fit_requested_meta
+      ~LDA.get_forward_requested_meta
       ~LDA.load
-      ~LDA.predict
-      ~LDA.predict_log_proba
-      ~LDA.predict_proba
-      ~LDA.score
       ~LDA.serialize
-      ~LDA.set_output
-      ~LDA.set_params
-      ~LDA.set_score_request
-      ~LDA.transform
+      ~LDA.set_fit_meta_request
+      ~LDA.set_forward_meta_request
    
    
 

@@ -1,9 +1,9 @@
-cuvis\_ai.node.Consumers.MetadataConsumerInference
-==================================================
+cuvis\_ai.pipeline.validator.ShapeValidator
+===========================================
 
-.. currentmodule:: cuvis_ai.node.Consumers
+.. currentmodule:: cuvis_ai.pipeline.validator
 
-.. autoclass:: MetadataConsumerInference
+.. autoclass:: ShapeValidator
    :members:
    :undoc-members:
    :show-inheritance:                          
@@ -17,7 +17,8 @@ cuvis\_ai.node.Consumers.MetadataConsumerInference
 
    .. autosummary::
    
-      ~MetadataConsumerInference.__init__
+      ~ShapeValidator.__init__
+      ~ShapeValidator.verify
    
    
 

@@ -22,8 +22,12 @@ cuvis\_ai.transformation.torchvision\_transformation.TorchVisionTransformation
       ~TorchVisionTransformation.check_output_dim
       ~TorchVisionTransformation.fit
       ~TorchVisionTransformation.forward
+      ~TorchVisionTransformation.get_fit_requested_meta
+      ~TorchVisionTransformation.get_forward_requested_meta
       ~TorchVisionTransformation.load
       ~TorchVisionTransformation.serialize
+      ~TorchVisionTransformation.set_fit_meta_request
+      ~TorchVisionTransformation.set_forward_meta_request
    
    
 

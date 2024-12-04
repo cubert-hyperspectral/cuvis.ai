@@ -50,6 +50,7 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.deciders.base_decider.html">cuvis_ai.deciders.base_decider</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.deciders.binary_decider.html">cuvis_ai.deciders.binary_decider</a></li>
@@ -144,11 +145,23 @@ Custom strategies may also be used.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.forward" title="cuvis_ai.deciders.combining_decider.CombiningDecider.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
 <td><p>Apply the chosen <a href="#id1"><span class="problematic" id="id2">:arg:`rule`</span></a> to the input data. :param X: Data to classify. :type X: np.ndarray.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.get_fit_requested_meta" title="cuvis_ai.deciders.combining_decider.CombiningDecider.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.get_forward_requested_meta" title="cuvis_ai.deciders.combining_decider.CombiningDecider.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.load" title="cuvis_ai.deciders.combining_decider.CombiningDecider.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, filepath)</p></td>
 <td><p>Load this node from a serialized graph.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.serialize" title="cuvis_ai.deciders.combining_decider.CombiningDecider.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(directory)</p></td>
 <td><p>Convert the class into a serialized representation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.set_fit_meta_request" title="cuvis_ai.deciders.combining_decider.CombiningDecider.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.set_forward_meta_request" title="cuvis_ai.deciders.combining_decider.CombiningDecider.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -206,6 +219,16 @@ X (array-like): Input data.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.deciders.combining_decider.CombiningDecider.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.deciders.combining_decider.CombiningDecider.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.deciders.combining_decider.CombiningDecider.input_dim">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><a class="headerlink" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.input_dim" title="Link to this definition"></a></dt>
@@ -241,6 +264,16 @@ If a dimension is not important it will return -1 in the specific position.</p>
 <span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/deciders/combining_decider.html#CombiningDecider.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.serialize" title="Link to this definition"></a></dt>
 <dd><p>Convert the class into a serialized representation</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.deciders.combining_decider.CombiningDecider.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.deciders.combining_decider.CombiningDecider.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.deciders.combining_decider.CombiningDecider.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

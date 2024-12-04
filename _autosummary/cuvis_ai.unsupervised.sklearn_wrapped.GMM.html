@@ -50,6 +50,7 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
@@ -105,7 +106,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.unsupervised.sklearn_wrapped.</span></span><span class="sig-name descname"><span class="pre">GMM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_covar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kmeans'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">means_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precisions_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/sklearn_wrapped.html#GMM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GMM</span></code></a>, <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised" title="cuvis_ai.node.base.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised" title="cuvis_ai.node.base.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_covar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kmeans'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">means_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precisions_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.__init__" title="Link to this definition"></a></dt>
@@ -117,12 +118,6 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.__init__" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([n_components, covariance_type, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.aic" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.aic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aic</span></code></a>(X)</p></td>
-<td><p>Akaike information criterion for the current model on the input X.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.bic" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.bic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bic</span></code></a>(X)</p></td>
-<td><p>Bayesian information criterion for the current model on the input X.</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.check_input_dim" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.check_input_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_input_dim</span></code></a>(X)</p></td>
 <td><p>Check that the parameters for the input data data match user expectations</p></td>
 </tr>
@@ -130,43 +125,28 @@
 <td><p>Check that the parameters for the output data data match user expectations</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
-<td><p>Estimate model parameters with the EM algorithm.</p></td>
+<td><p>_summary_</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit_predict" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
-<td><p>Estimate model parameters using X and predict the labels for X.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.forward" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.forward" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
 <td><p>Transform the input data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_metadata_routing" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
-<td><p>Get metadata routing of this object.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_fit_requested_meta" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_params" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
-<td><p>Get parameters for this estimator.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_forward_requested_meta" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.load" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, data_dir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.load" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, data_dir)</p></td>
 <td><p>Load from serialized format into an object</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
-<td><p>Predict the labels for the data samples in X using trained model.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict_proba" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict_proba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_proba</span></code></a>(X)</p></td>
-<td><p>Evaluate the components' density for each sample.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.sample" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code></a>([n_samples])</p></td>
-<td><p>Generate random samples from the fitted Gaussian distribution.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.score" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(X[, y])</p></td>
-<td><p>Compute the per-sample average log-likelihood of the given data X.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.score_samples" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.score_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score_samples</span></code></a>(X)</p></td>
-<td><p>Compute the log-likelihood of each sample.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.serialize" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(data_dir)</p></td>
 <td><p>Convert the class into a serialized representation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_params" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
-<td><p>Set the parameters of this estimator.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_fit_meta_request" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_forward_meta_request" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -181,44 +161,6 @@
 </tr>
 </tbody>
 </table>
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.aic">
-<span class="sig-name descname"><span class="pre">aic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.aic" title="Link to this definition"></a></dt>
-<dd><p>Akaike information criterion for the current model on the input X.</p>
-<p>You can refer to this <a class="reference external" href="https://scikit-learn.org/stable/modules/linear_model.html#aic-bic" title="(in scikit-learn v1.5)"><span class="xref std std-ref">mathematical section</span></a> for more
-details regarding the formulation of the AIC used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_dimensions</em><em>)</em>) – The input samples.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>aic</strong> – The lower the better.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.bic">
-<span class="sig-name descname"><span class="pre">bic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.bic" title="Link to this definition"></a></dt>
-<dd><p>Bayesian information criterion for the current model on the input X.</p>
-<p>You can refer to this <a class="reference external" href="https://scikit-learn.org/stable/modules/linear_model.html#aic-bic" title="(in scikit-learn v1.5)"><span class="xref std std-ref">mathematical section</span></a> for more
-details regarding the formulation of the BIC used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_dimensions</em><em>)</em>) – The input samples.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>bic</strong> – The lower the better.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.check_input_dim">
 <span class="sig-name descname"><span class="pre">check_input_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.check_input_dim" title="Link to this definition"></a></dt>
@@ -244,59 +186,10 @@ X (array-like): Input data.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit" title="Link to this definition"></a></dt>
-<dd><p>Estimate model parameters with the EM algorithm.</p>
-<p>The method fits the model <code class="docutils literal notranslate"><span class="pre">n_init</span></code> times and sets the parameters with
-which the model has the largest likelihood or lower bound. Within each
-trial, the method iterates between E-step and M-step for <code class="docutils literal notranslate"><span class="pre">max_iter</span></code>
-times until the change of likelihood or lower bound is less than
-<code class="docutils literal notranslate"><span class="pre">tol</span></code>, otherwise, a <code class="docutils literal notranslate"><span class="pre">ConvergenceWarning</span></code> is raised.
-If <code class="docutils literal notranslate"><span class="pre">warm_start</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then <code class="docutils literal notranslate"><span class="pre">n_init</span></code> is ignored and a single
-initialization is performed upon the first call. Upon consecutive
-calls, training starts where it left off.</p>
+<dd><p>_summary_</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> – The fitted mixture.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)">object</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit_predict">
-<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.fit_predict" title="Link to this definition"></a></dt>
-<dd><p>Estimate model parameters using X and predict the labels for X.</p>
-<p>The method fits the model n_init times and sets the parameters with
-which the model has the largest likelihood or lower bound. Within each
-trial, the method iterates between E-step and M-step for <cite>max_iter</cite>
-times until the change of likelihood or lower bound is less than
-<cite>tol</cite>, otherwise, a <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.exceptions.ConvergenceWarning.html#sklearn.exceptions.ConvergenceWarning" title="(in scikit-learn v1.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConvergenceWarning</span></code></a> is
-raised. After fitting, it predicts the most probable label for the
-input data points.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">Added in version 0.20.</span></p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>labels</strong> – Component labels.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array, shape (n_samples,)</p>
+<dd class="field-odd"><p><strong>X</strong> (<em>Any</em>) – Generic method to initialize a classifier with data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -312,39 +205,14 @@ Transformed data.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_metadata_routing">
-<span class="sig-name descname"><span class="pre">get_metadata_routing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_metadata_routing" title="Link to this definition"></a></dt>
-<dd><p>Get metadata routing of this object.</p>
-<p>Please check <a class="reference external" href="https://scikit-learn.org/stable/metadata_routing.html#metadata-routing" title="(in scikit-learn v1.5)"><span class="xref std std-ref">User Guide</span></a> on how the routing
-mechanism works.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>routing</strong> – A <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.utils.metadata_routing.MetadataRequest.html#sklearn.utils.metadata_routing.MetadataRequest" title="(in scikit-learn v1.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRequest</span></code></a> encapsulating
-routing information.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>MetadataRequest</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_params">
-<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_params" title="Link to this definition"></a></dt>
-<dd><p>Get parameters for this estimator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>deep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=True</em>) – If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>params</strong> – Parameter names mapped to their values.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.input_dim">
@@ -371,124 +239,20 @@ If a dimension is dependent on the input, it will return -1 in the specific posi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict" title="Link to this definition"></a></dt>
-<dd><p>Predict the labels for the data samples in X using trained model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>labels</strong> – Component labels.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array, shape (n_samples,)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict_proba">
-<span class="sig-name descname"><span class="pre">predict_proba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.predict_proba" title="Link to this definition"></a></dt>
-<dd><p>Evaluate the components’ density for each sample.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>resp</strong> – Density of each Gaussian component for each sample in X.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array, shape (n_samples, n_components)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.sample" title="Link to this definition"></a></dt>
-<dd><p>Generate random samples from the fitted Gaussian distribution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>default=1</em>) – Number of samples to generate.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>X</strong> (<em>array, shape (n_samples, n_features)</em>) – Randomly generated sample.</p></li>
-<li><p><strong>y</strong> (<em>array, shape (nsamples,)</em>) – Component labels.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.score" title="Link to this definition"></a></dt>
-<dd><p>Compute the per-sample average log-likelihood of the given data X.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_dimensions</em><em>)</em>) – List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>log_likelihood</strong> – Log-likelihood of <cite>X</cite> under the Gaussian mixture model.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.score_samples">
-<span class="sig-name descname"><span class="pre">score_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.score_samples" title="Link to this definition"></a></dt>
-<dd><p>Compute the log-likelihood of each sample.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – List of n_features-dimensional data points. Each row
-corresponds to a single data point.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>log_prob</strong> – Log-likelihood of each sample in <cite>X</cite> under the current model.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array, shape (n_samples,)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.serialize">
 <span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.serialize" title="Link to this definition"></a></dt>
 <dd><p>Convert the class into a serialized representation</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_params">
-<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_params" title="Link to this definition"></a></dt>
-<dd><p>Set the parameters of this estimator.</p>
-<p>The method works on simple estimators as well as on nested objects
-(such as <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v1.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>). The latter have
-parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
-possible to update each component of a nested object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Estimator parameters.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> – Estimator instance.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>estimator instance</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.GMM.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

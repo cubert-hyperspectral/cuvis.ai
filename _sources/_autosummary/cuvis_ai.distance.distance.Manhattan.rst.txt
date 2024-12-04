@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.Manhattan
       ~Manhattan.check_output_dim
       ~Manhattan.fit
       ~Manhattan.forward
+      ~Manhattan.get_fit_requested_meta
+      ~Manhattan.get_forward_requested_meta
       ~Manhattan.load
       ~Manhattan.score
       ~Manhattan.serialize
+      ~Manhattan.set_fit_meta_request
+      ~Manhattan.set_forward_meta_request
       ~Manhattan.spectra_to_array
    
    

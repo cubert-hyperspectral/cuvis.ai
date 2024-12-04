@@ -20,10 +20,13 @@ cuvis\_ai.transformation.torch\_transformation.TorchTransformation
       ~TorchTransformation.__init__
       ~TorchTransformation.check_input_dim
       ~TorchTransformation.check_output_dim
-      ~TorchTransformation.fit
       ~TorchTransformation.forward
+      ~TorchTransformation.get_fit_requested_meta
+      ~TorchTransformation.get_forward_requested_meta
       ~TorchTransformation.load
       ~TorchTransformation.serialize
+      ~TorchTransformation.set_fit_meta_request
+      ~TorchTransformation.set_forward_meta_request
    
    
 

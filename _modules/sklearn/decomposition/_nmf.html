@@ -1698,8 +1698,6 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="NMF.fit_transform">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.preprocessor.sklearn_wrapped.NMF.html#cuvis_ai.preprocessor.sklearn_wrapped.NMF.fit_transform">[docs]</a>
     <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Learn a NMF model for the data X and returns the transformed data.</span>
@@ -1743,8 +1741,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="n">H</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_iter_</span> <span class="o">=</span> <span class="n">n_iter</span>
 
-        <span class="k">return</span> <span class="n">W</span></div>
-
+        <span class="k">return</span> <span class="n">W</span>
 
     <span class="k">def</span> <span class="nf">_fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update_H</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Learn a NMF model for the data X and returns the transformed data.</span>
@@ -1846,8 +1843,6 @@
 
         <span class="k">return</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">n_iter</span>
 
-<div class="viewcode-block" id="NMF.transform">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.preprocessor.sklearn_wrapped.NMF.html#cuvis_ai.preprocessor.sklearn_wrapped.NMF.transform">[docs]</a>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform the data X according to the fitted NMF model.</span>
 
@@ -1870,8 +1865,7 @@
         <span class="k">with</span> <span class="n">config_context</span><span class="p">(</span><span class="n">assume_finite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="n">W</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">components_</span><span class="p">,</span> <span class="n">update_H</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">W</span></div>
-
+        <span class="k">return</span> <span class="n">W</span>
 
 
 <span class="k">class</span> <span class="nc">MiniBatchNMF</span><span class="p">(</span><span class="n">_BaseNMF</span><span class="p">):</span>

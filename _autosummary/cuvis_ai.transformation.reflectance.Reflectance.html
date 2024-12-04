@@ -50,6 +50,7 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
@@ -105,7 +106,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.transformation.reflectance.</span></span><span class="sig-name descname"><span class="pre">Reflectance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/transformation/reflectance.html#Reflectance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseTransformation.html#cuvis_ai.node.base.BaseTransformation" title="cuvis_ai.node.base.BaseTransformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTransformation</span></code></a>, <a class="reference internal" href="cuvis_ai.node.Consumers.MetadataConsumer.html#cuvis_ai.node.Consumers.MetadataConsumer" title="cuvis_ai.node.Consumers.MetadataConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataConsumer</span></code></a>, <a class="reference internal" href="cuvis_ai.node.Consumers.MetadataConsumerInference.html#cuvis_ai.node.Consumers.MetadataConsumerInference" title="cuvis_ai.node.Consumers.MetadataConsumerInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataConsumerInference</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseTransformation.html#cuvis_ai.node.base.BaseTransformation" title="cuvis_ai.node.base.BaseTransformation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTransformation</span></code></a></p>
 <p>Generic reflectance calculus: (data - dark) / (white - dark)
 Requires “Dark” and “White” references to be set in Metadata.</p>
 <dl class="field-list simple">
@@ -133,17 +134,26 @@ Requires “Dark” and “White” references to be set in Metadata.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.check_output_dim" title="cuvis_ai.transformation.reflectance.Reflectance.check_output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_dim</span></code></a>(X)</p></td>
 <td><p>Check that the parameters for the output data data match user expectations</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.fit" title="cuvis_ai.transformation.reflectance.Reflectance.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(*X)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.forward" title="cuvis_ai.transformation.reflectance.Reflectance.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.forward" title="cuvis_ai.transformation.reflectance.Reflectance.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X, references__White, references__Dark)</p></td>
 <td><p>Apply reflectance calculus to the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.load" title="cuvis_ai.transformation.reflectance.Reflectance.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, serial_dir)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.get_fit_requested_meta" title="cuvis_ai.transformation.reflectance.Reflectance.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.get_forward_requested_meta" title="cuvis_ai.transformation.reflectance.Reflectance.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.load" title="cuvis_ai.transformation.reflectance.Reflectance.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, serial_dir)</p></td>
 <td><p>Load this node from a serialized graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.serialize" title="cuvis_ai.transformation.reflectance.Reflectance.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(serial_dir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.serialize" title="cuvis_ai.transformation.reflectance.Reflectance.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(serial_dir)</p></td>
 <td><p>Serialize this node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.set_fit_meta_request" title="cuvis_ai.transformation.reflectance.Reflectance.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.transformation.reflectance.Reflectance.set_forward_meta_request" title="cuvis_ai.transformation.reflectance.Reflectance.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -181,33 +191,45 @@ X (array-like): Input data.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/transformation/reflectance.html#Reflectance.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.fit" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/transformation/reflectance.html#Reflectance.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.forward" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">references__White</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">references__Dark</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/transformation/reflectance.html#Reflectance.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.forward" title="Link to this definition"></a></dt>
 <dd><p>Apply reflectance calculus to the data.
 Returns the data as percentage values between the “Dark” and “White” references set in the meta-data.
 e.g. A pixel value of 1.0 means that the pixel is as bright as the white reference at this pixel, 1.5 -&gt; 50% brighter, 0.0 -&gt; as bright as the dark reference, -0.2 -&gt; 20% darker than the dark reference.
 The output values can be clamped by setting <code class="xref py py-attr docutils literal notranslate"><span class="pre">lower_bond</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">upper_bound</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>Tuple</em>) – Data to compute reflectance of. Expects a tuple of (data, meta-data) as (np.ndarray, Dict)</p>
+<dl>
+<dt>Parameters</dt><dd><dl class="simple">
+<dt>X<span class="classifier">np.ndarray</span></dt><dd><p>The input data array for which reflectance is computed. Must have the same shape
+as <cite>references__White</cite> and <cite>references__Dark</cite>.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns the reflectance data in a tuple along with the remaining data passed in.</p>
+<dt>references__White<span class="classifier">np.ndarray</span></dt><dd><p>The white reference array. Defines the maximum intensity for each pixel.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple</p>
+<dt>references__Dark<span class="classifier">np.ndarray</span></dt><dd><p>The dark reference array. Defines the minimum intensity for each pixel.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>np.ndarray</dt><dd><p>An array of reflectance values with the same shape as the input <cite>X</cite>. The reflectance
+values are computed as <cite>(X - references__Dark) / (references__White - references__Dark)</cite>
+and optionally clamped between the lower and upper bounds.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.input_dim">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.input_dim" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.input_dim" title="Link to this definition"></a></dt>
 <dd><p>Returns the needed shape for the input data.
 If a dimension is not important, it will return -1 in the specific position.</p>
 <p>Returns:
@@ -222,7 +244,7 @@ If a dimension is not important, it will return -1 in the specific position.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.output_dim">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.output_dim" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.output_dim" title="Link to this definition"></a></dt>
 <dd><p>Returns the shape for the output data.
 If a dimension is dependent on the input, it will return -1 in the specific position.</p>
 <p>Returns:
@@ -234,6 +256,16 @@ If a dimension is dependent on the input, it will return -1 in the specific posi
 <span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serial_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/transformation/reflectance.html#Reflectance.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.serialize" title="Link to this definition"></a></dt>
 <dd><p>Serialize this node.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.transformation.reflectance.Reflectance.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.transformation.reflectance.Reflectance.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

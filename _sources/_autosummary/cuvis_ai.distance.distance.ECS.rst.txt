@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.ECS
       ~ECS.check_output_dim
       ~ECS.fit
       ~ECS.forward
+      ~ECS.get_fit_requested_meta
+      ~ECS.get_forward_requested_meta
       ~ECS.load
       ~ECS.score
       ~ECS.serialize
+      ~ECS.set_fit_meta_request
+      ~ECS.set_forward_meta_request
       ~ECS.spectra_to_array
    
    

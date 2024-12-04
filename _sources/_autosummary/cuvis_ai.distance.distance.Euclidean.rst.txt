@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.Euclidean
       ~Euclidean.check_output_dim
       ~Euclidean.fit
       ~Euclidean.forward
+      ~Euclidean.get_fit_requested_meta
+      ~Euclidean.get_forward_requested_meta
       ~Euclidean.load
       ~Euclidean.score
       ~Euclidean.serialize
+      ~Euclidean.set_fit_meta_request
+      ~Euclidean.set_forward_meta_request
       ~Euclidean.spectra_to_array
    
    

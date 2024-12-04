@@ -22,8 +22,12 @@ cuvis\_ai.deciders.cascaded\_decider.Cascaded
       ~Cascaded.check_output_dim
       ~Cascaded.fit
       ~Cascaded.forward
+      ~Cascaded.get_fit_requested_meta
+      ~Cascaded.get_forward_requested_meta
       ~Cascaded.load
       ~Cascaded.serialize
+      ~Cascaded.set_fit_meta_request
+      ~Cascaded.set_forward_meta_request
    
    
 

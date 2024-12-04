@@ -22,8 +22,12 @@ cuvis\_ai.deciders.combining\_decider.CombiningDecider
       ~CombiningDecider.check_output_dim
       ~CombiningDecider.fit
       ~CombiningDecider.forward
+      ~CombiningDecider.get_fit_requested_meta
+      ~CombiningDecider.get_forward_requested_meta
       ~CombiningDecider.load
       ~CombiningDecider.serialize
+      ~CombiningDecider.set_fit_meta_request
+      ~CombiningDecider.set_forward_meta_request
    
    
 

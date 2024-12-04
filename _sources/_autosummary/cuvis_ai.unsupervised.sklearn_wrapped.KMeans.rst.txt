@@ -21,21 +21,13 @@ cuvis\_ai.unsupervised.sklearn\_wrapped.KMeans
       ~KMeans.check_input_dim
       ~KMeans.check_output_dim
       ~KMeans.fit
-      ~KMeans.fit_predict
-      ~KMeans.fit_transform
       ~KMeans.forward
-      ~KMeans.get_feature_names_out
-      ~KMeans.get_metadata_routing
-      ~KMeans.get_params
+      ~KMeans.get_fit_requested_meta
+      ~KMeans.get_forward_requested_meta
       ~KMeans.load
-      ~KMeans.predict
-      ~KMeans.score
       ~KMeans.serialize
-      ~KMeans.set_fit_request
-      ~KMeans.set_output
-      ~KMeans.set_params
-      ~KMeans.set_score_request
-      ~KMeans.transform
+      ~KMeans.set_fit_meta_request
+      ~KMeans.set_forward_meta_request
    
    
 

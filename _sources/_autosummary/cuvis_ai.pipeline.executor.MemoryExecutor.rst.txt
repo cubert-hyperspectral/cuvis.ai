@@ -19,7 +19,9 @@ cuvis\_ai.pipeline.executor.MemoryExecutor
    
       ~MemoryExecutor.__init__
       ~MemoryExecutor.fit
+      ~MemoryExecutor.fit_node
       ~MemoryExecutor.forward
+      ~MemoryExecutor.forward_node
       ~MemoryExecutor.train
    
    

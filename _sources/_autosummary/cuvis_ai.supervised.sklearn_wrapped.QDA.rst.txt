@@ -20,19 +20,14 @@ cuvis\_ai.supervised.sklearn\_wrapped.QDA
       ~QDA.__init__
       ~QDA.check_input_dim
       ~QDA.check_output_dim
-      ~QDA.decision_function
       ~QDA.fit
       ~QDA.forward
-      ~QDA.get_metadata_routing
-      ~QDA.get_params
+      ~QDA.get_fit_requested_meta
+      ~QDA.get_forward_requested_meta
       ~QDA.load
-      ~QDA.predict
-      ~QDA.predict_log_proba
-      ~QDA.predict_proba
-      ~QDA.score
       ~QDA.serialize
-      ~QDA.set_params
-      ~QDA.set_score_request
+      ~QDA.set_fit_meta_request
+      ~QDA.set_forward_meta_request
    
    
 

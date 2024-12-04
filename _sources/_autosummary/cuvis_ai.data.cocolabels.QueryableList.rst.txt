@@ -1,9 +1,9 @@
-cuvis\_ai.node.Consumers.LabelConsumerInference
-===============================================
+cuvis\_ai.data.cocolabels.QueryableList
+=======================================
 
-.. currentmodule:: cuvis_ai.node.Consumers
+.. currentmodule:: cuvis_ai.data.cocolabels
 
-.. autoclass:: LabelConsumerInference
+.. autoclass:: QueryableList
    :members:
    :undoc-members:
    :show-inheritance:                          
@@ -17,7 +17,8 @@ cuvis\_ai.node.Consumers.LabelConsumerInference
 
    .. autosummary::
    
-      ~LabelConsumerInference.__init__
+      ~QueryableList.__init__
+      ~QueryableList.where
    
    
 

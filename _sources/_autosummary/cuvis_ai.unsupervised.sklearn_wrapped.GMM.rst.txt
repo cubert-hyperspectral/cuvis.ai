@@ -18,23 +18,16 @@ cuvis\_ai.unsupervised.sklearn\_wrapped.GMM
    .. autosummary::
    
       ~GMM.__init__
-      ~GMM.aic
-      ~GMM.bic
       ~GMM.check_input_dim
       ~GMM.check_output_dim
       ~GMM.fit
-      ~GMM.fit_predict
       ~GMM.forward
-      ~GMM.get_metadata_routing
-      ~GMM.get_params
+      ~GMM.get_fit_requested_meta
+      ~GMM.get_forward_requested_meta
       ~GMM.load
-      ~GMM.predict
-      ~GMM.predict_proba
-      ~GMM.sample
-      ~GMM.score
-      ~GMM.score_samples
       ~GMM.serialize
-      ~GMM.set_params
+      ~GMM.set_fit_meta_request
+      ~GMM.set_forward_meta_request
    
    
 

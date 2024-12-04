@@ -20,20 +20,14 @@ cuvis\_ai.supervised.sklearn\_wrapped.SVM
       ~SVM.__init__
       ~SVM.check_input_dim
       ~SVM.check_output_dim
-      ~SVM.decision_function
       ~SVM.fit
       ~SVM.forward
-      ~SVM.get_metadata_routing
-      ~SVM.get_params
+      ~SVM.get_fit_requested_meta
+      ~SVM.get_forward_requested_meta
       ~SVM.load
-      ~SVM.predict
-      ~SVM.predict_log_proba
-      ~SVM.predict_proba
-      ~SVM.score
       ~SVM.serialize
-      ~SVM.set_fit_request
-      ~SVM.set_params
-      ~SVM.set_score_request
+      ~SVM.set_fit_meta_request
+      ~SVM.set_forward_meta_request
    
    
 
@@ -43,12 +37,7 @@ cuvis\_ai.supervised.sklearn\_wrapped.SVM
 
    .. autosummary::
    
-      ~SVM.coef_
       ~SVM.input_dim
-      ~SVM.n_support_
       ~SVM.output_dim
-      ~SVM.probA_
-      ~SVM.probB_
-      ~SVM.unused_param
    
    

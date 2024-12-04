@@ -22,8 +22,12 @@ cuvis\_ai.deciders.binary\_decider.BinaryDecider
       ~BinaryDecider.check_output_dim
       ~BinaryDecider.fit
       ~BinaryDecider.forward
+      ~BinaryDecider.get_fit_requested_meta
+      ~BinaryDecider.get_forward_requested_meta
       ~BinaryDecider.load
       ~BinaryDecider.serialize
+      ~BinaryDecider.set_fit_meta_request
+      ~BinaryDecider.set_forward_meta_request
    
    
 

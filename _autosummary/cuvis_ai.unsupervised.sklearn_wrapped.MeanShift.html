@@ -50,6 +50,7 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
@@ -105,7 +106,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.unsupervised.sklearn_wrapped.</span></span><span class="sig-name descname"><span class="pre">MeanShift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_seeding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_bin_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/sklearn_wrapped.html#MeanShift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanShift</span></code></a>, <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised" title="cuvis_ai.node.base.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised" title="cuvis_ai.node.base.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_seeding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_bin_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sklearn/cluster/_mean_shift.html#MeanShift.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.__init__" title="Link to this definition"></a></dt>
@@ -124,31 +125,28 @@
 <td><p>Check that the parameters for the output data data match user expectations</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
-<td><p>Perform clustering.</p></td>
+<td><p>_summary_</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit_predict" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
-<td><p>Perform clustering on <cite>X</cite> and returns cluster labels.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.forward" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.forward" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
 <td><p>Transform the input data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_metadata_routing" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
-<td><p>Get metadata routing of this object.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_fit_requested_meta" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_params" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
-<td><p>Get parameters for this estimator.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_forward_requested_meta" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.load" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, data_dir)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.load" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, data_dir)</p></td>
 <td><p>Load from serialized format into an object</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.predict" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
-<td><p>Predict the closest cluster each sample in X belongs to.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.serialize" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(data_dir)</p></td>
 <td><p>Convert the class into a serialized representation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_params" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
-<td><p>Set the parameters of this estimator.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_fit_meta_request" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_forward_meta_request" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -188,44 +186,10 @@ X (array-like): Input data.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit" title="Link to this definition"></a></dt>
-<dd><p>Perform clustering.</p>
+<dd><p>_summary_</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Samples to cluster.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> – Fitted instance.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)">object</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit_predict">
-<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.fit_predict" title="Link to this definition"></a></dt>
-<dd><p>Perform clustering on <cite>X</cite> and returns cluster labels.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Input data.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>Arguments to be passed to <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">Added in version 1.4.</span></p>
-</div>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>labels</strong> – Cluster labels.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ndarray of shape (n_samples,), dtype=np.int64</p>
+<dd class="field-odd"><p><strong>X</strong> (<em>Any</em>) – Generic method to initialize a classifier with data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -241,39 +205,14 @@ Transformed data.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_metadata_routing">
-<span class="sig-name descname"><span class="pre">get_metadata_routing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_metadata_routing" title="Link to this definition"></a></dt>
-<dd><p>Get metadata routing of this object.</p>
-<p>Please check <a class="reference external" href="https://scikit-learn.org/stable/metadata_routing.html#metadata-routing" title="(in scikit-learn v1.5)"><span class="xref std std-ref">User Guide</span></a> on how the routing
-mechanism works.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>routing</strong> – A <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.utils.metadata_routing.MetadataRequest.html#sklearn.utils.metadata_routing.MetadataRequest" title="(in scikit-learn v1.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRequest</span></code></a> encapsulating
-routing information.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>MetadataRequest</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_params">
-<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_params" title="Link to this definition"></a></dt>
-<dd><p>Get parameters for this estimator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>deep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=True</em>) – If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>params</strong> – Parameter names mapped to their values.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.input_dim">
@@ -300,48 +239,20 @@ If a dimension is dependent on the input, it will return -1 in the specific posi
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sklearn/cluster/_mean_shift.html#MeanShift.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.predict" title="Link to this definition"></a></dt>
-<dd><p>Predict the closest cluster each sample in X belongs to.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – New data to predict.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>labels</strong> – Index of the cluster each sample belongs to.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ndarray of shape (n_samples,)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.serialize">
 <span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.serialize" title="Link to this definition"></a></dt>
 <dd><p>Convert the class into a serialized representation</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_params">
-<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_params" title="Link to this definition"></a></dt>
-<dd><p>Set the parameters of this estimator.</p>
-<p>The method works on simple estimators as well as on nested objects
-(such as <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v1.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>). The latter have
-parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
-possible to update each component of a nested object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Estimator parameters.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> – Estimator instance.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>estimator instance</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

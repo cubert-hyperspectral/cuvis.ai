@@ -22,18 +22,12 @@ cuvis\_ai.supervised.sklearn\_wrapped.MLP
       ~MLP.check_output_dim
       ~MLP.fit
       ~MLP.forward
-      ~MLP.get_metadata_routing
-      ~MLP.get_params
+      ~MLP.get_fit_requested_meta
+      ~MLP.get_forward_requested_meta
       ~MLP.load
-      ~MLP.partial_fit
-      ~MLP.predict
-      ~MLP.predict_log_proba
-      ~MLP.predict_proba
-      ~MLP.score
       ~MLP.serialize
-      ~MLP.set_params
-      ~MLP.set_partial_fit_request
-      ~MLP.set_score_request
+      ~MLP.set_fit_meta_request
+      ~MLP.set_forward_meta_request
    
    
 

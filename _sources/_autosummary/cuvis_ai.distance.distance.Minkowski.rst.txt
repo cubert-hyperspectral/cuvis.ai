@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.Minkowski
       ~Minkowski.check_output_dim
       ~Minkowski.fit
       ~Minkowski.forward
+      ~Minkowski.get_fit_requested_meta
+      ~Minkowski.get_forward_requested_meta
       ~Minkowski.load
       ~Minkowski.score
       ~Minkowski.serialize
+      ~Minkowski.set_fit_meta_request
+      ~Minkowski.set_forward_meta_request
       ~Minkowski.spectra_to_array
    
    

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cuvis_ai.node.Consumers.MetadataConsumerInference &mdash; Cuvis AI 0.1.0 documentation</title>
+  <title>cuvis_ai.pipeline.meta_routing &mdash; Cuvis AI 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cuvis_ai.node.base" href="cuvis_ai.node.base.html" />
-    <link rel="prev" title="cuvis_ai.node.Consumers.MetadataConsumer" href="cuvis_ai.node.Consumers.MetadataConsumer.html" /> 
+    <link rel="next" title="cuvis_ai.pipeline.meta_routing.get_fit_metadata" href="cuvis_ai.pipeline.meta_routing.get_fit_metadata.html" />
+    <link rel="prev" title="cuvis_ai.pipeline.graph.Graph" href="cuvis_ai.pipeline.graph.Graph.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,26 +50,24 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.node.Consumers.html">cuvis_ai.node.Consumers</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.Consumers.CubeConsumer.html">cuvis_ai.node.Consumers.CubeConsumer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.Consumers.LabelConsumer.html">cuvis_ai.node.Consumers.LabelConsumer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.Consumers.LabelConsumerInference.html">cuvis_ai.node.Consumers.LabelConsumerInference</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.Consumers.MetadataConsumer.html">cuvis_ai.node.Consumers.MetadataConsumer</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.node.Consumers.MetadataConsumerInference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.executor.html">cuvis_ai.pipeline.executor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.graph.html">cuvis_ai.pipeline.graph</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">cuvis_ai.pipeline.meta_routing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_fit_metadata.html">cuvis_ai.pipeline.meta_routing.get_fit_metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_forward_metadata.html">cuvis_ai.pipeline.meta_routing.get_forward_metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_requested_metadata.html">cuvis_ai.pipeline.meta_routing.get_requested_metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_route.html">cuvis_ai.pipeline.meta_routing.get_route</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.traverse.html">cuvis_ai.pipeline.meta_routing.traverse</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.base.html">cuvis_ai.node.base</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.node.html">cuvis_ai.node.node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.sklearn.html">cuvis_ai.node.sklearn</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.skorch.html">cuvis_ai.node.skorch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.torch.html">cuvis_ai.node.torch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.wrap.html">cuvis_ai.node.wrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.validator.html">cuvis_ai.pipeline.validator</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.preprocessor.html">cuvis_ai.preprocessor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.supervised.html">cuvis_ai.supervised</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.test.html">cuvis_ai.test</a></li>
@@ -96,11 +94,10 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="cuvis_ai.html">cuvis_ai</a></li>
-          <li class="breadcrumb-item"><a href="cuvis_ai.node.html">cuvis_ai.node</a></li>
-          <li class="breadcrumb-item"><a href="cuvis_ai.node.Consumers.html">cuvis_ai.node.Consumers</a></li>
-      <li class="breadcrumb-item active">cuvis_ai.node.Consumers.MetadataConsumerInference</li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.pipeline.meta_routing</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/_autosummary/cuvis_ai.node.Consumers.MetadataConsumerInference.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/_autosummary/cuvis_ai.pipeline.meta_routing.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -108,35 +105,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="cuvis-ai-node-consumers-metadataconsumerinference">
-<h1>cuvis_ai.node.Consumers.MetadataConsumerInference<a class="headerlink" href="#cuvis-ai-node-consumers-metadataconsumerinference" title="Link to this heading"></a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="cuvis_ai.node.Consumers.MetadataConsumerInference">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.node.Consumers.</span></span><span class="sig-name descname"><span class="pre">MetadataConsumerInference</span></span><a class="reference internal" href="../_modules/cuvis_ai/node/Consumers.html#MetadataConsumerInference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.node.Consumers.MetadataConsumerInference" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.node.Consumers.MetadataConsumerInference.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.node.Consumers.MetadataConsumerInference.__init__" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods</p>
+  <section id="module-cuvis_ai.pipeline.meta_routing">
+<span id="cuvis-ai-pipeline-meta-routing"></span><h1>cuvis_ai.pipeline.meta_routing<a class="headerlink" href="#module-cuvis_ai.pipeline.meta_routing" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.node.Consumers.MetadataConsumerInference.__init__" title="cuvis_ai.node.Consumers.MetadataConsumerInference.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_fit_metadata.html#cuvis_ai.pipeline.meta_routing.get_fit_metadata" title="cuvis_ai.pipeline.meta_routing.get_fit_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_metadata</span></code></a>(node, metadata)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_forward_metadata.html#cuvis_ai.pipeline.meta_routing.get_forward_metadata" title="cuvis_ai.pipeline.meta_routing.get_forward_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_metadata</span></code></a>(node, metadata)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_requested_metadata.html#cuvis_ai.pipeline.meta_routing.get_requested_metadata" title="cuvis_ai.pipeline.meta_routing.get_requested_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_requested_metadata</span></code></a>(requested, metadata)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.get_route.html#cuvis_ai.pipeline.meta_routing.get_route" title="cuvis_ai.pipeline.meta_routing.get_route"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_route</span></code></a>(name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.pipeline.meta_routing.traverse.html#cuvis_ai.pipeline.meta_routing.traverse" title="cuvis_ai.pipeline.meta_routing.traverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">traverse</span></code></a>(obj, route)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuvis_ai.node.Consumers.MetadataConsumer.html" class="btn btn-neutral float-left" title="cuvis_ai.node.Consumers.MetadataConsumer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuvis_ai.node.base.html" class="btn btn-neutral float-right" title="cuvis_ai.node.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuvis_ai.pipeline.graph.Graph.html" class="btn btn-neutral float-left" title="cuvis_ai.pipeline.graph.Graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.pipeline.meta_routing.get_fit_metadata.html" class="btn btn-neutral float-right" title="cuvis_ai.pipeline.meta_routing.get_fit_metadata" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

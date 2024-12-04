@@ -22,8 +22,12 @@ cuvis\_ai.deciders.base\_decider.BaseDecider
       ~BaseDecider.check_output_dim
       ~BaseDecider.fit
       ~BaseDecider.forward
+      ~BaseDecider.get_fit_requested_meta
+      ~BaseDecider.get_forward_requested_meta
       ~BaseDecider.load
       ~BaseDecider.serialize
+      ~BaseDecider.set_fit_meta_request
+      ~BaseDecider.set_forward_meta_request
    
    
 

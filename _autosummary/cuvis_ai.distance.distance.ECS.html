@@ -50,6 +50,7 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.distance.distance.html">cuvis_ai.distance.distance</a><ul class="current">
@@ -150,6 +151,12 @@ This length of this vector must equal the number of channels in inputted datacub
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.forward" title="cuvis_ai.distance.distance.ECS.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, ref_spectra])</p></td>
 <td><p>Pass the data through comparative function</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.get_fit_requested_meta" title="cuvis_ai.distance.distance.ECS.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.get_forward_requested_meta" title="cuvis_ai.distance.distance.ECS.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.load" title="cuvis_ai.distance.distance.ECS.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params[, filepath])</p></td>
 <td><p>Load dumped parameters to recreate the distance object</p></td>
 </tr>
@@ -158,6 +165,12 @@ This length of this vector must equal the number of channels in inputted datacub
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.serialize" title="cuvis_ai.distance.distance.ECS.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(working_dir)</p></td>
 <td><p>Convert distance node to serializable format</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.set_fit_meta_request" title="cuvis_ai.distance.distance.ECS.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.set_forward_meta_request" title="cuvis_ai.distance.distance.ECS.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.ECS.spectra_to_array" title="cuvis_ai.distance.distance.ECS.spectra_to_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectra_to_array</span></code></a>(ref_spectra)</p></td>
 <td><p>Convert list of spectra to a numpy array</p></td>
@@ -228,6 +241,16 @@ X (array-like): Input data.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.ECS.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.ECS.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.ECS.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.ECS.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.distance.distance.ECS.input_dim">
@@ -307,6 +330,16 @@ X (array-like): Input data.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.ECS.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.ECS.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.ECS.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.ECS.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.distance.distance.ECS.spectra_to_array">

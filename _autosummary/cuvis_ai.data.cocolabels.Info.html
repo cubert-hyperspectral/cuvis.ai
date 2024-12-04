@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuvis_ai.data.cocolabels.Info &mdash; Cuvis AI 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cuvis_ai.data.cocolabels.License" href="cuvis_ai.data.cocolabels.License.html" />
+    <link rel="prev" title="cuvis_ai.data.cocolabels.Image" href="cuvis_ai.data.cocolabels.Image.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Cuvis AI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/concepts.html">Concepts</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.BaseDataSet.html">cuvis_ai.data.BaseDataSet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.CuvisDataSet.html">cuvis_ai.data.CuvisDataSet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.LiveCuvisDataLoader.html">cuvis_ai.data.LiveCuvisDataLoader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.NumpyDataSet.html">cuvis_ai.data.NumpyDataSet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.OutputFormat.html">cuvis_ai.data.OutputFormat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.PublicDataSets.html">cuvis_ai.data.PublicDataSets</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.data.cocolabels.html">cuvis_ai.data.cocolabels</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.RLE2mask.html">cuvis_ai.data.cocolabels.RLE2mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.Annotation.html">cuvis_ai.data.cocolabels.Annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.COCOData.html">cuvis_ai.data.cocolabels.COCOData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.Category.html">cuvis_ai.data.cocolabels.Category</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.Image.html">cuvis_ai.data.cocolabels.Image</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.data.cocolabels.Info</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.License.html">cuvis_ai.data.cocolabels.License</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.data.cocolabels.QueryableList.html">cuvis_ai.data.cocolabels.QueryableList</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.metadata.html">cuvis_ai.data.metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.data.utils_dataloader.html">cuvis_ai.data.utils_dataloader</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.preprocessor.html">cuvis_ai.preprocessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.supervised.html">cuvis_ai.supervised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.test.html">cuvis_ai.test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.transformation.html">cuvis_ai.transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.tv_transforms.html">cuvis_ai.tv_transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.utils.html">cuvis_ai.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cuvis AI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.html">cuvis_ai</a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.data.html">cuvis_ai.data</a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.data.cocolabels.html">cuvis_ai.data.cocolabels</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.data.cocolabels.Info</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/cuvis_ai.data.cocolabels.Info.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cuvis-ai-data-cocolabels-info">
+<h1>cuvis_ai.data.cocolabels.Info<a class="headerlink" href="#cuvis-ai-data-cocolabels-info" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.data.cocolabels.</span></span><span class="sig-name descname"><span class="pre">Info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contributor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_created</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/data/cocolabels.html#Info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSerializable</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contributor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_created</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.__init__" title="cuvis_ai.data.cocolabels.Info.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([description, url, version, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.from_dict" title="cuvis_ai.data.cocolabels.Info.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a>(d)</p></td>
+<td><p>Converts a Python dictionary object to a dataclass instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.from_json" title="cuvis_ai.data.cocolabels.Info.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>(string, *[, decoder])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.from_list" title="cuvis_ai.data.cocolabels.Info.from_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_list</span></code></a>(list_of_dict)</p></td>
+<td><p>Converts a Python list object to a list of dataclass instances.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.list_to_json" title="cuvis_ai.data.cocolabels.Info.list_to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_to_json</span></code></a>(instances[, encoder])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.to_dict" title="cuvis_ai.data.cocolabels.Info.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>(*[, cls, dict_factory, exclude])</p></td>
+<td><p>Return the fields of a dataclass instance as a new dictionary mapping field names to field values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.to_json" title="cuvis_ai.data.cocolabels.Info.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a>(*[, encoder])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.contributor" title="cuvis_ai.data.cocolabels.Info.contributor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contributor</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.date_created" title="cuvis_ai.data.cocolabels.Info.date_created"><code class="xref py py-obj docutils literal notranslate"><span class="pre">date_created</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.description" title="cuvis_ai.data.cocolabels.Info.description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">description</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.url" title="cuvis_ai.data.cocolabels.Info.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.data.cocolabels.Info.version" title="cuvis_ai.data.cocolabels.Info.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseJSONWizardMeta</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.all_fields">
+<span class="sig-name descname"><span class="pre">all_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'auto_assign_tags',</span> <span class="pre">'debug_enabled',</span> <span class="pre">'json_key_to_field',</span> <span class="pre">'key_transform_with_dump',</span> <span class="pre">'key_transform_with_load',</span> <span class="pre">'marshal_date_time_as',</span> <span class="pre">'raise_on_unknown_json_key',</span> <span class="pre">'recursive',</span> <span class="pre">'recursive_classes',</span> <span class="pre">'skip_defaults',</span> <span class="pre">'skip_defaults_if',</span> <span class="pre">'skip_if',</span> <span class="pre">'tag',</span> <span class="pre">'tag_key'})</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.all_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.auto_assign_tags">
+<span class="sig-name descname"><span class="pre">auto_assign_tags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.auto_assign_tags" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.bind_to">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bind_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">create</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.bind_to" title="Link to this definition"></a></dt>
+<dd><p>Initialize hook which applies the Meta config to <cite>dataclass</cite>, which is
+typically a subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONWizard</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataclass</strong> – A class which has been decorated by the <cite>&#64;dataclass</cite>
+decorator; typically this is a sub-class of <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONWizard</span></code>.</p></li>
+<li><p><strong>create</strong> – When true, a separate loader/dumper will be created
+for the class. If disabled, this will access the root loader/dumper,
+so modifying this should affect global settings across all
+dataclasses that use the JSON load/dump process.</p></li>
+<li><p><strong>is_default</strong> – When enabled, the Meta will be cached as the
+default Meta config for the dataclass. Defaults to true.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.debug_enabled">
+<span class="sig-name descname"><span class="pre">debug_enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'bool</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">str'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.debug_enabled" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.fields_to_merge">
+<span class="sig-name descname"><span class="pre">fields_to_merge</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'auto_assign_tags',</span> <span class="pre">'debug_enabled',</span> <span class="pre">'key_transform_with_dump',</span> <span class="pre">'key_transform_with_load',</span> <span class="pre">'marshal_date_time_as',</span> <span class="pre">'raise_on_unknown_json_key',</span> <span class="pre">'recursive_classes',</span> <span class="pre">'skip_defaults',</span> <span class="pre">'skip_defaults_if',</span> <span class="pre">'skip_if',</span> <span class="pre">'tag_key'})</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.fields_to_merge" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.json_key_to_field">
+<span class="sig-name descname"><span class="pre">json_key_to_field</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.json_key_to_field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.key_transform_with_dump">
+<span class="sig-name descname"><span class="pre">key_transform_with_dump</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">LetterCase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.key_transform_with_dump" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.key_transform_with_load">
+<span class="sig-name descname"><span class="pre">key_transform_with_load</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">LetterCase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.key_transform_with_load" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.marshal_date_time_as">
+<span class="sig-name descname"><span class="pre">marshal_date_time_as</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">DateTimeTo</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.marshal_date_time_as" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.raise_on_unknown_json_key">
+<span class="sig-name descname"><span class="pre">raise_on_unknown_json_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.raise_on_unknown_json_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.recursive">
+<span class="sig-name descname"><span class="pre">recursive</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.recursive" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.recursive_classes">
+<span class="sig-name descname"><span class="pre">recursive_classes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.recursive_classes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.skip_defaults">
+<span class="sig-name descname"><span class="pre">skip_defaults</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.skip_defaults" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.skip_defaults_if">
+<span class="sig-name descname"><span class="pre">skip_defaults_if</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Condition</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.skip_defaults_if" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.skip_if">
+<span class="sig-name descname"><span class="pre">skip_if</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Condition</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.skip_if" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.tag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.Meta.tag_key">
+<span class="sig-name descname"><span class="pre">tag_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'__tag__'</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.Meta.tag_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.contributor">
+<span class="sig-name descname"><span class="pre">contributor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.contributor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.date_created">
+<span class="sig-name descname"><span class="pre">date_created</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.date_created" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Converts a Python dictionary object to a dataclass instance.</p>
+<p>Iterates over each dataclass field recursively; lists, dicts, and nested
+dataclasses will likewise be initialized as expected.</p>
+<p>When directly invoking this function, an optional Meta configuration for
+the dataclass can be specified via <code class="docutils literal notranslate"><span class="pre">LoadMeta</span></code>; by default, this will
+apply recursively to any nested dataclasses. Here’s a sample usage of this
+below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">LoadMeta</span><span class="p">(</span><span class="n">key_transform</span><span class="o">=</span><span class="s1">&#39;CAMEL&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bind_to</span><span class="p">(</span><span class="n">MyClass</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fromdict</span><span class="p">(</span><span class="n">MyClass</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;myStr&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.from_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder=&lt;function</span> <span class="pre">loads&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**decoder_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.from_json" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.from_list">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.from_list" title="Link to this definition"></a></dt>
+<dd><p>Converts a Python list object to a list of dataclass instances.</p>
+<p>Iterates over each dataclass field recursively; lists, dicts, and nested
+dataclasses will likewise be initialized as expected.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.list_to_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instances</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder=&lt;function</span> <span class="pre">dumps&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**encoder_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.list_to_json" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_factory=&lt;class</span> <span class="pre">'dict'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude:</span> <span class="pre">~typing.Collection[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Return the fields of a dataclass instance as a new dictionary mapping
+field names to field values.</p>
+<p>Example usage:</p>
+<blockquote>
+<div><p>&#64;dataclass
+class C:</p>
+<blockquote>
+<div><p>x: int
+y: int</p>
+</div></blockquote>
+<p>c = C(1, 2)
+assert asdict(c) == {‘x’: 1, ‘y’: 2}</p>
+</div></blockquote>
+<p>When directly invoking this function, an optional Meta configuration for
+the dataclass can be specified via <code class="docutils literal notranslate"><span class="pre">DumpMeta</span></code>; by default, this will
+apply recursively to any nested dataclasses. Here’s a sample usage of this
+below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DumpMeta</span><span class="p">(</span><span class="n">key_transform</span><span class="o">=</span><span class="s1">&#39;CAMEL&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bind_to</span><span class="p">(</span><span class="n">MyClass</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">asdict</span><span class="p">(</span><span class="n">MyClass</span><span class="p">(</span><span class="n">my_str</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If given, ‘dict_factory’ will be used instead of built-in dict.
+The function applies recursively to field values that are
+dataclass instances. This will also look into built-in containers:
+tuples, lists, and dicts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder=&lt;function</span> <span class="pre">dumps&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**encoder_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.to_json" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.url">
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.url" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cuvis_ai.data.cocolabels.Info.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cuvis_ai.data.cocolabels.Info.version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cuvis_ai.data.cocolabels.Image.html" class="btn btn-neutral float-left" title="cuvis_ai.data.cocolabels.Image" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.data.cocolabels.License.html" class="btn btn-neutral float-right" title="cuvis_ai.data.cocolabels.License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cubert GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -92,7 +92,9 @@
 <div class="viewcode-block" id="Node.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__forward_metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__fit_metadata</span> <span class="o">=</span> <span class="p">{}</span></div>
 
 
 <div class="viewcode-block" id="Node.forward">
@@ -141,6 +143,36 @@
 <span class="sd">        (Bool) Valid data </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">check_array_shape</span><span class="p">(</span><span class="n">get_shape_without_batch</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Node.set_forward_meta_request">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.set_forward_meta_request">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_forward_meta_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid usage of Metadata Routing&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__forward_metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="Node.set_fit_meta_request">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.set_fit_meta_request">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_fit_meta_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid usage of Metadata Routing&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__fit_metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="Node.get_forward_requested_meta">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.get_forward_requested_meta">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_forward_requested_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__forward_metadata</span></div>
+
+
+<div class="viewcode-block" id="Node.get_fit_requested_meta">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node.get_fit_requested_meta">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_fit_requested_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fit_metadata</span></div>
 
 
     <span class="nd">@property</span>

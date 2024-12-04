@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.GFC
       ~GFC.check_output_dim
       ~GFC.fit
       ~GFC.forward
+      ~GFC.get_fit_requested_meta
+      ~GFC.get_forward_requested_meta
       ~GFC.load
       ~GFC.score
       ~GFC.serialize
+      ~GFC.set_fit_meta_request
+      ~GFC.set_forward_meta_request
       ~GFC.spectra_to_array
    
    

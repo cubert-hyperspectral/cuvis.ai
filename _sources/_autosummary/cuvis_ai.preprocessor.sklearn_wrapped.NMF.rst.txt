@@ -21,17 +21,13 @@ cuvis\_ai.preprocessor.sklearn\_wrapped.NMF
       ~NMF.check_input_dim
       ~NMF.check_output_dim
       ~NMF.fit
-      ~NMF.fit_transform
       ~NMF.forward
-      ~NMF.get_feature_names_out
-      ~NMF.get_metadata_routing
-      ~NMF.get_params
-      ~NMF.inverse_transform
+      ~NMF.get_fit_requested_meta
+      ~NMF.get_forward_requested_meta
       ~NMF.load
       ~NMF.serialize
-      ~NMF.set_output
-      ~NMF.set_params
-      ~NMF.transform
+      ~NMF.set_fit_meta_request
+      ~NMF.set_forward_meta_request
    
    
 

@@ -527,8 +527,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="PCA.fit_transform">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.preprocessor.sklearn_wrapped.PCA.html#cuvis_ai.preprocessor.sklearn_wrapped.PCA.fit_transform">[docs]</a>
     <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model with X and apply the dimensionality reduction on X.</span>
@@ -565,8 +563,7 @@
 
             <span class="k">return</span> <span class="n">U</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># solver=&quot;covariance_eigh&quot; does not compute U at fit time.</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="o">=</span><span class="n">x_is_centered</span><span class="p">)</span></div>
-
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="o">=</span><span class="n">x_is_centered</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch to the right submethod depending on the chosen solver.&quot;&quot;&quot;</span>
@@ -883,8 +880,6 @@
 
         <span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="p">,</span> <span class="n">xp</span>
 
-<div class="viewcode-block" id="PCA.score_samples">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.preprocessor.sklearn_wrapped.PCA.html#cuvis_ai.preprocessor.sklearn_wrapped.PCA.score_samples">[docs]</a>
     <span class="k">def</span> <span class="nf">score_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the log-likelihood of each sample.</span>
 
@@ -910,11 +905,8 @@
         <span class="n">precision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_precision</span><span class="p">()</span>
         <span class="n">log_like</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Xr</span> <span class="o">*</span> <span class="p">(</span><span class="n">Xr</span> <span class="o">@</span> <span class="n">precision</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">log_like</span> <span class="o">-=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_features</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">fast_logdet</span><span class="p">(</span><span class="n">precision</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">log_like</span></div>
+        <span class="k">return</span> <span class="n">log_like</span>
 
-
-<div class="viewcode-block" id="PCA.score">
-<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.preprocessor.sklearn_wrapped.PCA.html#cuvis_ai.preprocessor.sklearn_wrapped.PCA.score">[docs]</a>
     <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the average log-likelihood of all samples.</span>
 
@@ -936,8 +928,7 @@
 <span class="sd">            Average log-likelihood of the samples under the current model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">xp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_namespace</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span></div>
-
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">_more_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;preserves_dtype&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> <span class="s2">&quot;array_api_support&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>

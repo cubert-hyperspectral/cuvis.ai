@@ -22,9 +22,13 @@ cuvis\_ai.distance.distance.SpectralAngle
       ~SpectralAngle.check_output_dim
       ~SpectralAngle.fit
       ~SpectralAngle.forward
+      ~SpectralAngle.get_fit_requested_meta
+      ~SpectralAngle.get_forward_requested_meta
       ~SpectralAngle.load
       ~SpectralAngle.score
       ~SpectralAngle.serialize
+      ~SpectralAngle.set_fit_meta_request
+      ~SpectralAngle.set_forward_meta_request
       ~SpectralAngle.spectra_to_array
    
    

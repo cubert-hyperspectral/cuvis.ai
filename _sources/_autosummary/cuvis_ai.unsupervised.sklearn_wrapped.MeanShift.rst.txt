@@ -21,14 +21,13 @@ cuvis\_ai.unsupervised.sklearn\_wrapped.MeanShift
       ~MeanShift.check_input_dim
       ~MeanShift.check_output_dim
       ~MeanShift.fit
-      ~MeanShift.fit_predict
       ~MeanShift.forward
-      ~MeanShift.get_metadata_routing
-      ~MeanShift.get_params
+      ~MeanShift.get_fit_requested_meta
+      ~MeanShift.get_forward_requested_meta
       ~MeanShift.load
-      ~MeanShift.predict
       ~MeanShift.serialize
-      ~MeanShift.set_params
+      ~MeanShift.set_fit_meta_request
+      ~MeanShift.set_forward_meta_request
    
    
 

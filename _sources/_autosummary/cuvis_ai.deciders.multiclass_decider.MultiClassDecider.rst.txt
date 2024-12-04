@@ -22,8 +22,12 @@ cuvis\_ai.deciders.multiclass\_decider.MultiClassDecider
       ~MultiClassDecider.check_output_dim
       ~MultiClassDecider.fit
       ~MultiClassDecider.forward
+      ~MultiClassDecider.get_fit_requested_meta
+      ~MultiClassDecider.get_forward_requested_meta
       ~MultiClassDecider.load
       ~MultiClassDecider.serialize
+      ~MultiClassDecider.set_fit_meta_request
+      ~MultiClassDecider.set_forward_meta_request
    
    
 

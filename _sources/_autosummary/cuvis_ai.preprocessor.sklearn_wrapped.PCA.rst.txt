@@ -21,21 +21,13 @@ cuvis\_ai.preprocessor.sklearn\_wrapped.PCA
       ~PCA.check_input_dim
       ~PCA.check_output_dim
       ~PCA.fit
-      ~PCA.fit_transform
       ~PCA.forward
-      ~PCA.get_covariance
-      ~PCA.get_feature_names_out
-      ~PCA.get_metadata_routing
-      ~PCA.get_params
-      ~PCA.get_precision
-      ~PCA.inverse_transform
+      ~PCA.get_fit_requested_meta
+      ~PCA.get_forward_requested_meta
       ~PCA.load
-      ~PCA.score
-      ~PCA.score_samples
       ~PCA.serialize
-      ~PCA.set_output
-      ~PCA.set_params
-      ~PCA.transform
+      ~PCA.set_fit_meta_request
+      ~PCA.set_forward_meta_request
    
    
 

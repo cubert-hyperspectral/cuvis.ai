@@ -21,8 +21,12 @@ cuvis\_ai.node.node.Node
       ~Node.check_input_dim
       ~Node.check_output_dim
       ~Node.forward
+      ~Node.get_fit_requested_meta
+      ~Node.get_forward_requested_meta
       ~Node.load
       ~Node.serialize
+      ~Node.set_fit_meta_request
+      ~Node.set_forward_meta_request
    
    
 

@@ -18,12 +18,7 @@ cuvis\_ai.node.base.BaseTransformation
    .. autosummary::
    
       ~BaseTransformation.__init__
-      ~BaseTransformation.fit
       ~BaseTransformation.forward
-      ~BaseTransformation.input_dim
-      ~BaseTransformation.load
-      ~BaseTransformation.output_dim
-      ~BaseTransformation.serialize
    
    
 

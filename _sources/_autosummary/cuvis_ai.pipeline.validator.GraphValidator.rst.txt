@@ -1,9 +1,9 @@
-cuvis\_ai.node.Consumers.MetadataConsumer
-=========================================
+cuvis\_ai.pipeline.validator.GraphValidator
+===========================================
 
-.. currentmodule:: cuvis_ai.node.Consumers
+.. currentmodule:: cuvis_ai.pipeline.validator
 
-.. autoclass:: MetadataConsumer
+.. autoclass:: GraphValidator
    :members:
    :undoc-members:
    :show-inheritance:                          
@@ -17,7 +17,8 @@ cuvis\_ai.node.Consumers.MetadataConsumer
 
    .. autosummary::
    
-      ~MetadataConsumer.__init__
+      ~GraphValidator.__init__
+      ~GraphValidator.verify
    
    
 

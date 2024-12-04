@@ -30,4 +30,6 @@ cuvis\_ai.pipeline
 
    executor
    graph
+   meta_routing
+   validator
 

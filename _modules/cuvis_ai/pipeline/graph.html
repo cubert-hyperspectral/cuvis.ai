@@ -97,7 +97,8 @@
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
-<span class="kn">from</span> <span class="nn">.executor</span> <span class="kn">import</span> <span class="n">MemoryExecutor</span>
+<span class="kn">from</span> <span class="nn">.executor</span> <span class="kn">import</span> <span class="n">MemoryExecutor</span><span class="p">,</span> <span class="n">HummingBirdExecutor</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 
 
 <div class="viewcode-block" id="Graph">
@@ -110,7 +111,6 @@
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sorted_graph</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
@@ -208,6 +208,44 @@
             <span class="c1"># Remove the nodes from the graph as a whole</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_nodes_from</span><span class="p">([</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">node2</span><span class="o">.</span><span class="n">id</span><span class="p">])</span></div>
 
+
+<div class="viewcode-block" id="Graph.custom_copy">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.custom_copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">custom_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Create a new instance of the class</span>
+        <span class="n">new_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+
+        <span class="n">new_instance</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">new_instance</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>  <span class="c1"># Deep copy</span>
+        <span class="n">new_instance</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>  <span class="c1"># Shallow copy</span>
+        <span class="n">new_instance</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_instance</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose with *other*.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            t = a &gt;&gt; b &gt;&gt; c</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">new_graph</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_graph</span><span class="o">.</span><span class="n">add_base_node</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_graph</span>
+
+        <span class="c1"># Get all nodes without successors</span>
+        <span class="n">sink_nodes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">new_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">new_graph</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">new_graph</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sink_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">new_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sink_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_graph</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">res</span>
 
     <span class="k">def</span> <span class="nf">_verify_input_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Private function to validate the integrity of data passed between nodes.</span>
@@ -391,8 +429,25 @@
 
 <div class="viewcode-block" id="Graph.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="n">executor</span> <span class="o">=</span> <span class="n">MemoryExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;memory&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;memory&#39;</span><span class="p">:</span>
+            <span class="n">executor</span> <span class="o">=</span> <span class="n">MemoryExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;hummingbird&#39;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">hummingbird.ml</span> <span class="kn">import</span> <span class="n">convert</span>
+            <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+            <span class="k">def</span> <span class="nf">convert_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;_wrapped&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                    <span class="n">new_node</span><span class="o">.</span><span class="n">_wrapped</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">_wrapped</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">new_node</span>
+
+            <span class="n">nodes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">convert_node</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+            <span class="n">executor</span> <span class="o">=</span> <span class="n">MemoryExecutor</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown Backend&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">executor</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span></div>
 
 

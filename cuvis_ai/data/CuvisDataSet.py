@@ -1,22 +1,97 @@
 import os
 import cuvis
 import numpy as np
-import glob
 import copy
 from typing import Optional, Callable
 import torch
 from torchvision import tv_tensors
-from pycocotools.coco import COCO
+from .cocolabels import COCOData
 
 from cuvis.General import SDKException
 
-from .Labels2TV import convert_COCO2TV
-from .MetadataUtils import metadataInit
 from .NumpyDataSet import NumpyDataSet
 from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
+from pathlib import Path
+from .metadata import Metadata, get_meta_from_session, get_meta_from_mesu, get_meta_from_path
+from functools import lru_cache, partial
 
 debug_enabled = True
+
+
+EXTENSION_SESSION = '.cu3s'
+EXTENSION_LEGACY = '.cu3'
+
+
+@lru_cache
+def get_session_cube(path, idx, proc_mode, to_dtype: np.dtype):
+    sess = cuvis.SessionFile(path)
+    mesu = sess.get_measurement(idx)
+    need_reprocess = bool(proc_mode is None)
+
+    if not 'cube' in mesu.data.keys():
+        need_reprocess = True
+
+    if need_reprocess:
+        pc = cuvis.ProcessingContext(sess)
+        if proc_mode is not None:
+            pc.processing_mode = proc_mode
+        mesu = pc.apply(mesu)
+
+    cube = mesu.data["cube"].array
+
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+    return cube.to(memory_format=torch.channels_last)
+
+
+@lru_cache
+def get_legacy_cube(path, proc_mode, to_dtype: np.dtype):
+    mesu = cuvis.Measurement.load(path)
+    need_reprocess = bool(proc_mode is None)
+    try:
+        cube = mesu.data["cube"].array
+    except KeyError:
+        need_reprocess = True
+
+    if need_reprocess:
+        pc = cuvis.ProcessingContext(mesu)
+        if proc_mode is not None:
+            pc.processing_mode = proc_mode
+        mesu = pc.apply(mesu)
+
+    cube = mesu.data["cube"].array
+
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+
+
+@lru_cache
+def get_session_reference(path, reftype, to_dtype: np.dtype):
+    try:
+
+        cube = cuvis.SessionFile(path).get_reference(
+            0, reftype).data["cube"].array
+    except KeyError:
+        sess = cuvis.SessionFile(path)
+        mesu = sess.get_reference(0, reftype)
+        pc = cuvis.ProcessingContext(sess)
+        pc.processing_mode = cuvis.ProcessingMode.Raw
+        mesu = pc.apply(mesu)
+        cube = mesu.data["cube"].array
+
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+    return cube.to(memory_format=torch.channels_last)
 
 
 class CuvisDataSet(NumpyDataSet):
@@ -46,90 +121,6 @@ class CuvisDataSet(NumpyDataSet):
 
     If :attr:`root` is not passed in the constructor, the :py:meth:`~CuvisDataSet.initialize` or :py:meth:`~CuvisDataSet.load` method has to be called with a root path before the dataset can be used.
     """
-    _cuvis_non_cube_references = (
-        cuvis.ReferenceType.Distance, cuvis.ReferenceType.SpRad)
-
-    class _SessionCubeLoader_:
-        def __init__(self, path, idx, proc_mode=None):
-            self.path = path
-            self.idx = idx
-            self.proc_mode = proc_mode
-
-        def __call__(self, to_dtype: np.dtype):
-            sess = cuvis.SessionFile(self.path)
-            mesu = sess.get_measurement(self.idx)
-            need_reprocess = bool(self.proc_mode is None)
-            try:
-                cube = mesu.data["cube"].array
-            except KeyError:
-                need_reprocess = True
-
-            if need_reprocess:
-                pc = cuvis.ProcessingContext(sess)
-                if self.proc_mode is not None:
-                    pc.processing_mode = self.proc_mode
-                mesu = pc.apply(mesu)
-
-            cube = mesu.data["cube"].array
-
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
-
-    class _SessionReferenceLoader_:
-        def __init__(self, path, reftype):
-            self.path = path
-            self.reftype = reftype
-
-        def __call__(self, to_dtype: np.dtype):
-            try:
-                cube = cuvis.SessionFile(self.path).get_reference(
-                    0, self.reftype).data["cube"].array
-            except KeyError:
-                sess = cuvis.SessionFile(self.path)
-                mesu = sess.get_reference(0, self.reftype)
-                pc = cuvis.ProcessingContext(sess)
-                pc.processing_mode = cuvis.ProcessingMode.Raw
-                mesu = pc.apply(mesu)
-                cube = mesu.data["cube"].array
-
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
-
-    class _LegacyCubeLoader_:
-        def __init__(self, path, proc_mode=None):
-            self.path = path
-            self.proc_mode = proc_mode
-
-        def __call__(self, to_dtype: np.dtype):
-            mesu = cuvis.Measurement.load(self.path)
-            need_reprocess = bool(self.proc_mode is None)
-            try:
-                cube = mesu.data["cube"].array
-            except KeyError:
-                need_reprocess = True
-
-            if need_reprocess:
-                pc = cuvis.ProcessingContext(mesu)
-                if self.proc_mode is not None:
-                    pc.processing_mode = self.proc_mode
-                mesu = pc.apply(mesu)
-
-            cube = mesu.data["cube"].array
-
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
 
     def __init__(self, root: Optional[str] = None,
                  transforms: Optional[Callable] = None,
@@ -139,160 +130,105 @@ class CuvisDataSet(NumpyDataSet):
                  output_lambda: Optional[Callable] = None,
                  force_proc_mode: Optional[cuvis.ProcessingMode] = None
                  ):
-        self._FILE_EXTENSION_SESSION = ".cu3s"
-        self._FILE_EXTENSION_LEGACY = ".cu3"
         self.processing_mode = force_proc_mode
         super().__init__(root, transforms=transforms, transform=transform,
                          target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
 
     def _load_directory(self, dir_path: str):
+        dir_path = Path(dir_path)
         if debug_enabled:
             print("Reading from directory:", dir_path)
-        fileset_session = glob.glob(os.path.join(
-            self.root, '**/*' + self._FILE_EXTENSION_SESSION), recursive=True)
+        fileset_session = dir_path.glob(f'**/*{EXTENSION_SESSION}')
 
-        fileset_legacy = glob.glob(os.path.join(
-            self.root, '**/*' + self._FILE_EXTENSION_LEGACY), recursive=True)
+        fileset_legacy = dir_path.glob(f'**/*{EXTENSION_LEGACY}')
 
         for cur_path in fileset_session:
             self._load_session_file(cur_path)
         for cur_path in fileset_legacy:
             self._load_legacy_file(cur_path)
 
-    def _load_session_file(self, filepath: str):
+    def _load_session_file(self, filepath: Path):
         if debug_enabled:
             print("Found file:", filepath)
-        labelpath = os.path.splitext(filepath)[0] + ".json"
 
-        crt_session = cuvis.SessionFile(filepath)
+        labelpath = filepath.with_suffix('.json')
+
+        crt_session = cuvis.SessionFile(str(filepath))
+
+        if self.processing_mode is None:
+            tmp_mesu = crt_session[0]
+            self.processing_mode = tmp_mesu.processing_mode
 
         cube_count = len(crt_session)
         if debug_enabled:
             print("Session file has", cube_count, "cubes")
 
-        sess_meta = metadataInit(filepath, self.fileset_metadata)
+        # sess_meta = {}  # metadataInit(filepath, self.fileset_metadata)
+        sess_meta = get_meta_from_session(crt_session, filepath)
 
-        temp_mesu = crt_session.get_measurement(0)
-        try:
-            temp_mesu.data["cube"]
-        except KeyError:
-            pc = cuvis.ProcessingContext(crt_session)
-            temp_mesu = pc.apply(temp_mesu)
+        canvas_size = (sess_meta.shape[0], sess_meta.shape[1])
 
-        sess_meta["shape"] = (temp_mesu.data["cube"].width,
-                              temp_mesu.data["cube"].height, temp_mesu.data["cube"].channels)
-        canvas_size = (sess_meta["shape"][0], sess_meta["shape"][1])
-        sess_meta["wavelengths_nm"] = WavelengthList(
-            temp_mesu.data["cube"].wavelength)
-        try:
-            sess_meta["framerate"] = crt_session.fps
-        except SDKException:
-            pass
-
-        try:
-            sess_meta["references"]
-        except KeyError:
-            sess_meta["references"] = {}
-
-        for reftype in cuvis.ReferenceType:
-            try:
-                sess_meta["references"][reftype]
-            except KeyError:
-                try:
-                    refmesu = crt_session.get_reference(0, reftype)
-                except SDKException:
-                    refmesu = None
-                if refmesu is not None and reftype not in self._cuvis_non_cube_references:
-                    sess_meta["references"][reftype.name] = self._SessionReferenceLoader_(
-                        filepath, reftype)
-
-        coco = None
-        if os.path.isfile(labelpath):
-            coco = COCO(labelpath)
-            ids = list(sorted(coco.imgs.keys()))
+        coco = COCOData.from_path(labelpath) if labelpath.exists() else None
 
         for idx in range(cube_count):
             cube_path = F"{filepath}:{idx}"
             self.paths.append(cube_path)
-            self.cubes.append(self._SessionCubeLoader_(
-                filepath, idx, self.processing_mode))
+            self.cubes.append(partial(get_session_cube,
+                                      str(filepath), idx, self.processing_mode))
 
             meta = copy.deepcopy(sess_meta)
-            # TODO: Add a way to SDK where only meta data is loaded or make the cube lazy-loadable
-            # mesu = crt_session.get_measurement(idx)
-            # meta["integration_time_us"] = int(mesu.integration_time * 1000)
-            # meta["flags"] = {}
-            # for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
-            #    meta["flags"][key] = val
-            # meta["references"] = {}
-            # for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            #    meta["references"][key] = val
-            for _, v in meta["references"].items():
-                if isinstance(v, str):
-                    if os.path.splitext(v)[-1] == ".cu3s":
-                        v = self._SessionCubeLoader_(
-                            v, 0, cuvis.ProcessingMode.Raw)
-                    elif os.path.splitext(v)[-1] == ".cu3":
-                        v = self._LegacyCubeLoader_(
-                            v, cuvis.ProcessingMode.Raw)
+
+            for k, v in meta.references.items():
+                if not isinstance(v, str):
+                    continue
+                if Path(v).suffix == EXTENSION_SESSION and v == str(filepath):
+                    meta.references[k] = partial(get_session_reference,
+                                                 str(v), k)
+                if Path(v).suffix == EXTENSION_SESSION:
+                    meta.references[k] = partial(get_session_cube,
+                                                 str(v), 0, cuvis.ProcessingMode.Raw)
+                elif Path(v).suffix == EXTENSION_LEGACY:
+                    meta.references[k] = partial(get_legacy_cube,
+                                                 str(v), cuvis.ProcessingMode.Raw)
 
             self.metas.append(meta)
 
             l = {}
             if coco is not None:
-                anns = coco.loadAnns(coco.getAnnIds(ids[idx]))[0]
-                try:
-                    anns["wavelength"] = coco.imgs[ids[idx]]["wavelength"]
-                except KeyError:
-                    pass
-                l = convert_COCO2TV(anns, canvas_size)
+                anns = coco.annotations.where(image_id=idx)[0]
+                l = anns.to_torchvision(canvas_size)
+                l['wavelength'] = WavelengthList(coco.images[idx].wavelength)
             self.labels.append(l)
 
-    def _load_legacy_file(self, filepath: str):
+    def _load_legacy_file(self, filepath: Path):
         if debug_enabled:
             print("Found file:", filepath)
         self.paths.append(filepath)
-        labelpath = os.path.splitext(filepath)[0] + ".json"
-
-        if self.metadata_filepath:
-            meta = Metadata(filepath, self.fileset_metadata)
-        else:
-            meta = Metadata(filepath)
+        labelpath = filepath.with_suffix(".json")
 
         mesu = cuvis.Measurement(filepath)
-        try:
-            mesu.data["cube"]
-        except KeyError:
-            pc = cuvis.ProcessingContext(mesu)
-            mesu = pc.apply(mesu)
 
-        meta["shape"] = (mesu.data["cube"].width,
-                         mesu.data["cube"].height, mesu.data["cube"].channels)
-        meta["wavelengths_nm"] = WavelengthList(mesu.data["cube"].wavelength)
+        meta = get_meta_from_mesu(mesu)
+
+        canvas_size = (meta.shape[0], meta.shape[1])
 
         l = None
-        canvas_size = (meta["shape"][0], meta["shape"][1])
-        if os.path.isfile(labelpath):
-            coco = COCO(labelpath)
-            anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))[0]
-            try:
-                anns["wavelength"] = coco.imgs[0]["wavelength"]
-            except KeyError:
-                pass
-
-            l = convert_COCO2TV(anns, canvas_size)
+        if labelpath.exists():
+            coco = COCOData.from_path(labelpath)
+            anns = coco.annotations.where(image_id=coco.image_ids[0])[0]
+            l = anns.to_torchvision(canvas_size)
+            l['wavelength'] = WavelengthList(coco.images[0].wavelength)
         self.labels.append(l)
 
-        self.cubes.append(self._LegacyCubeLoader_(
-            filepath, self.processing_mode))
+        self.cubes.append(partial(get_legacy_cube,
+                                  filepath, self.processing_mode))
 
-        meta["integration_time_us"] = int(mesu.integration_time * 1000)
-        meta["flags"] = {}
+        meta.flags = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "Flag_" in key]:
-            meta["flags"][key] = val
-        meta["references"] = {}
+            meta.flags[key] = val
+        meta.references = {}
         for key, val in [(key, mesu.data[key]) for key in mesu.data.keys() if "_ref" in key]:
-            meta["references"][key] = self._LegacyCubeLoader_(
-                val, cuvis.ProcessingMode.Raw)
+            meta.references[key] = partial(get_legacy_cube,
+                                           val, cuvis.ProcessingMode.Raw)
 
         self.metas.append(meta)

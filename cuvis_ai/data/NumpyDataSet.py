@@ -1,24 +1,46 @@
 import cv2
-import glob
-import os
-import time
-import torch
-import torchvision
-import uuid
 import yaml
+import torch
 import numpy as np
 from copy import deepcopy
-from typing import Optional, Callable, Dict, Union, Any, Tuple, List
+from typing import Optional, Callable, Any, Union
 from torchvision import tv_tensors
 from pycocotools.coco import COCO
 
 from .BaseDataSet import BaseDataSet
-from .Labels2TV import convert_COCO2TV
-from .MetadataUtils import metadataInit
+
 from .OutputFormat import OutputFormat
 from ..tv_transforms import WavelengthList
+from functools import lru_cache, partial
+from .metadata import Metadata
+from pathlib import Path
+from .cocolabels import COCOData
 
 debug_enabled = True
+
+NUMPY_EXTENSION = ".npy"
+
+
+@lru_cache
+def get_numpy(path, to_dtype: np.dtype):
+    cube = np.load(path)
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+    return cube.to(memory_format=torch.channels_last)
+
+
+@lru_cache
+def get_opencv(path, to_dtype: np.dtype):
+    cube = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    if cube.dtype != to_dtype:
+        cube = cube.astype(to_dtype)
+    cube = tv_tensors.Image(cube)
+    while len(cube.shape) < 4:
+        cube = cube.unsqueeze(0)
+    return cube.to(memory_format=torch.channels_last)
 
 
 class NumpyDataSet(BaseDataSet):
@@ -57,32 +79,6 @@ class NumpyDataSet(BaseDataSet):
     If :attr:`root` is not passed in the constructor, the :py:meth:`~NumpyDataSet.initialize` or :py:meth:`~NumpyDataSet.load` method has to be called with a root path before the dataset can be used.
     """
 
-    class _NumpyLoader_:
-        def __init__(self, path):
-            self.path = path
-
-        def __call__(self, to_dtype: np.dtype):
-            cube = np.load(self.path)
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
-
-    class _CVLoader_:
-        def __init__(self, path):
-            self.path = path
-
-        def __call__(self, to_dtype: np.dtype):
-            cube = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
-            if cube.dtype != to_dtype:
-                cube = cube.astype(to_dtype)
-            cube = tv_tensors.Image(cube)
-            while len(cube.shape) < 4:
-                cube = cube.unsqueeze(0)
-            return cube.to(memory_format=torch.channels_last)
-
     def __init__(self, root: Optional[str] = None,
                  transforms: Optional[Callable] = None,
                  transform: Optional[Callable] = None,
@@ -92,8 +88,6 @@ class NumpyDataSet(BaseDataSet):
                  ):
         super().__init__(root, transforms=transforms, transform=transform,
                          target_transform=target_transform, output_format=output_format, output_lambda=output_lambda)
-        self._FILE_EXTENSION = ".npy"
-
         self._clear()
 
         if root is not None:
@@ -116,10 +110,11 @@ class NumpyDataSet(BaseDataSet):
             else:
                 raise RuntimeError(
                     "Cannot initialize an already initialized dataset. Use force=True if this was intended.")
-        self.root = root
+        self.root = Path(root)
 
-        self.metadata_filepath = os.path.join(self.root, "metadata.yaml")
-        if os.path.isfile(self.metadata_filepath):
+        self.metadata_filepath = self.root / "metadata.yaml"
+
+        if self.metadata_filepath.exists():
             self.fileset_metadata = yaml.safe_load(
                 open(self.metadata_filepath, "r"))
         else:
@@ -140,65 +135,59 @@ class NumpyDataSet(BaseDataSet):
         self.initialized = False
 
     def _load_directory(self, dir_path: str):
+        dir_path = Path(dir_path)
         if debug_enabled:
             print("Reading from directory:", dir_path)
-        fileset = glob.glob(os.path.join(
-            dir_path, '**/*' + self._FILE_EXTENSION), recursive=True)
-
+        fileset = dir_path.glob(f'**/*{NUMPY_EXTENSION}')
         for cur_path in fileset:
             self._load_file(cur_path)
 
-    def _load_file(self, filepath: str):
+    def _load_file(self, filepath: Path):
         if debug_enabled:
             print("Found file:", filepath)
 
         self.paths.append(filepath)
-        self.cubes.append(self._NumpyLoader_(filepath))
+        self.cubes.append(partial(get_numpy, filepath))
 
-        meta = metadataInit(filepath, self.fileset_metadata)
+        # meta = {} # metadataInit(filepath, self.fileset_metadata)
+        meta = Metadata()
         try:
-            meta["wavelengths_nm"] = WavelengthList(meta["wavelengths_nm"])
+            meta.wavelengths_nm = WavelengthList(meta.wavelengths_nm)
         except:
             pass
 
         temp_data = np.load(filepath)
-        meta["shape"] = temp_data.shape
-        meta["datatype"] = temp_data.dtype
+        meta.shape = temp_data.shape
+        meta.datatype = temp_data.dtype
         self.data_types.add(temp_data.dtype)
 
         try:
-            refs = meta["references"]
+            refs = meta.references
             for t, v in refs.items():
-                if isinstance(v, str) and os.path.exists(v):
-                    if os.path.splitext(v)[-1] == ".npy":
-                        meta["references"][t] = self._NumpyLoader_(v)
+                if isinstance(v, str) and Path(v).exists():
+                    if Path(v).suffix == ".npy":
+                        meta.references[t] = partial(get_numpy, v)
                     else:
-                        meta["references"][t] = self._CVLoader_(v)
+                        meta.references[t] = partial(get_opencv, v)
         except KeyError:
             pass
         self.metas.append(meta)
 
-        labelpath = os.path.splitext(filepath)[0] + ".json"
-        canvas_size = (meta["shape"][0], meta["shape"][1])
-        if os.path.isfile(labelpath):
-            coco = COCO(labelpath)
-            anns = coco.loadAnns(coco.getAnnIds(list(coco.imgs.keys())[0]))
-            try:
-                anns["wavelength"] = coco.imgs[0]["wavelength"]
-            except KeyError:
-                pass
-
-            l = convert_COCO2TV(anns, canvas_size)
-        else:
-            l = None
-
+        labelpath = filepath.with_suffix('.json')
+        canvas_size = (meta.shape[0], meta.shape[1])
+        l = None
+        if labelpath.exists():
+            coco = COCOData.from_path(labelpath)
+            anns = coco.annotations.where(image_id=coco.image_ids[0])[0]
+            l = anns.to_torchvision(canvas_size)
+            l['wavelength'] = WavelengthList(coco.images[0].wavelength)
         self.labels.append(l)
 
     def __len__(self) -> int:
         """The number of data elements this data set holds."""
         return len(self.cubes)
 
-    def __getitem__(self, idx: Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
+    def __getitem__(self, idx: Union[int, slice]) -> tuple[np.ndarray, list[dict], list[dict]]:
         """Return data element number 'idx' in the selected :attr:`OutputFormat`.
         Default is `OutputFormat.Full`, tuple(cube, meta-data, labels):
         """
@@ -206,13 +195,6 @@ class NumpyDataSet(BaseDataSet):
         label = self.get_labels(idx)
         meta = self.get_metadata(idx)
         return self._get_return_shape(data, label, meta)
-
-    def __next__(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        for idx in range(len(self)):
-            yield self[idx]
-
-    def forward(self, X: Any) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        return next(self)
 
     def merge(self, other_dataset):
         """Merge another NumpyData dataset into this dataset."""
@@ -225,35 +207,9 @@ class NumpyDataSet(BaseDataSet):
             raise TypeError("Cannot merge NumpyData with an object "
                             F"of type {type(other_dataset).__name__}")
 
-    def random_split(self, train_percent, val_percent, test_percent) -> list[torch.utils.data.dataset.Subset]:
-        """Generate three datasets with randomly chosen data from this dataset.
-        Parameters
-        ----------
-        train_percent : float
-            How much of the data to put into the training dataset.
-        val_percent : float
-            How much of the data to put into the validation dataset.
-        test_percent : float
-            How much of the data to put into the testing dataset.
-
-        Returns
-        -------
-        tuple of datasets. Contents depend on the :attr:`output_format` specified.
-        """
-        gen = torch.torch.Generator().manual_seed(time.time_ns())
-        return torch.utils.data.random_split(self, [train_percent, val_percent, test_percent], gen)
-
     def get_dataitems_datatypes(self) -> list:
         """Get a list with all datatypes detected when scanning the root folder."""
         return list(self.data_types)
-
-    def get_all_cubes(self):
-        """Get a list of all cubes in this dataset.
-        Notes
-        -----
-        Not recommended for large sets. All data will be read into RAM!
-        """
-        return [cube(self.provide_datatype) for cube in self.cubes]
 
     def get_data(self, idx: Union[int, slice]):
         """Get the cube at 'idx'."""
@@ -262,31 +218,16 @@ class NumpyDataSet(BaseDataSet):
         # torchvision transforms don't yet respect the memory layout property of tensors. They assume NCHW while cubes are in NHWC
         return self._apply_transform(torch.concatenate(loaded_cubes, dim=0).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
 
-    def get_all_items(self) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        """Get all items of this dataset in the selected :attr:`output_format`.
-        Notes
-        -----
-        Not recommended for large sets. All data will be read into RAM!"""
-        return self[:]
-
-    def get_item(self, idx: Union[int, slice]) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
-        """Get item at 'idx' of this dataset in the selected :attr:`output_format`."""
-        return self[idx]
-
-    def get_all_metadata(self):
-        """Get the meta-data for every cube in this dataset."""
-        return [self.get_metadata(idx) for idx in range(len(self.metas))]
-
     def get_metadata(self, idx: Union[int, slice]):
         """Get the meta-data for the cube at 'idx' in this dataset."""
         def transform_meta(m):
             m_out = deepcopy(m)
             try:
-                m["wavelengths_nm"] = self._apply_transform(
-                    m["wavelengths_nm"], True)
+                m.wavelengths_nm = self._apply_transform(
+                    m.wavelengths_nm, True)
             except:
                 pass
-            for t, v in m["references"].items():
+            for t, v in m.references.items():
                 try:
                     refdata = v(self.provide_datatype)
                 except:
@@ -294,41 +235,12 @@ class NumpyDataSet(BaseDataSet):
                 if isinstance(refdata, torch.Tensor):
                     refdata = self._apply_transform(refdata.permute(
                         [0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
-                m_out["references"][t] = refdata
+                m_out.references[t] = refdata
             return m_out
         return list(map(transform_meta, [self.metas[idx]] if isinstance(idx, int) else self.metas[idx]))
-
-    def get_all_labels(self):
-        """Get the labels for every cube in this dataset."""
-        return self.get_labels(slice(None))
 
     def get_labels(self, idx: Union[int, slice]):
         """Get the labels for the cube at 'idx' in this dataset."""
         labels = [self.labels[idx]] if isinstance(
             idx, int) else self.labels[idx]
         return list(map(self._apply_transform, labels, [True]*len(labels)))
-
-    def serialize(self, serial_dir: str):
-        """Serialize the parameters of this dataset and store in 'serial_dir'."""
-        if not self.initialized:
-            print('Module not fully initialized, skipping output!')
-            return
-
-        blobname = F"{hash(self.transforms)}_dataset_transforms.zip"
-        torch.save(self.transforms, os.path.join(serial_dir, blobname))
-        data = {
-            'type': type(self).__name__,
-            'root_dir': self.root,
-            'data_type': self.provide_datatype,
-            'transforms': blobname,
-        }
-        # Dump to a string
-        return yaml.dump(data, default_flow_style=False)
-
-    def load(self, params: Dict, filepath: str):
-        """Load dumped parameters to recreate the dataset."""
-        root = params["root_dir"]
-        self.provide_datatype = params["data_type"]
-        self.transforms = torch.load(
-            os.path.join(filepath, params["transforms"]))
-        self.initialize(root)

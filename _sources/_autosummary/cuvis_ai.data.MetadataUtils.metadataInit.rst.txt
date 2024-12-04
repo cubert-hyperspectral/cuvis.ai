@@ -1,6 +1,0 @@
-cuvis\_ai.data.MetadataUtils.metadataInit
-=========================================
-
-.. currentmodule:: cuvis_ai.data.MetadataUtils
-
-.. autofunction:: metadataInit

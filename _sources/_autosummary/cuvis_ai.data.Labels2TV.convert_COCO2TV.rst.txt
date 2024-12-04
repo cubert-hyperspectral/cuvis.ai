@@ -1,6 +1,0 @@
-cuvis\_ai.data.Labels2TV.convert\_COCO2TV
-=========================================
-
-.. currentmodule:: cuvis_ai.data.Labels2TV
-
-.. autofunction:: convert_COCO2TV

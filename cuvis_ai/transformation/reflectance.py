@@ -15,16 +15,21 @@ class Reflectance(Node, BaseTransformation):
         Threshold for the largest allowed value, everything higher will be clamped. Set to None to allow any value. Default: 2.0
     """
 
-    def __init__(self, lower_bound: float = 0.0, upper_bound: float = 2.0):
+    def __init__(self, white_ref: np.ndarray = None, dark_ref: np.ndarray = None, lower_bound: float = 0.0, upper_bound: float = 2.0):
         super().__init__()
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
-        self.input_size = None
-        self.output_size = None
-        self.set_forward_meta_request(
-            references__Dark=True, references__White=True)
+        self.white_ref = white_ref
+        self.dark_ref = dark_ref
+        if not self.white_ref is None and not self.dark_ref is None:
+            if self.white_ref.shape != self.dark_ref.shape:
+                raise ValueError(
+                    "Mismatching Dimensions in Dark and White Reference")
 
-    def forward(self, X: np.ndarray, references__White: np.ndarray, references__Dark: np.ndarray):
+        self.set_forward_meta_request(
+            references__Dark=(dark_ref is None), references__White=(white_ref is None))
+
+    def forward(self, X: np.ndarray, references__White: np.ndarray = None, references__Dark: np.ndarray = None):
         """Apply reflectance calculus to the data.
         Returns the data as percentage values between the "Dark" and "White" references set in the meta-data.
         e.g. A pixel value of 1.0 means that the pixel is as bright as the white reference at this pixel, 1.5 -> 50% brighter, 0.0 -> as bright as the dark reference, -0.2 -> 20% darker than the dark reference.
@@ -49,8 +54,16 @@ class Reflectance(Node, BaseTransformation):
 
         """
 
-        numerator = X - references__Dark
-        denominator = references__White - references__Dark
+        if (self.dark_ref is None and references__Dark is None) or (self.white_ref is None and references__White is None):
+            raise RuntimeError(
+                "Missing References for Reflectance Normalization")
+
+        dark_reference = references__Dark or np.resize(self.dark_ref, X.shape)
+        white_reference = references__White or np.resize(
+            self.white_ref, X.shape)
+
+        numerator = X - dark_reference
+        denominator = white_reference - dark_reference
         # Avoid division by zero
         reflectance = np.divide(numerator, denominator, where=denominator != 0)
         reflectance = np.nan_to_num(reflectance)

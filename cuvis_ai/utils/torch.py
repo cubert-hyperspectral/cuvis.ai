@@ -21,8 +21,8 @@ def guess_input_dimensionalty(model: nn.Module) -> InputDimension:
     # Get the first layer of the model
     first_layer = next(model.children(), None)
 
-    if isinstance(first_layer, nn.Sequential):
-        first_layer = first_layer._modules['0']
+    if len(first_layer._modules.items()) > 0:
+        first_layer = list(first_layer._modules.values())[0]
 
     # Check if there is a first layer in the model
     if first_layer is None:

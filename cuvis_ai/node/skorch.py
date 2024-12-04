@@ -72,7 +72,7 @@ def _wrap_supervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self.net.predict(self, flattened_data)
+            transformed_data = self.net.predict_proba(self, flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self) -> dict:
@@ -151,6 +151,8 @@ def _wrap_unsupervised_class(cls):
                 flattened_data = flatten_batch_and_spatial(X)
             elif self.expected_dim == InputDimension.Three:
                 flattened_data = np.moveaxis(X, -1, -3)
+            else:
+                raise RuntimeError("Could not estimate needed input Dimension")
 
             # y can be set to None, in that case it will be derived from X
             self.net.fit(flattened_data, flattened_data)
@@ -164,7 +166,7 @@ def _wrap_unsupervised_class(cls):
                 flattened_data = flatten_batch_and_spatial(X)
             elif self.expected_dim == InputDimension.Three:
                 flattened_data = np.moveaxis(X, -1, -3)
-            transformed_data = self.net.predict(flattened_data)
+            transformed_data = self.net.predict_proba(flattened_data)
             if self.expected_dim == InputDimension.One:
                 return unflatten_batch_and_spatial(transformed_data, X.shape)
             elif self.expected_dim == InputDimension.Three:

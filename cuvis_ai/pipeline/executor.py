@@ -13,7 +13,6 @@ class MemoryExecutor:
         self.graph = graph
         self.nodes = nodes
         self.entry_point = entry_point
-        self.sorted_nodes = list(nx.topological_sort(self.graph))
 
     def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Pass data through the graph by starting at the root node and flowing through all
@@ -33,8 +32,8 @@ class MemoryExecutor:
         tuple[np.ndarray, np.ndarray, np.ndarray]
             Residuals of processed X, Y, and M
         """
-        self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert (self.sorted_graph[0] == self.entry_point)
+        sorted_graph = list(nx.topological_sort(self.graph))
+        assert (sorted_graph[0] == self.entry_point)
 
         xs = X
         ys = Y or [None]*len(xs)
@@ -46,11 +45,11 @@ class MemoryExecutor:
         intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.forward_node(
             self.nodes[self.entry_point], xs, ys, ms)
 
-        for node in self.sorted_graph[1:]:
+        for node in sorted_graph[1:]:
             self._forward_helper(node, intermediary,
                                  intermediary_labels, intermediary_metas)
 
-        results = intermediary[self.sorted_graph[-1]]
+        results = intermediary[sorted_graph[-1]]
         return results
 
     def _forward_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
@@ -193,8 +192,8 @@ class MemoryExecutor:
             Input metadata, by default None
         """
         # training stage
-        self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert (self.sorted_graph[0] == self.entry_point)
+        sorted_graph = list(nx.topological_sort(self.graph))
+        assert (sorted_graph[0] == self.entry_point)
 
         intermediary = {}
         intermediary_labels = {}
@@ -203,7 +202,7 @@ class MemoryExecutor:
         intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.fit_node(
             self.nodes[self.entry_point], X, Y, M)
 
-        for node in self.sorted_graph[1:]:
+        for node in sorted_graph[1:]:
             self._fit_helper(node, intermediary,
                              intermediary_labels, intermediary_metas)
 

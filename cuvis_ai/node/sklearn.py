@@ -156,7 +156,7 @@ def _wrap_supervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self._wrapped.transform(flattened_data)
+            transformed_data = self._wrapped.predict_proba(flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
@@ -209,7 +209,7 @@ def _wrap_unsupervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            prediction_data = self._wrapped.predict(flattened_data)
+            prediction_data = self._wrapped.predict_proba(flattened_data)
             return unflatten_batch_and_spatial(prediction_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:

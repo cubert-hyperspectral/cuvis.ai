@@ -4,7 +4,7 @@ import torch
 from typing import Any
 from datetime import datetime
 from os.path import expanduser
-from typing import Optional, Dict, List, Tuple, Any, Union
+from typing import Optional, Any, Union, Iterator
 import networkx as nx
 from typing import List, Union
 from collections import defaultdict
@@ -23,6 +23,9 @@ from pathlib import Path
 from importlib import import_module
 from .executor import MemoryExecutor, HummingBirdExecutor
 from copy import copy, deepcopy
+from functools import lru_cache
+from ..node.skorch import SkorchWrapped
+from ..node.sklearn import SklearnWrapped
 
 
 class Graph():
@@ -328,7 +331,7 @@ class Graph():
 
             def convert_node(node):
                 new_node = copy(node)
-                if '_wrapped' in node.__dict__:
+                if '_wrapped' in node.__dict__ and isinstance(node, SklearnWrapped):
                     new_node._wrapped = convert(node._wrapped, 'torch')
                 return new_node
 
@@ -343,3 +346,19 @@ class Graph():
     def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
         executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
         executor.fit(X, Y, M)
+
+    @property
+    @lru_cache(maxsize=128)
+    def torch_layers(self) -> List[torch.nn.Module]:
+        """Get a list with all pytorch layers in the Graph.
+        """
+        layers = []
+        for key, node in self.nodes.items():
+            if isinstance(node, SkorchWrapped):
+                layers.append(node.net.model_)
+        return layers
+
+    def parameters(self) -> Iterator:
+        """Iterate over all (pytorch-) parameters in all layers contained in the Graph. """
+        for layer in self.torch_layers:
+            yield from layer.parameters()

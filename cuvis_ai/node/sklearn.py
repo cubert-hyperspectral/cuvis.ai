@@ -13,6 +13,10 @@ from sklearn.base import TransformerMixin, ClassifierMixin, ClusterMixin, Densit
 from .base import Preprocessor, BaseUnsupervised, BaseSupervised
 
 
+class SklearnWrapped:
+    pass
+
+
 def _serialize_sklearn_model(obj, cls, data_dir: Path) -> dict:
     data_independent = cls.get_params(obj)
     if not obj.initialized:
@@ -65,7 +69,7 @@ def _load_sklearn_model(obj, cls, params: dict, data_dir: Path) -> None:
 
 def _wrap_preprocessor_class(cls):
 
-    class SklearnWrappedPreprocessor(Node, Preprocessor):
+    class SklearnWrappedPreprocessor(Node, Preprocessor, SklearnWrapped):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
@@ -118,7 +122,7 @@ def _wrap_preprocessor_class(cls):
 
 def _wrap_supervised_class(cls):
 
-    class SklearnWrappedSupervised(Node, BaseSupervised):
+    class SklearnWrappedSupervised(Node, BaseSupervised, SklearnWrapped):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
@@ -172,7 +176,7 @@ def _wrap_supervised_class(cls):
 
 def _wrap_unsupervised_class(cls):
 
-    class SklearnWrappedUnsupervised(Node, BaseUnsupervised):
+    class SklearnWrappedUnsupervised(Node, BaseUnsupervised, SklearnWrapped):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__

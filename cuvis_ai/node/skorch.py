@@ -17,6 +17,10 @@ import skorch
 import uuid
 
 
+class SkorchWrapped:
+    pass
+
+
 def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
     data_independent = {}  # obj.net.get_params()
     if not obj.initialized:
@@ -63,7 +67,7 @@ def _wrap_preprocessor_class(cls):
 
 def _wrap_supervised_class(cls):
 
-    class SkorchWrappedSupervised(Node, BaseSupervised):
+    class SkorchWrappedSupervised(Node, BaseSupervised, SkorchWrapped):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__
@@ -153,7 +157,7 @@ def _wrap_supervised_class(cls):
 
 def _wrap_unsupervised_class(cls):
 
-    class SkorchWrappedUnsupervised(Node, BaseUnsupervised):
+    class SkorchWrappedUnsupervised(Node, BaseUnsupervised, SkorchWrapped):
 
         __doc__ = cls.__doc__
         __module__ = cls.__module__

@@ -284,10 +284,11 @@ class MemoryExecutor:
                 F"Node {node} invalid, does not indicate input data type!")
 
         additional_meta = get_fit_metadata(node, metadata)
-        if len(additional_meta) > 0:
-            node.fit(*node_input, **additional_meta)
-        else:
-            node.fit(*node_input)
+        if node.freezed == False:
+            if len(additional_meta) > 0:
+                node.fit(*node_input, **additional_meta)
+            else:
+                node.fit(*node_input)
 
         return self.forward_node(node, data, labels, metadata)
 

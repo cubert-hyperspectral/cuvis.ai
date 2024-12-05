@@ -10,10 +10,6 @@ class Preprocessor(ABC, CubeConsumer):
     Abstract class for data preprocessing.
     """
 
-    def __init__(self):
-        self.input_size = None
-        self.output_size = None
-
     @abstractmethod
     def fit(self, X):
         """
@@ -84,9 +80,6 @@ class BaseUnsupervised(ABC, CubeConsumer):
 
 
 class BaseTransformation(CubeConsumer):
-    def __init__(self):
-        self.input_size = None
-        self.output_size = None
 
     @abstractmethod
     def forward(self, X):

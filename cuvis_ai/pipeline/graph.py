@@ -362,3 +362,10 @@ class Graph():
         """Iterate over all (pytorch-) parameters in all layers contained in the Graph. """
         for layer in self.torch_layers:
             yield from layer.parameters()
+
+    def freeze(self):
+        for node in self.nodes.values():
+            if node.initialized:
+                node.freezed = True
+            else:
+                raise RuntimeError("Tried freezing a uninitialized node")

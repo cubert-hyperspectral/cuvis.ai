@@ -73,7 +73,7 @@ def _wrap_supervised_class(cls):
         __module__ = cls.__module__
 
         def __init__(self, *args, criterion=torch.nn.NLLLoss, **kwargs):
-            super().__init__()
+            Node.__init__(self)
             self.input_size = (-1, -1, -1)
             self.output_size = (-1, -1, -1)
 
@@ -94,8 +94,6 @@ def _wrap_supervised_class(cls):
                 train_split=None,
                 **self.model_args
             )
-
-            self.initialized = False
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -163,7 +161,7 @@ def _wrap_unsupervised_class(cls):
         __module__ = cls.__module__
 
         def __init__(self, *args, criterion, **kwargs):
-            super().__init__()
+            Node.__init__(self)
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
 
@@ -184,8 +182,6 @@ def _wrap_unsupervised_class(cls):
                 train_split=None,
                 **self.model_args
             )
-
-            self.initialized = False
 
         @Node.input_dim.getter
         def input_dim(self):

@@ -6,12 +6,55 @@ from ..utils.numpy import *
 from ..utils.torch import InputDimension, guess_input_dimensionalty
 from .node import Node
 from .base import BaseSupervised, BaseUnsupervised
+from pathlib import Path
 
 import numpy as np
 
 import torch
 import torch.nn as nn
 import skorch
+
+import uuid
+
+
+def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
+    data_independent = {}  # obj.net.get_params()
+    if not obj.initialized:
+        return {'params': data_independent}
+
+    f_params = f'{uuid.uuid4()}.pth'
+
+    obj.net.save_params(f_params=f_params)
+
+    data_dependend = {'weights': f_params}
+
+    return {'params': data_independent, 'state': data_dependend}
+
+
+def _load_skorch_model(obj, cls, params: dict, data_dir: Path) -> None:
+    data_independent_keys = set(cls.get_params(obj).keys())
+
+    params_independent = {key: params['params'][key]
+                          for key in data_independent_keys}
+
+    cls.set_params(obj, **params_independent)
+
+    if 'state' not in params.keys():
+        return
+
+    data_dependent_keys = {
+        key for key in params['state'].keys()}
+
+    params_dependent = {key: params['state'][key]
+                        for key in data_dependent_keys}
+
+    for k, v in params_dependent.items():
+        try:
+            setattr(obj, k, v)
+        except:
+            print(f'Could not set state attribute {k} for {obj.id}')  # nopep8
+    obj.initialized = True
+    obj._derive_values()
 
 
 def _wrap_preprocessor_class(cls):
@@ -77,7 +120,7 @@ def _wrap_supervised_class(cls):
             transformed_data = self.net.predict_proba(self, flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
-        def serialize(self) -> dict:
+        def serialize(self, data_dir: Path) -> dict:
             data_independent = self.net.get_params(self)
             data_dependend = {
                 attr: getattr(self, attr)
@@ -86,7 +129,7 @@ def _wrap_supervised_class(cls):
             }
             return data_independent | data_dependend
 
-        def load(self, params: dict) -> None:
+        def load(self, params: dict, data_dir: Path) -> None:
             data_independent_keys = set(self.net.get_params(self).keys())
 
             data_dependent_keys = {
@@ -175,31 +218,11 @@ def _wrap_unsupervised_class(cls):
             elif self.expected_dim == InputDimension.Three:
                 return np.moveaxis(X, -1, -3)
 
-        def serialize(self) -> dict:
-            data_independent = self.net.get_params(self)
-            data_dependend = {
-                attr: getattr(self, attr)
-                for attr in dir(self)
-                if attr.endswith("_") and not callable(getattr(self, attr)) and not attr.startswith("__")
-            }
-            return data_independent | data_dependend
+        def serialize(self, data_dir: Path) -> dict:
+            return _serialize_skorch_model(self, cls, data_dir)
 
-        def load(self, params: dict) -> None:
-            data_independent_keys = set(self.net.get_params(self).keys())
-
-            data_dependent_keys = {
-                key for key in params.keys() if key not in data_independent_keys and key.endswith("_")}
-
-            params_independent = {key: params[key]
-                                  for key in data_independent_keys}
-
-            self.net.set_params(self, **params_independent)
-
-            params_dependent = {key: params[key]
-                                for key in data_dependent_keys}
-
-            for k, v in params_dependent.items():
-                setattr(self, k, v)
+        def load(self, params: dict, data_dir: Path) -> None:
+            return _load_skorch_model(self, cls, params, data_dir)
 
     SkorchWrappedUnsupervised.__name__ = cls.__name__
     functools.update_wrapper(SkorchWrappedUnsupervised.__init__, cls.__init__)

@@ -13,6 +13,14 @@ cuvis\_ai.node.skorch
 
    
    
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      SkorchWrapped
+   
    
 
    

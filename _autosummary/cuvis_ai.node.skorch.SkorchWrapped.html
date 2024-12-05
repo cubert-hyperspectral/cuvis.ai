@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cuvis_ai.node.base.Preprocessor &mdash; Cuvis AI 0.1.0 documentation</title>
+  <title>cuvis_ai.node.skorch.SkorchWrapped &mdash; Cuvis AI 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cuvis_ai.node.node" href="cuvis_ai.node.node.html" />
-    <link rel="prev" title="cuvis_ai.node.base.BaseUnsupervised" href="cuvis_ai.node.base.BaseUnsupervised.html" /> 
+    <link rel="next" title="cuvis_ai.node.torch" href="cuvis_ai.node.torch.html" />
+    <link rel="prev" title="cuvis_ai.node.skorch" href="cuvis_ai.node.skorch.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,16 +55,13 @@
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.Consumers.html">cuvis_ai.node.Consumers</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.node.base.html">cuvis_ai.node.base</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.base.BaseSupervised.html">cuvis_ai.node.base.BaseSupervised</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.base.BaseTransformation.html">cuvis_ai.node.base.BaseTransformation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html">cuvis_ai.node.base.BaseUnsupervised</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.node.base.Preprocessor</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.base.html">cuvis_ai.node.base</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.node.html">cuvis_ai.node.node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.sklearn.html">cuvis_ai.node.sklearn</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.skorch.html">cuvis_ai.node.skorch</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.node.skorch.html">cuvis_ai.node.skorch</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.node.skorch.SkorchWrapped</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.torch.html">cuvis_ai.node.torch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.node.wrap.html">cuvis_ai.node.wrap</a></li>
 </ul>
@@ -97,10 +94,10 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="cuvis_ai.html">cuvis_ai</a></li>
           <li class="breadcrumb-item"><a href="cuvis_ai.node.html">cuvis_ai.node</a></li>
-          <li class="breadcrumb-item"><a href="cuvis_ai.node.base.html">cuvis_ai.node.base</a></li>
-      <li class="breadcrumb-item active">cuvis_ai.node.base.Preprocessor</li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.node.skorch.html">cuvis_ai.node.skorch</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.node.skorch.SkorchWrapped</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/_autosummary/cuvis_ai.node.base.Preprocessor.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/_autosummary/cuvis_ai.node.skorch.SkorchWrapped.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -108,51 +105,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="cuvis-ai-node-base-preprocessor">
-<h1>cuvis_ai.node.base.Preprocessor<a class="headerlink" href="#cuvis-ai-node-base-preprocessor" title="Link to this heading"></a></h1>
+  <section id="cuvis-ai-node-skorch-skorchwrapped">
+<h1>cuvis_ai.node.skorch.SkorchWrapped<a class="headerlink" href="#cuvis-ai-node-skorch-skorchwrapped" title="Link to this heading"></a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="cuvis_ai.node.base.Preprocessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.node.base.</span></span><span class="sig-name descname"><span class="pre">Preprocessor</span></span><a class="reference internal" href="../_modules/cuvis_ai/node/base.html#Preprocessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.node.base.Preprocessor" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a>, <a class="reference internal" href="cuvis_ai.node.Consumers.CubeConsumer.html#cuvis_ai.node.Consumers.CubeConsumer" title="cuvis_ai.node.Consumers.CubeConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">CubeConsumer</span></code></a></p>
-<p>Abstract class for data preprocessing.</p>
+<dt class="sig sig-object py" id="cuvis_ai.node.skorch.SkorchWrapped">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.node.skorch.</span></span><span class="sig-name descname"><span class="pre">SkorchWrapped</span></span><a class="reference internal" href="../_modules/cuvis_ai/node/skorch.html#SkorchWrapped"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.node.skorch.SkorchWrapped" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.node.base.Preprocessor.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.node.base.Preprocessor.__init__" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="cuvis_ai.node.skorch.SkorchWrapped.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.node.skorch.SkorchWrapped.__init__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.node.base.Preprocessor.__init__" title="cuvis_ai.node.base.Preprocessor.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.node.base.Preprocessor.fit" title="cuvis_ai.node.base.Preprocessor.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
-<td><p>Fit the preprocessor to the data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.node.base.Preprocessor.forward" title="cuvis_ai.node.base.Preprocessor.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.node.skorch.SkorchWrapped.__init__" title="cuvis_ai.node.skorch.SkorchWrapped.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.node.base.Preprocessor.fit">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/node/base.html#Preprocessor.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.node.base.Preprocessor.fit" title="Link to this definition"></a></dt>
-<dd><p>Fit the preprocessor to the data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em>) – Input data.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>self</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cuvis_ai.node.base.Preprocessor.forward">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/node/base.html#Preprocessor.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.node.base.Preprocessor.forward" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </section>
@@ -161,8 +132,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuvis_ai.node.base.BaseUnsupervised.html" class="btn btn-neutral float-left" title="cuvis_ai.node.base.BaseUnsupervised" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuvis_ai.node.node.html" class="btn btn-neutral float-right" title="cuvis_ai.node.node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuvis_ai.node.skorch.html" class="btn btn-neutral float-left" title="cuvis_ai.node.skorch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.node.torch.html" class="btn btn-neutral float-right" title="cuvis_ai.node.torch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

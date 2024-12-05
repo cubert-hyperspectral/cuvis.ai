@@ -141,17 +141,34 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.forward" title="cuvis_ai.pipeline.graph.Graph.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, Y, M, backend])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.load" title="cuvis_ai.pipeline.graph.Graph.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(structure, data_dir)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.freeze" title="cuvis_ai.pipeline.graph.Graph.freeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeze</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.load_from_file" title="cuvis_ai.pipeline.graph.Graph.load_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_from_file</span></code></a>(filepath)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.load" title="cuvis_ai.pipeline.graph.Graph.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(structure, data_dir)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.load_from_file" title="cuvis_ai.pipeline.graph.Graph.load_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_from_file</span></code></a>(filepath)</p></td>
 <td><p>Reconstruct the graph from a file path defining the location of a zip archive.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.parameters" title="cuvis_ai.pipeline.graph.Graph.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>()</p></td>
+<td><p>Iterate over all (pytorch-) parameters in all layers contained in the Graph.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.save_to_file" title="cuvis_ai.pipeline.graph.Graph.save_to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_to_file</span></code></a>(filepath)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.serialize" title="cuvis_ai.pipeline.graph.Graph.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(data_dir)</p></td>
 <td><p>Convert graph structure and all contained nodes to a serializable YAML format.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.train" title="cuvis_ai.pipeline.graph.Graph.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(train_dl, test_dl)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.pipeline.graph.Graph.torch_layers" title="cuvis_ai.pipeline.graph.Graph.torch_layers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_layers</span></code></a></p></td>
+<td><p>Get a list with all pytorch layers in the Graph.</p></td>
 </tr>
 </tbody>
 </table>
@@ -238,6 +255,11 @@ To successfully remove a node, it must not have successors.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.freeze">
+<span class="sig-name descname"><span class="pre">freeze</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.freeze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.freeze" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.load">
 <span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.load" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -254,6 +276,12 @@ To successfully remove a node, it must not have successors.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.parameters" title="Link to this definition"></a></dt>
+<dd><p>Iterate over all (pytorch-) parameters in all layers contained in the Graph.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.save_to_file">
 <span class="sig-name descname"><span class="pre">save_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.save_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.save_to_file" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -264,6 +292,17 @@ To successfully remove a node, it must not have successors.</p>
 <dd><p>Convert graph structure and all contained nodes to a serializable YAML format.
 Numeric data and fit models will be stored in zipped directory named with current time.</p>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.torch_layers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">torch_layers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><span class="pre">Module</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.torch_layers" title="Link to this definition"></a></dt>
+<dd><p>Get a list with all pytorch layers in the Graph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.5)"><span class="pre">DataLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.5)"><span class="pre">DataLoader</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

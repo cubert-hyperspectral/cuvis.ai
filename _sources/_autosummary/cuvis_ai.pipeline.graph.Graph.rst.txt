@@ -25,13 +25,22 @@ cuvis\_ai.pipeline.graph.Graph
       ~Graph.delete_node
       ~Graph.fit
       ~Graph.forward
+      ~Graph.freeze
       ~Graph.load
       ~Graph.load_from_file
+      ~Graph.parameters
       ~Graph.save_to_file
       ~Graph.serialize
+      ~Graph.train
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Graph.torch_layers
    
    

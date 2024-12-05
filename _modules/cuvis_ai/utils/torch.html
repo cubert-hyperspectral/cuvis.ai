@@ -102,8 +102,8 @@
     <span class="c1"># Get the first layer of the model</span>
     <span class="n">first_layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">children</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_layer</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">):</span>
-        <span class="n">first_layer</span> <span class="o">=</span> <span class="n">first_layer</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_layer</span><span class="o">.</span><span class="n">_modules</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">first_layer</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">first_layer</span><span class="o">.</span><span class="n">_modules</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># Check if there is a first layer in the model</span>
     <span class="k">if</span> <span class="n">first_layer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

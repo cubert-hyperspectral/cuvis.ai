@@ -118,8 +118,8 @@ def _wrap_supervised_class(cls):
                 self.net.fit(flattened_data, flattened_label,
                              warm_start=warm_start)
 
-            self.input_size = (-1, -1, self.n_features_in_)
-            self.output_size = (-1, -1, self._n_features_out)
+            self._input_size = X.shape[-3:]
+            self._output_size = X.shape[-3:]
             self.initialized = True
 
         def forward(self, X: np.ndarray):
@@ -210,8 +210,8 @@ def _wrap_unsupervised_class(cls):
             else:
                 self.net.fit(flattened_data, flattened_data)
 
-            self._input_size = X.shape
-            self._output_size = X.shape
+            self._input_size = X.shape[-3:]
+            self._output_size = X.shape[-3:]
             self.initialized = True
 
         def forward(self, X: np.ndarray):

@@ -13,7 +13,6 @@ class MemoryExecutor:
         self.graph = graph
         self.nodes = nodes
         self.entry_point = entry_point
-        self.sorted_nodes = list(nx.topological_sort(self.graph))
 
     def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Pass data through the graph by starting at the root node and flowing through all
@@ -33,8 +32,8 @@ class MemoryExecutor:
         tuple[np.ndarray, np.ndarray, np.ndarray]
             Residuals of processed X, Y, and M
         """
-        self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert (self.sorted_graph[0] == self.entry_point)
+        sorted_graph = list(nx.topological_sort(self.graph))
+        assert (sorted_graph[0] == self.entry_point)
 
         xs = X
         ys = Y or [None]*len(xs)
@@ -46,11 +45,11 @@ class MemoryExecutor:
         intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.forward_node(
             self.nodes[self.entry_point], xs, ys, ms)
 
-        for node in self.sorted_graph[1:]:
+        for node in sorted_graph[1:]:
             self._forward_helper(node, intermediary,
                                  intermediary_labels, intermediary_metas)
 
-        results = intermediary[self.sorted_graph[-1]]
+        results = intermediary[sorted_graph[-1]]
         return results
 
     def _forward_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
@@ -164,15 +163,8 @@ class MemoryExecutor:
             raise TypeError(
                 "train or test dataloader argument is not a pytorch DataLoader!")
 
-        xs = []
-        ys = []
-        ms = []
         for x, y, m in iter(train_dataloader):
-            xs.append(x)
-            ys.append(y)
-            ms.append(m)
-
-        self.fit(xs, ys, ms)
+            self.fit(np.squeeze(x), np.squeeze(y), m, warm_start=True)
 
         # test stage
         test_results = []
@@ -180,7 +172,7 @@ class MemoryExecutor:
             test_results.append(self.forward(x, y, m))
             # do some metrics
 
-    def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None):
+    def fit(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None, warm_start=False):
         """Take a graph of uninitialized nodes and fit then given a set of inputs and outputs
 
         Parameters
@@ -193,21 +185,21 @@ class MemoryExecutor:
             Input metadata, by default None
         """
         # training stage
-        self.sorted_graph = list(nx.topological_sort(self.graph))
-        assert (self.sorted_graph[0] == self.entry_point)
+        sorted_graph = list(nx.topological_sort(self.graph))
+        assert (sorted_graph[0] == self.entry_point)
 
         intermediary = {}
         intermediary_labels = {}
         intermediary_metas = {}
 
         intermediary[self.entry_point], intermediary_labels[self.entry_point], intermediary_metas[self.entry_point] = self.fit_node(
-            self.nodes[self.entry_point], X, Y, M)
+            self.nodes[self.entry_point], X, Y, M, warm_start=warm_start)
 
-        for node in self.sorted_graph[1:]:
+        for node in sorted_graph[1:]:
             self._fit_helper(node, intermediary,
                              intermediary_labels, intermediary_metas)
 
-    def _fit_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict):
+    def _fit_helper(self, current: str, intermediary: dict, intermediary_labels: dict, intermediary_metas: dict, warm_start=False):
         """Private helper function to fit an individual node.
 
         Parameters
@@ -249,7 +241,7 @@ class MemoryExecutor:
             intermediary_labels.pop(current)
             intermediary_metas.pop(current)
 
-    def fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray) -> np.ndarray:
+    def fit_node(self, node: Node, data: np.ndarray, labels: np.ndarray, metadata: np.ndarray, warm_start=False) -> np.ndarray:
         """Private function wrapper to call the fit function for an individual node
 
         Parameters
@@ -285,10 +277,11 @@ class MemoryExecutor:
                 F"Node {node} invalid, does not indicate input data type!")
 
         additional_meta = get_fit_metadata(node, metadata)
-        if len(additional_meta) > 0:
-            node.fit(*node_input, **additional_meta)
-        else:
-            node.fit(*node_input)
+        if node.freezed == False:
+            if len(additional_meta) > 0:
+                node.fit(*node_input, **additional_meta, warm_start=warm_start)
+            else:
+                node.fit(*node_input, warm_start=warm_start)
 
         return self.forward_node(node, data, labels, metadata)
 

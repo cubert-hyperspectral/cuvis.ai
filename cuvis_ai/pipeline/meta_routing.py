@@ -30,6 +30,12 @@ def get_requested_metadata(requested: dict[str, bool], metadata: dict):
     for k in requested.keys():
         additional_meta[k] = list()
 
+    if len(requested) > 0 and metadata is None:
+        raise RuntimeError("Requested metadata but no metadata supplied")
+
+    if len(requested) == 0:
+        return additional_meta
+
     for idx in range(len(metadata)):
         for k, v in requested.items():
             if not v:

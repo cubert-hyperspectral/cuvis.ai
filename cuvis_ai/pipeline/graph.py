@@ -347,6 +347,10 @@ class Graph():
         executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
         executor.fit(X, Y, M)
 
+    def train(self, train_dl: torch.utils.data.DataLoader, test_dl: torch.utils.data.DataLoader):
+        executor = MemoryExecutor(self.graph, self.nodes, self.entry_point)
+        executor.train(train_dl, test_dl)
+
     @property
     @lru_cache(maxsize=128)
     def torch_layers(self) -> List[torch.nn.Module]:

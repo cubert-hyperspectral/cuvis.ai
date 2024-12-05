@@ -4,9 +4,11 @@ from .BaseDataSet import BaseDataSet
 import torch
 import re
 import collections.abc
+from .metadata import Metadata
 container_abcs = collections.abc
 
 string_classes = (str, bytes)
+
 
 @staticmethod
 def cuvis_collate(batch):
@@ -39,11 +41,13 @@ def cuvis_collate(batch):
     elif isinstance(batch[0], container_abcs.Sequence):
         transposed = zip(*batch)
         return [cuvis_collate(samples) for samples in transposed]
+    elif isinstance(batch[0], Metadata):
+        return [b.dict() for b in batch]
 
     raise TypeError((error_msg.format(type(batch[0]))))
-    
-    
-def get_dataloader_from_dataset(dataset:BaseDataSet, batch_size=1, shuffle=False, sampler=None, batch_sampler=None,
-                 num_workers=0, collate_fn=cuvis_collate, drop_last=False,
-                 timeout=0, worker_init_fn=None):
+
+
+def get_dataloader_from_dataset(dataset: BaseDataSet, batch_size=1, shuffle=False, sampler=None, batch_sampler=None,
+                                num_workers=0, collate_fn=cuvis_collate, drop_last=False,
+                                timeout=0, worker_init_fn=None):
     return DataLoader(dataset, batch_size, shuffle, sampler, batch_sampler, num_workers, collate_fn, False, drop_last, timeout, worker_init_fn)

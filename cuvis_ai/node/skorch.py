@@ -103,7 +103,7 @@ def _wrap_supervised_class(cls):
         def output_dim(self):
             return self.output_size
 
-        def fit(self, X: np.ndarray, Y: np.ndarray):
+        def fit(self, X: np.ndarray, Y: np.ndarray, warm_start=False):
             if self.expected_dim == InputDimension.One:
                 flattened_data = flatten_batch_and_spatial(X)
                 flattened_label = flatten_labels(Y)
@@ -111,7 +111,12 @@ def _wrap_supervised_class(cls):
                 flattened_data = flatten_spatial(X)
                 flattened_label = flatten_labels(Y)
 
-            self.net.fit(flattened_data, flattened_label)
+            if warm_start:
+                self.net.partial_fit(flattened_data, flattened_label,
+                                     warm_start=warm_start)
+            else:
+                self.net.fit(flattened_data, flattened_label,
+                             warm_start=warm_start)
 
             self.input_size = (-1, -1, self.n_features_in_)
             self.output_size = (-1, -1, self._n_features_out)
@@ -191,7 +196,7 @@ def _wrap_unsupervised_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray):
+        def fit(self, X: np.ndarray, warm_start=False):
 
             if self.expected_dim == InputDimension.One:
                 flattened_data = flatten_batch_and_spatial(X)
@@ -200,8 +205,10 @@ def _wrap_unsupervised_class(cls):
             else:
                 raise RuntimeError("Could not estimate needed input Dimension")
 
-            # y can be set to None, in that case it will be derived from X
-            self.net.fit(flattened_data, flattened_data)
+            if warm_start:
+                self.net.partial_fit(flattened_data, flattened_data)
+            else:
+                self.net.fit(flattened_data, flattened_data)
 
             self._input_size = X.shape
             self._output_size = X.shape

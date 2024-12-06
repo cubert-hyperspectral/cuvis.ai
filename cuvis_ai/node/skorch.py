@@ -73,7 +73,7 @@ def _wrap_supervised_class(cls):
         __module__ = cls.__module__
 
         def __init__(self, *args, criterion=torch.nn.NLLLoss, **kwargs):
-            Node.__init__(self)
+            super(SkorchWrappedSupervised, self).__init__()
             self.input_size = (-1, -1, -1)
             self.output_size = (-1, -1, -1)
 
@@ -166,7 +166,7 @@ def _wrap_unsupervised_class(cls):
         __module__ = cls.__module__
 
         def __init__(self, *args, criterion, **kwargs):
-            Node.__init__(self)
+            super(SkorchWrappedUnsupervised, self).__init__()
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
 

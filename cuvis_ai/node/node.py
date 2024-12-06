@@ -15,6 +15,8 @@ class Node(ABC):
         self.id = f'{type(self).__name__}-{str(uuid.uuid4())}'
         self.__forward_metadata = {}
         self.__fit_metadata = {}
+        self.__forward_inputs = {}
+        self.__fit_inputs = {}
         self.initialized = False
         self.freezed = False
 

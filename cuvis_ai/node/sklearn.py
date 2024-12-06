@@ -76,7 +76,7 @@ def _wrap_preprocessor_class(cls):
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
-            Node.__init__(self)
+            super().__init__(self)
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
@@ -128,7 +128,7 @@ def _wrap_supervised_class(cls):
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
-            Node.__init__(self)
+            super().__init__(self)
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
@@ -181,7 +181,7 @@ def _wrap_unsupervised_class(cls):
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
-            Node.__init__(self)
+            super().__init__(self)
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__

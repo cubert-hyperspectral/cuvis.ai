@@ -24,7 +24,7 @@ jobs:
       - name: Run docker container
         run: docker run -v ./docs/_build:/install/cuvis.ai/docs/_build cuvis_ai /bin/bash  /install/cuvis.ai/entrypoint_doc.sh
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.7.2
         with:
           folder: ./docs/_build/html/
 

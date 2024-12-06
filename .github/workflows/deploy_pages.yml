@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
       - name: Run docker container
         run: docker run -v ./docs/_build:/install/cuvis.ai/docs/_build cuvis_ai /bin/bash  /install/cuvis.ai/entrypoint_doc.sh
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.5.0
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ./docs/_build/html/
 

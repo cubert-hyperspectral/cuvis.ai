@@ -82,6 +82,8 @@ def _wrap_preprocessor_class(cls):
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
+            self.initialized = False
+            self.freezed = False
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -134,6 +136,8 @@ def _wrap_supervised_class(cls):
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
+            self.initialized = False
+            self.freezed = False
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -187,6 +191,8 @@ def _wrap_unsupervised_class(cls):
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
+            self.initialized = False
+            self.freezed = False
 
         @Node.input_dim.getter
         def input_dim(self):

@@ -76,12 +76,14 @@ def _wrap_preprocessor_class(cls):
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
-            Node.__init__(self)
+            super(SklearnWrappedPreprocessor, self).__init__()
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
+            self.initialized = False
+            self.freezed = False
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -91,7 +93,7 @@ def _wrap_preprocessor_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray):
+        def fit(self, X: np.ndarray, warm_start=False):
             flattened_data = flatten_batch_and_spatial(X)
             self._wrapped.fit(flattened_data)
             self.initialized = True
@@ -128,12 +130,14 @@ def _wrap_supervised_class(cls):
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
-            Node.__init__(self)
+            super(SklearnWrappedSupervised, self).__init__()
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
+            self.initialized = False
+            self.freezed = False
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -143,7 +147,7 @@ def _wrap_supervised_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray, Y: np.ndarray):
+        def fit(self, X: np.ndarray, Y: np.ndarray, warm_start=False):
             flattened_data = flatten_batch_and_spatial(X)
             flattened_label = flatten_batch_and_labels(Y)
             self._wrapped.fit(flattened_data, flattened_label)
@@ -158,7 +162,10 @@ def _wrap_supervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self._wrapped.predict_proba(flattened_data)
+            if 'predict_proba' in self._wrapped.__dict__:
+                transformed_data = self._wrapped.predict_proba(flattened_data)
+            else:
+                transformed_data = self._wrapped.predict(flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
@@ -181,12 +188,14 @@ def _wrap_unsupervised_class(cls):
 
         @functools.wraps(cls.__init__)
         def __init__(self, *args, **kwargs):
-            Node.__init__(self)
+            super(SklearnWrappedUnsupervised, self).__init__()
             self.id = f'{cls.__name__}-{str(uuid.uuid4())}'
             self._wrapped = cls(*args, **kwargs)
             __name__ = cls.__name__
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
+            self.initialized = False
+            self.freezed = False
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -196,7 +205,7 @@ def _wrap_unsupervised_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray):
+        def fit(self, X: np.ndarray, warm_start=False):
             flattened_data = flatten_batch_and_spatial(X)
             self._wrapped.fit(flattened_data)
             self.initialized = True
@@ -210,7 +219,11 @@ def _wrap_unsupervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            prediction_data = self._wrapped.predict_proba(flattened_data)
+            if 'predict_proba' in self._wrapped.__dict__:
+                prediction_data = self._wrapped.predict_proba(
+                    flattened_data)
+            else:
+                prediction_data = self._wrapped.predict(flattened_data)
             return unflatten_batch_and_spatial(prediction_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:

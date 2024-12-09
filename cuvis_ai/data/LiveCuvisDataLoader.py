@@ -342,7 +342,7 @@ class LiveCuvisDataLoader(BaseDataSet):
             label_list.append(labels)
             metas.append(meta)
 
-        cube = np.stack(cubes, axis=0)
+        cube = np.concatenate(cubes, axis=0)
 
         return (cube, label_list, metas)
 

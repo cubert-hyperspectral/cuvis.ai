@@ -172,7 +172,7 @@
         <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
 
-        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
@@ -226,7 +226,7 @@
         <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
 
-        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
             <span class="n">flattened_label</span> <span class="o">=</span> <span class="n">flatten_batch_and_labels</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">,</span> <span class="n">flattened_label</span><span class="p">)</span>
@@ -241,7 +241,10 @@
 
         <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-            <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;predict_proba&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">unflatten_batch_and_spatial</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -281,7 +284,7 @@
         <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
 
-        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
@@ -295,7 +298,11 @@
 
         <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-            <span class="n">prediction_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;predict_proba&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="n">prediction_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span>
+                    <span class="n">flattened_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prediction_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">unflatten_batch_and_spatial</span><span class="p">(</span><span class="n">prediction_data</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>

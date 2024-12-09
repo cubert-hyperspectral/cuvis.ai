@@ -93,7 +93,7 @@ def _wrap_preprocessor_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray):
+        def fit(self, X: np.ndarray, warm_start=False):
             flattened_data = flatten_batch_and_spatial(X)
             self._wrapped.fit(flattened_data)
             self.initialized = True
@@ -147,7 +147,7 @@ def _wrap_supervised_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray, Y: np.ndarray):
+        def fit(self, X: np.ndarray, Y: np.ndarray, warm_start=False):
             flattened_data = flatten_batch_and_spatial(X)
             flattened_label = flatten_batch_and_labels(Y)
             self._wrapped.fit(flattened_data, flattened_label)
@@ -162,7 +162,10 @@ def _wrap_supervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self._wrapped.predict_proba(flattened_data)
+            if 'predict_proba' in self._wrapped.__dict__:
+                transformed_data = self._wrapped.predict_proba(flattened_data)
+            else:
+                transformed_data = self._wrapped.predict(flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
@@ -202,7 +205,7 @@ def _wrap_unsupervised_class(cls):
         def output_dim(self):
             return self._output_size
 
-        def fit(self, X: np.ndarray):
+        def fit(self, X: np.ndarray, warm_start=False):
             flattened_data = flatten_batch_and_spatial(X)
             self._wrapped.fit(flattened_data)
             self.initialized = True
@@ -216,7 +219,11 @@ def _wrap_unsupervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            prediction_data = self._wrapped.predict_proba(flattened_data)
+            if 'predict_proba' in self._wrapped.__dict__:
+                prediction_data = self._wrapped.predict_proba(
+                    flattened_data)
+            else:
+                prediction_data = self._wrapped.predict(flattened_data)
             return unflatten_batch_and_spatial(prediction_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:

@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Make empty dir
-        run: mkdir -p ./docs/_build
+        run: mkdir -p ./docs/_build/html
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

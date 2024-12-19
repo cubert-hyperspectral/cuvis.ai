@@ -15,17 +15,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
       - name: Build docker images
         run: docker build -t "cuvis_ai" .
       - name: Make empty dir
         run: mkdir -p ./docs/_build
       - name: Run docker container
         run: docker run -v ./docs/_build:/install/cuvis.ai/docs/_build cuvis_ai /bin/bash  /install/cuvis.ai/entrypoint_doc.sh
-      - name: Install rsync 📚
-        run: |
-          apt-get update && apt-get install -y rsync
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

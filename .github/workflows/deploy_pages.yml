@@ -23,6 +23,7 @@ jobs:
           python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           python3.10 -m pip install .
           python3.10 -m pip install -r docs/requirements.txt
+          python3.10 -m pip show cuvis
           export CUVIS="dontcare"
           echo "Test Cuvis AI importable"
           python3.10 -c "import cuvis; import cuvis_ai"

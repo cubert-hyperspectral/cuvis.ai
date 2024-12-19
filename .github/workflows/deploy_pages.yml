@@ -39,7 +39,7 @@ jobs:
           git submodule update --init --recursive
           mkdir build
           cd build
-          cmake  -DCMAKE_BUILD_TYPE=Release -DDOXYGEN_BUILD_DOCUMENTATION=OFF -DPython_ROOT_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))") ..
+          cmake  -DCMAKE_BUILD_TYPE=Release -DDOXYGEN_BUILD_DOCUMENTATION=OFF -DPython_ROOT_DIR=$(python3.10 -c "import sysconfig; print(sysconfig.get_path('include'))") ..
           cmake --build . --target cuvis_pyil --config Release
           cp ./_cuvis_pyil.so ../cuvis_il
           cp ./cuvis_il.py ../cuvis_il

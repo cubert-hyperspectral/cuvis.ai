@@ -56,12 +56,13 @@ jobs:
           python3.10 -m pip install .
           python3.10 -m pip install -r docs/requirements.txt
           python3.10 -m pip show cuvis
-          export CUVIS=$(python3.10 -m pip show cuvis | grep -i "Location:" | cut -d' ' -f2-)
+          export CUVIS=/lib/cuvis
           echo "Test Cuvis AI importable"
           python3.10 -c "import cuvis; import cuvis_ai"
       - name: Build Documentation
         run:  |
             source venv/bin/activate
+            export CUVIS=/lib/cuvis
             mkdir -p docs/_build
             sphinx-build -M html docs docs/_build
             touch docs/_build/html/.nojekyll

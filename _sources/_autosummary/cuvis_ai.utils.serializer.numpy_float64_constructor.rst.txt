@@ -1,6 +1,0 @@
-cuvis\_ai.utils.serializer.numpy\_float64\_constructor
-======================================================
-
-.. currentmodule:: cuvis_ai.utils.serializer
-
-.. autofunction:: numpy_float64_constructor

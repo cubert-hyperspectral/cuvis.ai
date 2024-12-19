@@ -1,6 +1,0 @@
-cuvis\_ai.tv\_transforms.NormalizeStdDev.training
-=================================================
-
-.. currentmodule:: cuvis_ai.tv_transforms
-
-.. autoattribute:: NormalizeStdDev.training

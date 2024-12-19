@@ -1,6 +1,0 @@
-cuvis\_ai.utils.torch.get\_output\_shape
-========================================
-
-.. currentmodule:: cuvis_ai.utils.torch
-
-.. autofunction:: get_output_shape

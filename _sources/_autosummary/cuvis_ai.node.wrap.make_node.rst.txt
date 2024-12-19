@@ -1,6 +1,0 @@
-cuvis\_ai.node.wrap.make\_node
-==============================
-
-.. currentmodule:: cuvis_ai.node.wrap
-
-.. autofunction:: make_node

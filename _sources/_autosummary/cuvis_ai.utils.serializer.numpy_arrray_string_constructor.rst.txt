@@ -1,6 +1,0 @@
-cuvis\_ai.utils.serializer.numpy\_arrray\_string\_constructor
-=============================================================
-
-.. currentmodule:: cuvis_ai.utils.serializer
-
-.. autofunction:: numpy_arrray_string_constructor

@@ -1,6 +1,0 @@
-cuvis\_ai.utils.test.get\_np\_dummy\_data
-=========================================
-
-.. currentmodule:: cuvis_ai.utils.test
-
-.. autofunction:: get_np_dummy_data

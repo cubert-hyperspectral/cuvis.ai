@@ -1,6 +1,0 @@
-cuvis\_ai.data.cocolabels.RLE2mask
-==================================
-
-.. currentmodule:: cuvis_ai.data.cocolabels
-
-.. autofunction:: RLE2mask

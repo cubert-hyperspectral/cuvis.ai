@@ -1,6 +1,0 @@
-cuvis\_ai.utils.dependencies.get\_installed\_packages
-=====================================================
-
-.. currentmodule:: cuvis_ai.utils.dependencies
-
-.. autofunction:: get_installed_packages

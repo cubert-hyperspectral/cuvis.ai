@@ -1,6 +1,0 @@
-cuvis\_ai.pipeline.meta\_routing.get\_fit\_metadata
-===================================================
-
-.. currentmodule:: cuvis_ai.pipeline.meta_routing
-
-.. autofunction:: get_fit_metadata

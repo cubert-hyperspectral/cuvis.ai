@@ -1,6 +1,0 @@
-cuvis\_ai.utils.numpy.flatten\_batch\_and\_spatial
-==================================================
-
-.. currentmodule:: cuvis_ai.utils.numpy
-
-.. autofunction:: flatten_batch_and_spatial

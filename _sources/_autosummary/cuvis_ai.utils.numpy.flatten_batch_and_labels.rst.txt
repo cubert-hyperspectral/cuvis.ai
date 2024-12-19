@@ -1,6 +1,0 @@
-cuvis\_ai.utils.numpy.flatten\_batch\_and\_labels
-=================================================
-
-.. currentmodule:: cuvis_ai.utils.numpy
-
-.. autofunction:: flatten_batch_and_labels

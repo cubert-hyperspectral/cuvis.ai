@@ -1,6 +1,0 @@
-cuvis\_ai.utils.numpy.unflatten\_batch\_and\_labels
-===================================================
-
-.. currentmodule:: cuvis_ai.utils.numpy
-
-.. autofunction:: unflatten_batch_and_labels

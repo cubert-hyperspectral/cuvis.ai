@@ -1,6 +1,0 @@
-cuvis\_ai.deciders.combining\_decider.at\_least\_n\_agree
-=========================================================
-
-.. currentmodule:: cuvis_ai.deciders.combining_decider
-
-.. autofunction:: at_least_n_agree

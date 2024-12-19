@@ -35,18 +35,23 @@ jobs:
           sudo add-apt-repository ppa:deadsnakes/ppa
           sudo apt install python3.10 python3.10-venv python3.10-dev
           curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+          python3.10 -m venv venv
+          source venv/bin/activate
+          python3.10 -m pip install numpy=1.25.0
           cd cuvis.pyil
           git submodule update --init --recursive
           mkdir build
           cd build
-          cmake  -DCMAKE_BUILD_TYPE=Release -DDOXYGEN_BUILD_DOCUMENTATION=OFF -DPython_ROOT_DIR=$(python3.10 -c "import sysconfig; print(sysconfig.get_path('include'))") ..
+          cmake  -DCMAKE_BUILD_TYPE=Release -DDOXYGEN_BUILD_DOCUMENTATION=OFF -DPython_ROOT_DIR=../../venv ..
           cmake --build . --target cuvis_pyil --config Release
           cp ./_cuvis_pyil.so ../cuvis_il
           cp ./cuvis_il.py ../cuvis_il
           cd ..
           python -m pip install .
+          cd ..
       - name: Install Cuvis AI
         run: |
+          source venv/bin/activate
           python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           python3.10 -m pip install .
           python3.10 -m pip install -r docs/requirements.txt

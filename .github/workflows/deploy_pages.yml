@@ -11,12 +11,23 @@ permissions:
 jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Make empty dir
-        run: mkdir -p ./docs/_build/html
+      - name: Install Cuvis AI
+        run: |
+          sudo apt install python3.10
+          python3.10 -m ensurepip
+          python3.10 -m pip install .
+          python3.10 -m pip install -r docs/requirements.txt
+          echo "Test Cuvis AI importable
+          python3.10 -c "import cuvis; import cuvis_ai"
+      - name: Build Documentation
+        run:  |
+            mkdir -p docs/_build
+            sphinx-build -M html docs docs/_build
+            touch docs/_build/html/.nojekyll
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

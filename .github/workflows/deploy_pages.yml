@@ -13,7 +13,7 @@ jobs:
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
+      - name: Checkout Cuvis AI
         uses: actions/checkout@v4
       - name: Install Cuvis
         run: |
@@ -25,6 +25,11 @@ jobs:
           sudo apt install ./cuviscommon_3.3.0-1.deb -y
           sudo dpkg -i --force-overwrite ./libcuvis_3.3.0-1.deb
           cd ../../..
+      - name: Checkout Cuvis Pyil
+        uses: actions/checkout@v4
+        with:
+          repository: cubert-hyperspectral/cuvis.pyil
+          path: cuvis.pyil
       - name: Install Cuvis Pyil
         run: |
           sudo add-apt-repository ppa:deadsnakes/ppa

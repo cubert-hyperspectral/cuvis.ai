@@ -20,3 +20,17 @@ This type of modules represent all Modules that do not need labeled data to be t
 but rather are trained on the input data themselves.
 Those modules are often used for tasks like dimensionality reduction (e.g. PCA) or similar things.
 
+Supervised Nodes
+~~~~~~~~~~~~~~~~
+
+Unsupervised Nodes
+~~~~~~~~~~~~~~~~~~
+
+Transformation Nodes
+~~~~~~~~~~~~~~~~~~~~
+
+Distance Nodes
+~~~~~~~~~~~~~~
+
+Decider Nodes
+~~~~~~~~~~~~~

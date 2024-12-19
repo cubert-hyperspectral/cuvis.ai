@@ -3,7 +3,7 @@
 Installation
 ============
 
-pip installation
+pip installation (Comming Soon)
 ~~~~~~~~~~~~~~~~
 
 To install with pip, run:

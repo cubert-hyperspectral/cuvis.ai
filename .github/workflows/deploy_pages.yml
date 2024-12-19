@@ -15,11 +15,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Cuvis AI
+      - name: Install Cuvis
+        run: |
+          wget https://cloud.cubert-gmbh.de/index.php/s/qpxkyWkycrmBK9m/download
+          unzip download
+          cd Cuvis\ 3.3
+          cd Cuvis\ 3.3.0
+          cd Ubuntu\ 20.04-amd64-nocuda/
+          sudo apt install ./cuviscommon_3.3.0-1.deb -y
+          sudo dpkg -i --force-overwrite ./libcuvis_3.3.0-1.deb
+          cd ../../..
+      - name: Install Cuvis Pyil
         run: |
           sudo add-apt-repository ppa:deadsnakes/ppa
-          sudo apt install python3.10 python3.10-venv
+          sudo apt install python3.10 python3.10-venv python3.10-dev
           curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+          git clone git@github.com:cubert-hyperspectral/cuvis.pyil.git
+          cd cuvis.pyil
+          git submodule update --init --recursive
+          mkdir build
+          cd build
+          cmake  -DCMAKE_BUILD_TYPE=Release -DDOXYGEN_BUILD_DOCUMENTATION=OFF -DPython_ROOT_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))") ..
+          cmake --build . --target cuvis_pyil --config Release
+          cp ./_cuvis_pyil.so ../cuvis_il
+          cp ./cuvis_il.py ../cuvis_il
+          cd ..
+          python -m pip install .
+      - name: Install Cuvis AI
+        run: |
           python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           python3.10 -m pip install .
           python3.10 -m pip install -r docs/requirements.txt

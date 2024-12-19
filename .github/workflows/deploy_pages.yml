@@ -20,6 +20,7 @@ jobs:
           sudo add-apt-repository ppa:deadsnakes/ppa
           sudo apt install python3.10 python3.10-venv
           curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+          python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           python3.10 -m pip install .
           python3.10 -m pip install -r docs/requirements.txt
           echo "Test Cuvis AI importable

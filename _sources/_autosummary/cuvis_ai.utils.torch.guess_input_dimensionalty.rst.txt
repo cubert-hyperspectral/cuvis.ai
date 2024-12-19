@@ -1,0 +1,6 @@
+cuvis\_ai.utils.torch.guess\_input\_dimensionalty
+=================================================
+
+.. currentmodule:: cuvis_ai.utils.torch
+
+.. autofunction:: guess_input_dimensionalty

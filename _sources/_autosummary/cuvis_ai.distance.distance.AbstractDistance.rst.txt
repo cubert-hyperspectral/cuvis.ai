@@ -1,0 +1,45 @@
+cuvis\_ai.distance.distance.AbstractDistance
+============================================
+
+.. currentmodule:: cuvis_ai.distance.distance
+
+.. autoclass:: AbstractDistance
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AbstractDistance.__init__
+      ~AbstractDistance.check_input_dim
+      ~AbstractDistance.check_output_dim
+      ~AbstractDistance.fit
+      ~AbstractDistance.forward
+      ~AbstractDistance.get_fit_requested_meta
+      ~AbstractDistance.get_forward_requested_meta
+      ~AbstractDistance.load
+      ~AbstractDistance.score
+      ~AbstractDistance.serialize
+      ~AbstractDistance.set_fit_meta_request
+      ~AbstractDistance.set_forward_meta_request
+      ~AbstractDistance.spectra_to_array
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AbstractDistance.input_dim
+      ~AbstractDistance.output_dim
+   
+   

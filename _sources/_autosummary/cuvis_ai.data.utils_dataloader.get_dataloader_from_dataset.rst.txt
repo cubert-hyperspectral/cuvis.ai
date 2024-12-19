@@ -1,0 +1,6 @@
+cuvis\_ai.data.utils\_dataloader.get\_dataloader\_from\_dataset
+===============================================================
+
+.. currentmodule:: cuvis_ai.data.utils_dataloader
+
+.. autofunction:: get_dataloader_from_dataset

@@ -1,0 +1,43 @@
+cuvis\_ai.supervised.sklearn\_wrapped.MLP
+=========================================
+
+.. currentmodule:: cuvis_ai.supervised.sklearn_wrapped
+
+.. autoclass:: MLP
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MLP.__init__
+      ~MLP.check_input_dim
+      ~MLP.check_output_dim
+      ~MLP.fit
+      ~MLP.forward
+      ~MLP.get_fit_requested_meta
+      ~MLP.get_forward_requested_meta
+      ~MLP.load
+      ~MLP.serialize
+      ~MLP.set_fit_meta_request
+      ~MLP.set_forward_meta_request
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MLP.input_dim
+      ~MLP.output_dim
+   
+   

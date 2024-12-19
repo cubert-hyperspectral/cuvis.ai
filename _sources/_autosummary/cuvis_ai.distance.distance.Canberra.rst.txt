@@ -1,0 +1,45 @@
+cuvis\_ai.distance.distance.Canberra
+====================================
+
+.. currentmodule:: cuvis_ai.distance.distance
+
+.. autoclass:: Canberra
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Canberra.__init__
+      ~Canberra.check_input_dim
+      ~Canberra.check_output_dim
+      ~Canberra.fit
+      ~Canberra.forward
+      ~Canberra.get_fit_requested_meta
+      ~Canberra.get_forward_requested_meta
+      ~Canberra.load
+      ~Canberra.score
+      ~Canberra.serialize
+      ~Canberra.set_fit_meta_request
+      ~Canberra.set_forward_meta_request
+      ~Canberra.spectra_to_array
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Canberra.input_dim
+      ~Canberra.output_dim
+   
+   

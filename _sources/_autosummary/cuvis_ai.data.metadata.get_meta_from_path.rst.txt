@@ -1,0 +1,6 @@
+cuvis\_ai.data.metadata.get\_meta\_from\_path
+=============================================
+
+.. currentmodule:: cuvis_ai.data.metadata
+
+.. autofunction:: get_meta_from_path

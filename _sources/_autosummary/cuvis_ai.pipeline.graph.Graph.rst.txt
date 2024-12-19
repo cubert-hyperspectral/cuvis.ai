@@ -1,0 +1,46 @@
+cuvis\_ai.pipeline.graph.Graph
+==============================
+
+.. currentmodule:: cuvis_ai.pipeline.graph
+
+.. autoclass:: Graph
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Graph.__init__
+      ~Graph.add_base_node
+      ~Graph.add_edge
+      ~Graph.add_node
+      ~Graph.custom_copy
+      ~Graph.delete_node
+      ~Graph.fit
+      ~Graph.forward
+      ~Graph.freeze
+      ~Graph.load
+      ~Graph.load_from_file
+      ~Graph.parameters
+      ~Graph.save_to_file
+      ~Graph.serialize
+      ~Graph.train
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Graph.torch_layers
+   
+   

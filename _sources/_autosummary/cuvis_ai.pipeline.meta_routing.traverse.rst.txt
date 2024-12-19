@@ -1,0 +1,6 @@
+cuvis\_ai.pipeline.meta\_routing.traverse
+=========================================
+
+.. currentmodule:: cuvis_ai.pipeline.meta_routing
+
+.. autofunction:: traverse

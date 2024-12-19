@@ -1,0 +1,67 @@
+cuvis\_ai.tv\_transforms.WavelengthList
+=======================================
+
+.. automodule:: cuvis_ai.tv_transforms.WavelengthList
+  
+   
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:                                          
+   
+      H
+      T
+      data
+      device
+      dtype
+      grad
+      grad_fn
+      imag
+      is_cpu
+      is_cuda
+      is_ipu
+      is_leaf
+      is_maia
+      is_meta
+      is_mkldnn
+      is_mps
+      is_mtia
+      is_nested
+      is_quantized
+      is_sparse
+      is_sparse_csr
+      is_vulkan
+      is_xla
+      is_xpu
+      itemsize
+      layout
+      mH
+      mT
+      name
+      names
+      nbytes
+      ndim
+      output_nr
+      real
+      requires_grad
+      retains_grad
+      shape
+      volatile
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

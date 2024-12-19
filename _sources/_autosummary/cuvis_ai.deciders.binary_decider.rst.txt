@@ -1,0 +1,31 @@
+cuvis\_ai.deciders.binary\_decider
+==================================
+
+.. automodule:: cuvis_ai.deciders.binary_decider
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      BinaryDecider
+   
+   
+
+   
+   
+   
+
+
+

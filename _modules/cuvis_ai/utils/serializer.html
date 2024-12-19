@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuvis_ai.utils.serializer &mdash; Cuvis AI 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Cuvis AI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/concepts.html">Concepts</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/cuvis_ai.html">cuvis_ai</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Cuvis AI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.utils.serializer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuvis_ai.utils.serializer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pk</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">.filesystem</span> <span class="kn">import</span> <span class="n">change_working_dir</span>
+<span class="c1"># TODO make yaml serializer</span>
+
+
+<div class="viewcode-block" id="Serializer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer">[docs]</a>
+<span class="k">class</span> <span class="nc">Serializer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Serializer.__init__">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Serializer.serialize">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.serialize">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Serializer.load">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.Serializer.html#cuvis_ai.utils.serializer.Serializer.load">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CuvisYamlDumper">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.CuvisYamlDumper.html#cuvis_ai.utils.serializer.CuvisYamlDumper">[docs]</a>
+<span class="k">class</span> <span class="nc">CuvisYamlDumper</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="CuvisYamlLoader">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.CuvisYamlLoader.html#cuvis_ai.utils.serializer.CuvisYamlLoader">[docs]</a>
+<span class="k">class</span> <span class="nc">CuvisYamlLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_array_string_representer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_array_string_representer.html#cuvis_ai.utils.serializer.numpy_array_string_representer">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_array_string_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_scalar</span><span class="p">(</span><span class="s1">&#39;!numpy.ndarray.str&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_array_binary_representer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_array_binary_representer.html#cuvis_ai.utils.serializer.numpy_array_binary_representer">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_array_binary_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_scalar</span><span class="p">(</span><span class="s1">&#39;!numpy.ndarray.bin&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_array_file_representer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_array_file_representer.html#cuvis_ai.utils.serializer.numpy_array_file_representer">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_array_file_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="n">tmp_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s1">.npy&#39;</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_scalar</span><span class="p">(</span><span class="s1">&#39;!numpy.ndarray.file&#39;</span><span class="p">,</span> <span class="n">tmp_filename</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_arrray_string_constructor">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_arrray_string_constructor.html#cuvis_ai.utils.serializer.numpy_arrray_string_constructor">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_arrray_string_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]&#39;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_arrray_file_constructor">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_arrray_file_constructor.html#cuvis_ai.utils.serializer.numpy_arrray_file_constructor">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_arrray_file_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_float32_representer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_float32_representer.html#cuvis_ai.utils.serializer.numpy_float32_representer">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_float32_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_scalar</span><span class="p">(</span><span class="s1">&#39;!numpy.float32&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_float32_constructor">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_float32_constructor.html#cuvis_ai.utils.serializer.numpy_float32_constructor">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_float32_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_float64_representer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_float64_representer.html#cuvis_ai.utils.serializer.numpy_float64_representer">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_float64_representer</span><span class="p">(</span><span class="n">dumper</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dumper</span><span class="o">.</span><span class="n">represent_scalar</span><span class="p">(</span><span class="s1">&#39;!numpy.float64&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="numpy_float64_constructor">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.numpy_float64_constructor.html#cuvis_ai.utils.serializer.numpy_float64_constructor">[docs]</a>
+<span class="k">def</span> <span class="nf">numpy_float64_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<span class="n">CuvisYamlDumper</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy_array_file_representer</span><span class="p">)</span>
+<span class="n">CuvisYamlDumper</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">numpy_float32_representer</span><span class="p">)</span>
+<span class="n">CuvisYamlDumper</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">numpy_float64_representer</span><span class="p">)</span>
+<span class="n">CuvisYamlLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
+    <span class="s1">&#39;!numpy.ndarray.str&#39;</span><span class="p">,</span> <span class="n">numpy_arrray_string_constructor</span><span class="p">)</span>
+<span class="n">CuvisYamlLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
+    <span class="s1">&#39;!numpy.ndarray.file&#39;</span><span class="p">,</span> <span class="n">numpy_arrray_file_constructor</span><span class="p">)</span>
+<span class="n">CuvisYamlLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s1">&#39;!numpy.float32&#39;</span><span class="p">,</span> <span class="n">numpy_float32_constructor</span><span class="p">)</span>
+<span class="n">CuvisYamlLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s1">&#39;!numpy.float64&#39;</span><span class="p">,</span> <span class="n">numpy_float64_constructor</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="YamlSerializer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer">[docs]</a>
+<span class="k">class</span> <span class="nc">YamlSerializer</span><span class="p">(</span><span class="n">Serializer</span><span class="p">):</span>
+
+<div class="viewcode-block" id="YamlSerializer.__init__">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;main&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span></div>
+
+
+<div class="viewcode-block" id="YamlSerializer.serialize">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer.serialize">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">change_working_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s1">.yml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">CuvisYamlDumper</span><span class="p">,</span>
+                          <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="YamlSerializer.load">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.YamlSerializer.html#cuvis_ai.utils.serializer.YamlSerializer.load">[docs]</a>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">change_working_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s1">.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">CuvisYamlLoader</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OldSerializer">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer">[docs]</a>
+<span class="k">class</span> <span class="nc">OldSerializer</span><span class="p">:</span>
+
+<div class="viewcode-block" id="OldSerializer.__init__">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial_dir</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">pickle_inner</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">serial_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">serial_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pickle_inner</span> <span class="o">=</span> <span class="n">pickle_inner</span></div>
+
+
+<div class="viewcode-block" id="OldSerializer.serialize_node">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer.serialize_node">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">inner_module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="n">pickle_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">hash</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">inner_module</span><span class="p">])</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickle_inner</span><span class="p">:</span>
+            <span class="n">pk</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">inner_module</span><span class="p">],</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serial_dir</span> <span class="o">/</span>
+                    <span class="n">pickle_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickle_inner</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pickle_name</span>
+
+        <span class="n">additional_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params_list</span><span class="p">}</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">|</span> <span class="n">additional_params</span>
+        <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OldSerializer.load_node">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.serializer.OldSerializer.html#cuvis_ai.utils.serializer.OldSerializer.load_node">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">inner_module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+
+        <span class="n">node</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params_list</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickle_inner</span><span class="p">:</span>
+            <span class="n">pickle_name</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_object&#39;</span><span class="p">]</span>
+            <span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">inner_module</span><span class="p">]</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serial_dir</span> <span class="o">/</span> <span class="n">pickle_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+
+        <span class="n">node</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cubert GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

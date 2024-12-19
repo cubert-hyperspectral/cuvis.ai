@@ -1,0 +1,6 @@
+cuvis\_ai.pipeline.meta\_routing.get\_route
+===========================================
+
+.. currentmodule:: cuvis_ai.pipeline.meta_routing
+
+.. autofunction:: get_route

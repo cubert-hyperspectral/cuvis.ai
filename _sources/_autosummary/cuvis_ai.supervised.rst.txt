@@ -1,0 +1,33 @@
+cuvis\_ai.supervised
+====================
+
+.. automodule:: cuvis_ai.supervised
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst                
+   :recursive:
+
+   sklearn_wrapped
+   skorch_supervised
+

@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuvis_ai.distance.distance.SpectralAngle &mdash; Cuvis AI 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cuvis_ai.node" href="cuvis_ai.node.html" />
+    <link rel="prev" title="cuvis_ai.distance.distance.Minkowski" href="cuvis_ai.distance.distance.Minkowski.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Cuvis AI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/concepts.html">Concepts</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.distance.distance.html">cuvis_ai.distance.distance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.AbstractDistance.html">cuvis_ai.distance.distance.AbstractDistance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.Canberra.html">cuvis_ai.distance.distance.Canberra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.ECS.html">cuvis_ai.distance.distance.ECS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.Euclidean.html">cuvis_ai.distance.distance.Euclidean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.GFC.html">cuvis_ai.distance.distance.GFC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.Manhattan.html">cuvis_ai.distance.distance.Manhattan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.distance.distance.Minkowski.html">cuvis_ai.distance.distance.Minkowski</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.distance.distance.SpectralAngle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.preprocessor.html">cuvis_ai.preprocessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.supervised.html">cuvis_ai.supervised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.test.html">cuvis_ai.test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.transformation.html">cuvis_ai.transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.tv_transforms.html">cuvis_ai.tv_transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.utils.html">cuvis_ai.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cuvis AI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.html">cuvis_ai</a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.distance.distance.html">cuvis_ai.distance.distance</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.distance.distance.SpectralAngle</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/cuvis_ai.distance.distance.SpectralAngle.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cuvis-ai-distance-distance-spectralangle">
+<h1>cuvis_ai.distance.distance.SpectralAngle<a class="headerlink" href="#cuvis-ai-distance-distance-spectralangle" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.distance.distance.</span></span><span class="sig-name descname"><span class="pre">SpectralAngle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/distance/distance.html#SpectralAngle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance" title="cuvis_ai.distance.distance.AbstractDistance"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDistance</span></code></a></p>
+<p>Cosine distance between spectra according to the Spectral Angle Mapper (SAM) formula.</p>
+<p>Nota Bene: Measurements should be normalized as large values skews this calculation towards π/2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AbstractDistance</strong> (<a class="reference internal" href="cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance" title="cuvis_ai.distance.distance.AbstractDistance"><em>AbstractDistance</em></a>) – Defines the node as AbstractDistance node type</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/distance/distance.html#SpectralAngle.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.__init__" title="Link to this definition"></a></dt>
+<dd><p>Construct SAM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ref_spectra</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Reference spectra to compare against, by default []</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.__init__" title="cuvis_ai.distance.distance.SpectralAngle.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([ref_spectra])</p></td>
+<td><p>Construct SAM</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.check_input_dim" title="cuvis_ai.distance.distance.SpectralAngle.check_input_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_input_dim</span></code></a>(X)</p></td>
+<td><p>Check that the parameters for the input data data match user expectations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.check_output_dim" title="cuvis_ai.distance.distance.SpectralAngle.check_output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_dim</span></code></a>(X)</p></td>
+<td><p>Check that the parameters for the output data data match user expectations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.fit" title="cuvis_ai.distance.distance.SpectralAngle.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.forward" title="cuvis_ai.distance.distance.SpectralAngle.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X[, ref_spectra])</p></td>
+<td><p>Pass the data through comparative function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.get_fit_requested_meta" title="cuvis_ai.distance.distance.SpectralAngle.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.get_forward_requested_meta" title="cuvis_ai.distance.distance.SpectralAngle.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.load" title="cuvis_ai.distance.distance.SpectralAngle.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params[, filepath])</p></td>
+<td><p>Load dumped parameters to recreate the distance object</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.score" title="cuvis_ai.distance.distance.SpectralAngle.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(data, ref_spectra)</p></td>
+<td><p>Score new datacubes against reference spectra.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.serialize" title="cuvis_ai.distance.distance.SpectralAngle.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(working_dir)</p></td>
+<td><p>Convert distance node to serializable format</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.set_fit_meta_request" title="cuvis_ai.distance.distance.SpectralAngle.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.set_forward_meta_request" title="cuvis_ai.distance.distance.SpectralAngle.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.spectra_to_array" title="cuvis_ai.distance.distance.SpectralAngle.spectra_to_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectra_to_array</span></code></a>(ref_spectra)</p></td>
+<td><p>Convert list of spectra to a numpy array</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.input_dim" title="cuvis_ai.distance.distance.SpectralAngle.input_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_dim</span></code></a></p></td>
+<td><p>Get required input dimension</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.distance.distance.SpectralAngle.output_dim" title="cuvis_ai.distance.distance.SpectralAngle.output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_dim</span></code></a></p></td>
+<td><p>Get required output dimension</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.check_input_dim">
+<span class="sig-name descname"><span class="pre">check_input_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.check_input_dim" title="Link to this definition"></a></dt>
+<dd><p>Check that the parameters for the input data data match user
+expectations</p>
+<p>Parameters:
+X (array-like): Input data.</p>
+<p>Returns:
+(Bool) Valid data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.check_output_dim">
+<span class="sig-name descname"><span class="pre">check_output_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.check_output_dim" title="Link to this definition"></a></dt>
+<dd><p>Check that the parameters for the output data data match user
+expectations</p>
+<p>Parameters:
+X (array-like): Input data.</p>
+<p>Returns:
+(Bool) Valid data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.forward" title="Link to this definition"></a></dt>
+<dd><p>Pass the data through comparative function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Input data.</p></li>
+<li><p><strong>ref_spectra</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – List of spectra to compare against</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Distance maps for each of the reference spectra.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – Mismatch in input data and reference spectra provided on function call.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – Mismatch in input data and reference spectra provided on node initialization.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – No reference spectra provided in init or on forward function pass.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.input_dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></em><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.input_dim" title="Link to this definition"></a></dt>
+<dd><p>Get required input dimension</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List defining which input dimensions should be checked in graph.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.load" title="Link to this definition"></a></dt>
+<dd><p>Load dumped parameters to recreate the distance object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing node values</p></li>
+<li><p><strong>filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Directory containing node metadata, by default None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.output_dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.output_dim" title="Link to this definition"></a></dt>
+<dd><p>Get required output dimension</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List defining which input dimensions should be checked in graph.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.score">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/cuvis_ai/distance/distance.html#SpectralAngle.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.score" title="Link to this definition"></a></dt>
+<dd><p>Score new datacubes against reference spectra.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data.</p></li>
+<li><p><strong>ref_spectra</strong> (<em>np.ndarray</em>) – Reference spectra to compare against.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Distance scores.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.serialize" title="Link to this definition"></a></dt>
+<dd><p>Convert distance node to serializable format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>working_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Directory where node metadata should be saved.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>YAML parameterization of node.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.distance.distance.SpectralAngle.spectra_to_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spectra_to_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></span><a class="headerlink" href="#cuvis_ai.distance.distance.SpectralAngle.spectra_to_array" title="Link to this definition"></a></dt>
+<dd><p>Convert list of spectra to a numpy array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ref_spectra</strong> (<em>np.ndarray</em><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Object of reference spectra</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectra stored in singular, indexable, sequential array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cuvis_ai.distance.distance.Minkowski.html" class="btn btn-neutral float-left" title="cuvis_ai.distance.distance.Minkowski" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.node.html" class="btn btn-neutral float-right" title="cuvis_ai.node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cubert GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

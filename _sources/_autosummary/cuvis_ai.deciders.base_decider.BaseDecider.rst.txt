@@ -1,0 +1,43 @@
+cuvis\_ai.deciders.base\_decider.BaseDecider
+============================================
+
+.. currentmodule:: cuvis_ai.deciders.base_decider
+
+.. autoclass:: BaseDecider
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseDecider.__init__
+      ~BaseDecider.check_input_dim
+      ~BaseDecider.check_output_dim
+      ~BaseDecider.fit
+      ~BaseDecider.forward
+      ~BaseDecider.get_fit_requested_meta
+      ~BaseDecider.get_forward_requested_meta
+      ~BaseDecider.load
+      ~BaseDecider.serialize
+      ~BaseDecider.set_fit_meta_request
+      ~BaseDecider.set_forward_meta_request
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseDecider.input_dim
+      ~BaseDecider.output_dim
+   
+   

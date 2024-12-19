@@ -1,0 +1,40 @@
+cuvis\_ai.data.metadata
+=======================
+
+.. automodule:: cuvis_ai.data.metadata
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                          
+   
+      get_meta_from_mesu
+      get_meta_from_path
+      get_meta_from_session
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                          
+      :template: custom-class-template.rst               
+   
+      Metadata
+   
+   
+
+   
+   
+   
+
+
+

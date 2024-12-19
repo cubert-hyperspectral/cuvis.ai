@@ -1,0 +1,32 @@
+cuvis\_ai.unsupervised
+======================
+
+.. automodule:: cuvis_ai.unsupervised
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst                
+   :recursive:
+
+   sklearn_wrapped
+

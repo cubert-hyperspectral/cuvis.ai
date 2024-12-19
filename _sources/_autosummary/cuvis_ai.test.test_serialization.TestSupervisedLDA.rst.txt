@@ -1,0 +1,101 @@
+cuvis\_ai.test.test\_serialization.TestSupervisedLDA
+====================================================
+
+.. currentmodule:: cuvis_ai.test.test_serialization
+
+.. autoclass:: TestSupervisedLDA
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TestSupervisedLDA.__init__
+      ~TestSupervisedLDA.addClassCleanup
+      ~TestSupervisedLDA.addCleanup
+      ~TestSupervisedLDA.addTypeEqualityFunc
+      ~TestSupervisedLDA.assertAlmostEqual
+      ~TestSupervisedLDA.assertAlmostEquals
+      ~TestSupervisedLDA.assertCountEqual
+      ~TestSupervisedLDA.assertDictContainsSubset
+      ~TestSupervisedLDA.assertDictEqual
+      ~TestSupervisedLDA.assertEqual
+      ~TestSupervisedLDA.assertEquals
+      ~TestSupervisedLDA.assertFalse
+      ~TestSupervisedLDA.assertGreater
+      ~TestSupervisedLDA.assertGreaterEqual
+      ~TestSupervisedLDA.assertIn
+      ~TestSupervisedLDA.assertIs
+      ~TestSupervisedLDA.assertIsInstance
+      ~TestSupervisedLDA.assertIsNone
+      ~TestSupervisedLDA.assertIsNot
+      ~TestSupervisedLDA.assertIsNotNone
+      ~TestSupervisedLDA.assertLess
+      ~TestSupervisedLDA.assertLessEqual
+      ~TestSupervisedLDA.assertListEqual
+      ~TestSupervisedLDA.assertLogs
+      ~TestSupervisedLDA.assertMultiLineEqual
+      ~TestSupervisedLDA.assertNoLogs
+      ~TestSupervisedLDA.assertNotAlmostEqual
+      ~TestSupervisedLDA.assertNotAlmostEquals
+      ~TestSupervisedLDA.assertNotEqual
+      ~TestSupervisedLDA.assertNotEquals
+      ~TestSupervisedLDA.assertNotIn
+      ~TestSupervisedLDA.assertNotIsInstance
+      ~TestSupervisedLDA.assertNotRegex
+      ~TestSupervisedLDA.assertNotRegexpMatches
+      ~TestSupervisedLDA.assertRaises
+      ~TestSupervisedLDA.assertRaisesRegex
+      ~TestSupervisedLDA.assertRaisesRegexp
+      ~TestSupervisedLDA.assertRegex
+      ~TestSupervisedLDA.assertRegexpMatches
+      ~TestSupervisedLDA.assertSequenceEqual
+      ~TestSupervisedLDA.assertSetEqual
+      ~TestSupervisedLDA.assertTrue
+      ~TestSupervisedLDA.assertTupleEqual
+      ~TestSupervisedLDA.assertWarns
+      ~TestSupervisedLDA.assertWarnsRegex
+      ~TestSupervisedLDA.assert_
+      ~TestSupervisedLDA.countTestCases
+      ~TestSupervisedLDA.debug
+      ~TestSupervisedLDA.defaultTestResult
+      ~TestSupervisedLDA.doClassCleanups
+      ~TestSupervisedLDA.doCleanups
+      ~TestSupervisedLDA.fail
+      ~TestSupervisedLDA.failIf
+      ~TestSupervisedLDA.failIfAlmostEqual
+      ~TestSupervisedLDA.failIfEqual
+      ~TestSupervisedLDA.failUnless
+      ~TestSupervisedLDA.failUnlessAlmostEqual
+      ~TestSupervisedLDA.failUnlessEqual
+      ~TestSupervisedLDA.failUnlessRaises
+      ~TestSupervisedLDA.id
+      ~TestSupervisedLDA.run
+      ~TestSupervisedLDA.setUp
+      ~TestSupervisedLDA.setUpClass
+      ~TestSupervisedLDA.shortDescription
+      ~TestSupervisedLDA.skipTest
+      ~TestSupervisedLDA.subTest
+      ~TestSupervisedLDA.tearDown
+      ~TestSupervisedLDA.tearDownClass
+      ~TestSupervisedLDA.test_serialization
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TestSupervisedLDA.longMessage
+      ~TestSupervisedLDA.maxDiff
+   
+   

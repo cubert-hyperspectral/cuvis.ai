@@ -1,0 +1,43 @@
+cuvis\_ai.deciders.combining\_decider.CombiningDecider
+======================================================
+
+.. currentmodule:: cuvis_ai.deciders.combining_decider
+
+.. autoclass:: CombiningDecider
+   :members:
+   :undoc-members:
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CombiningDecider.__init__
+      ~CombiningDecider.check_input_dim
+      ~CombiningDecider.check_output_dim
+      ~CombiningDecider.fit
+      ~CombiningDecider.forward
+      ~CombiningDecider.get_fit_requested_meta
+      ~CombiningDecider.get_forward_requested_meta
+      ~CombiningDecider.load
+      ~CombiningDecider.serialize
+      ~CombiningDecider.set_fit_meta_request
+      ~CombiningDecider.set_forward_meta_request
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CombiningDecider.input_dim
+      ~CombiningDecider.output_dim
+   
+   

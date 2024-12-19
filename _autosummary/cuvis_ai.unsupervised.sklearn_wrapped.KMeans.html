@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuvis_ai.unsupervised.sklearn_wrapped.KMeans &mdash; Cuvis AI 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift" href="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.html" />
+    <link rel="prev" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM" href="cuvis_ai.unsupervised.sklearn_wrapped.GMM.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Cuvis AI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/concepts.html">Concepts</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="cuvis_ai.html">cuvis_ai</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.data.html">cuvis_ai.data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.deciders.html">cuvis_ai.deciders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.distance.html">cuvis_ai.distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.node.html">cuvis_ai.node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.preprocessor.html">cuvis_ai.preprocessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.supervised.html">cuvis_ai.supervised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.test.html">cuvis_ai.test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.transformation.html">cuvis_ai.transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.tv_transforms.html">cuvis_ai.tv_transforms</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.unsupervised.sklearn_wrapped.html">cuvis_ai.unsupervised.sklearn_wrapped</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.unsupervised.sklearn_wrapped.GMM.html">cuvis_ai.unsupervised.sklearn_wrapped.GMM</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.unsupervised.sklearn_wrapped.KMeans</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.html">cuvis_ai.unsupervised.sklearn_wrapped.MeanShift</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuvis_ai.utils.html">cuvis_ai.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cuvis AI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.html">cuvis_ai</a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a></li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.unsupervised.sklearn_wrapped.html">cuvis_ai.unsupervised.sklearn_wrapped</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.unsupervised.sklearn_wrapped.KMeans</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/cuvis_ai.unsupervised.sklearn_wrapped.KMeans.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cuvis-ai-unsupervised-sklearn-wrapped-kmeans">
+<h1>cuvis_ai.unsupervised.sklearn_wrapped.KMeans<a class="headerlink" href="#cuvis-ai-unsupervised-sklearn-wrapped-kmeans" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuvis_ai.unsupervised.sklearn_wrapped.</span></span><span class="sig-name descname"><span class="pre">KMeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k-means++'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lloyd'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/unsupervised/sklearn_wrapped.html#KMeans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="cuvis_ai.node.node.Node.html#cuvis_ai.node.node.Node" title="cuvis_ai.node.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>, <a class="reference internal" href="cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised" title="cuvis_ai.node.base.BaseUnsupervised"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseUnsupervised</span></code></a>, <a class="reference internal" href="cuvis_ai.node.sklearn.SklearnWrapped.html#cuvis_ai.node.sklearn.SklearnWrapped" title="cuvis_ai.node.sklearn.SklearnWrapped"><code class="xref py py-class docutils literal notranslate"><span class="pre">SklearnWrapped</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_clusters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k-means++'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lloyd'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sklearn/cluster/_kmeans.html#KMeans.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.__init__" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([n_clusters, init, n_init, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_input_dim" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_input_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_input_dim</span></code></a>(X)</p></td>
+<td><p>Check that the parameters for the input data data match user expectations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_output_dim" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_dim</span></code></a>(X)</p></td>
+<td><p>Check that the parameters for the output data data match user expectations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.fit" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, warm_start])</p></td>
+<td><p>_summary_</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.forward" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(X)</p></td>
+<td><p>Transform the input data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_fit_requested_meta" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_fit_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fit_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_forward_requested_meta" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_forward_requested_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_forward_requested_meta</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.load" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(params, data_dir)</p></td>
+<td><p>Load from serialized format into an object</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.serialize" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(data_dir)</p></td>
+<td><p>Convert the class into a serialized representation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_fit_meta_request" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_fit_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fit_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_forward_meta_request" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_forward_meta_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_forward_meta_request</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.input_dim" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.input_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_dim</span></code></a></p></td>
+<td><p>Returns the needed shape for the input data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.output_dim" title="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.output_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_dim</span></code></a></p></td>
+<td><p>Returns the shape for the output data.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_input_dim">
+<span class="sig-name descname"><span class="pre">check_input_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_input_dim" title="Link to this definition"></a></dt>
+<dd><p>Check that the parameters for the input data data match user
+expectations</p>
+<p>Parameters:
+X (array-like): Input data.</p>
+<p>Returns:
+(Bool) Valid data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_output_dim">
+<span class="sig-name descname"><span class="pre">check_output_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.check_output_dim" title="Link to this definition"></a></dt>
+<dd><p>Check that the parameters for the output data data match user
+expectations</p>
+<p>Parameters:
+X (array-like): Input data.</p>
+<p>Returns:
+(Bool) Valid data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.fit" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>Any</em>) – Generic method to initialize a classifier with data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.forward" title="Link to this definition"></a></dt>
+<dd><p>Transform the input data.</p>
+<p>Parameters:
+X (array-like): Input data.</p>
+<p>Returns:
+Transformed data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_fit_requested_meta">
+<span class="sig-name descname"><span class="pre">get_fit_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_fit_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_forward_requested_meta">
+<span class="sig-name descname"><span class="pre">get_forward_requested_meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.get_forward_requested_meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.input_dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dim</span></span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.input_dim" title="Link to this definition"></a></dt>
+<dd><p>Returns the needed shape for the input data.
+If a dimension is not important, it will return -1 in the specific position.</p>
+<p>Returns:
+(tuple) needed shape for data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.load" title="Link to this definition"></a></dt>
+<dd><p>Load from serialized format into an object</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.output_dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dim</span></span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.output_dim" title="Link to this definition"></a></dt>
+<dd><p>Returns the shape for the output data.
+If a dimension is dependent on the input, it will return -1 in the specific position.</p>
+<p>Returns:
+(tuple) expected output shape for data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.serialize" title="Link to this definition"></a></dt>
+<dd><p>Convert the class into a serialized representation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_fit_meta_request">
+<span class="sig-name descname"><span class="pre">set_fit_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_fit_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_forward_meta_request">
+<span class="sig-name descname"><span class="pre">set_forward_meta_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.set_forward_meta_request" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cuvis_ai.unsupervised.sklearn_wrapped.GMM.html" class="btn btn-neutral float-left" title="cuvis_ai.unsupervised.sklearn_wrapped.GMM" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.html" class="btn btn-neutral float-right" title="cuvis_ai.unsupervised.sklearn_wrapped.MeanShift" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cubert GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

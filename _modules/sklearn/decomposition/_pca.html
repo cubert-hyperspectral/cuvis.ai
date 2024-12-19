@@ -1,0 +1,963 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sklearn.decomposition._pca &mdash; Cuvis AI 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Cuvis AI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/concepts.html">Concepts</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/cuvis_ai.html">cuvis_ai</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Cuvis AI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sklearn.decomposition._pca</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sklearn.decomposition._pca</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Principal Component Analysis.&quot;&quot;&quot;</span>
+
+<span class="c1"># Authors: The scikit-learn developers</span>
+<span class="c1"># SPDX-License-Identifier: BSD-3-Clause</span>
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">issparse</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">svds</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">gammaln</span>
+
+<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">_fit_context</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_random_state</span>
+<span class="kn">from</span> <span class="nn">..utils._arpack</span> <span class="kn">import</span> <span class="n">_init_arpack_v0</span>
+<span class="kn">from</span> <span class="nn">..utils._array_api</span> <span class="kn">import</span> <span class="n">_convert_to_numpy</span><span class="p">,</span> <span class="n">get_namespace</span>
+<span class="kn">from</span> <span class="nn">..utils._param_validation</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">RealNotInt</span><span class="p">,</span> <span class="n">StrOptions</span>
+<span class="kn">from</span> <span class="nn">..utils.extmath</span> <span class="kn">import</span> <span class="n">fast_logdet</span><span class="p">,</span> <span class="n">randomized_svd</span><span class="p">,</span> <span class="n">stable_cumsum</span><span class="p">,</span> <span class="n">svd_flip</span>
+<span class="kn">from</span> <span class="nn">..utils.sparsefuncs</span> <span class="kn">import</span> <span class="n">_implicit_column_offset</span><span class="p">,</span> <span class="n">mean_variance_axis</span>
+<span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="kn">import</span> <span class="n">check_is_fitted</span><span class="p">,</span> <span class="n">validate_data</span>
+<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">_BasePCA</span>
+
+
+<span class="k">def</span> <span class="nf">_assess_dimension</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the log-likelihood of a rank ``rank`` dataset.</span>
+
+<span class="sd">    The dataset is assumed to be embedded in gaussian noise of shape(n,</span>
+<span class="sd">    dimf) having spectrum ``spectrum``. This implements the method of</span>
+<span class="sd">    T. P. Minka.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spectrum : ndarray of shape (n_features,)</span>
+<span class="sd">        Data spectrum.</span>
+<span class="sd">    rank : int</span>
+<span class="sd">        Tested rank value. It should be strictly lower than n_features,</span>
+<span class="sd">        otherwise the method isn&#39;t specified (division by zero in equation</span>
+<span class="sd">        (31) from the paper).</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        Number of samples.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ll : float</span>
+<span class="sd">        The log-likelihood.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    This implements the method of `Thomas P. Minka:</span>
+<span class="sd">    Automatic Choice of Dimensionality for PCA. NIPS 2000: 598-604</span>
+<span class="sd">    &lt;https://proceedings.neurips.cc/paper/2000/file/7503cfacd12053d309b6bed5c89de212-Paper.pdf&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_namespace</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+
+    <span class="n">n_features</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">rank</span> <span class="o">&lt;</span> <span class="n">n_features</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the tested rank should be in [1, n_features - 1]&quot;</span><span class="p">)</span>
+
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-15</span>
+
+    <span class="k">if</span> <span class="n">spectrum</span><span class="p">[</span><span class="n">rank</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
+        <span class="c1"># When the tested rank is associated with a small eigenvalue, there&#39;s</span>
+        <span class="c1"># no point in computing the log-likelihood: it&#39;s going to be very</span>
+        <span class="c1"># small and won&#39;t be the max anyway. Also, it can lead to numerical</span>
+        <span class="c1"># issues below when computing pa, in particular in log((spectrum[i] -</span>
+        <span class="c1"># spectrum[j]) because this will take the log of something very small.</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">xp</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="n">pu</span> <span class="o">=</span> <span class="o">-</span><span class="n">rank</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rank</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">pu</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">gammaln</span><span class="p">((</span><span class="n">n_features</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_features</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="p">)</span>
+
+    <span class="n">pl</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">spectrum</span><span class="p">[:</span><span class="n">rank</span><span class="p">]))</span>
+    <span class="n">pl</span> <span class="o">=</span> <span class="o">-</span><span class="n">pl</span> <span class="o">*</span> <span class="n">n_samples</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">spectrum</span><span class="p">[</span><span class="n">rank</span><span class="p">:])</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_features</span> <span class="o">-</span> <span class="n">rank</span><span class="p">))</span>
+    <span class="n">pv</span> <span class="o">=</span> <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_samples</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_features</span> <span class="o">-</span> <span class="n">rank</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">n_features</span> <span class="o">*</span> <span class="n">rank</span> <span class="o">-</span> <span class="n">rank</span> <span class="o">*</span> <span class="p">(</span><span class="n">rank</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">xp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">rank</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">pa</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">spectrum_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">spectrum_</span><span class="p">[</span><span class="n">rank</span><span class="p">:</span><span class="n">n_features</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rank</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">pa</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">spectrum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">spectrum</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">spectrum_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">spectrum_</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="n">ll</span> <span class="o">=</span> <span class="n">pu</span> <span class="o">+</span> <span class="n">pl</span> <span class="o">+</span> <span class="n">pv</span> <span class="o">+</span> <span class="n">pp</span> <span class="o">-</span> <span class="n">pa</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">rank</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="k">return</span> <span class="n">ll</span>
+
+
+<span class="k">def</span> <span class="nf">_infer_dimension</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Infers the dimension of a dataset with a given spectrum.</span>
+
+<span class="sd">    The returned value will be in [1, n_features - 1].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_namespace</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+
+    <span class="n">ll</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">spectrum</span><span class="p">)</span>
+    <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">xp</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># we don&#39;t want to return n_components = 0</span>
+    <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">ll</span><span class="p">[</span><span class="n">rank</span><span class="p">]</span> <span class="o">=</span> <span class="n">_assess_dimension</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xp</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PCA</span><span class="p">(</span><span class="n">_BasePCA</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Principal component analysis (PCA).</span>
+
+<span class="sd">    Linear dimensionality reduction using Singular Value Decomposition of the</span>
+<span class="sd">    data to project it to a lower dimensional space. The input data is centered</span>
+<span class="sd">    but not scaled for each feature before applying the SVD.</span>
+
+<span class="sd">    It uses the LAPACK implementation of the full SVD or a randomized truncated</span>
+<span class="sd">    SVD by the method of Halko et al. 2009, depending on the shape of the input</span>
+<span class="sd">    data and the number of components to extract.</span>
+
+<span class="sd">    With sparse inputs, the ARPACK implementation of the truncated SVD can be</span>
+<span class="sd">    used (i.e. through :func:`scipy.sparse.linalg.svds`). Alternatively, one</span>
+<span class="sd">    may consider :class:`TruncatedSVD` where the data are not centered.</span>
+
+<span class="sd">    Notice that this class only supports sparse inputs for some solvers such as</span>
+<span class="sd">    &quot;arpack&quot; and &quot;covariance_eigh&quot;. See :class:`TruncatedSVD` for an</span>
+<span class="sd">    alternative with sparse data.</span>
+
+<span class="sd">    For a usage example, see</span>
+<span class="sd">    :ref:`sphx_glr_auto_examples_decomposition_plot_pca_iris.py`</span>
+
+<span class="sd">    Read more in the :ref:`User Guide &lt;PCA&gt;`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_components : int, float or &#39;mle&#39;, default=None</span>
+<span class="sd">        Number of components to keep.</span>
+<span class="sd">        if n_components is not set all components are kept::</span>
+
+<span class="sd">            n_components == min(n_samples, n_features)</span>
+
+<span class="sd">        If ``n_components == &#39;mle&#39;`` and ``svd_solver == &#39;full&#39;``, Minka&#39;s</span>
+<span class="sd">        MLE is used to guess the dimension. Use of ``n_components == &#39;mle&#39;``</span>
+<span class="sd">        will interpret ``svd_solver == &#39;auto&#39;`` as ``svd_solver == &#39;full&#39;``.</span>
+
+<span class="sd">        If ``0 &lt; n_components &lt; 1`` and ``svd_solver == &#39;full&#39;``, select the</span>
+<span class="sd">        number of components such that the amount of variance that needs to be</span>
+<span class="sd">        explained is greater than the percentage specified by n_components.</span>
+
+<span class="sd">        If ``svd_solver == &#39;arpack&#39;``, the number of components must be</span>
+<span class="sd">        strictly less than the minimum of n_features and n_samples.</span>
+
+<span class="sd">        Hence, the None case results in::</span>
+
+<span class="sd">            n_components == min(n_samples, n_features) - 1</span>
+
+<span class="sd">    copy : bool, default=True</span>
+<span class="sd">        If False, data passed to fit are overwritten and running</span>
+<span class="sd">        fit(X).transform(X) will not yield the expected results,</span>
+<span class="sd">        use fit_transform(X) instead.</span>
+
+<span class="sd">    whiten : bool, default=False</span>
+<span class="sd">        When True (False by default) the `components_` vectors are multiplied</span>
+<span class="sd">        by the square root of n_samples and then divided by the singular values</span>
+<span class="sd">        to ensure uncorrelated outputs with unit component-wise variances.</span>
+
+<span class="sd">        Whitening will remove some information from the transformed signal</span>
+<span class="sd">        (the relative variance scales of the components) but can sometime</span>
+<span class="sd">        improve the predictive accuracy of the downstream estimators by</span>
+<span class="sd">        making their data respect some hard-wired assumptions.</span>
+
+<span class="sd">    svd_solver : {&#39;auto&#39;, &#39;full&#39;, &#39;covariance_eigh&#39;, &#39;arpack&#39;, &#39;randomized&#39;},\</span>
+<span class="sd">            default=&#39;auto&#39;</span>
+<span class="sd">        &quot;auto&quot; :</span>
+<span class="sd">            The solver is selected by a default &#39;auto&#39; policy is based on `X.shape` and</span>
+<span class="sd">            `n_components`: if the input data has fewer than 1000 features and</span>
+<span class="sd">            more than 10 times as many samples, then the &quot;covariance_eigh&quot;</span>
+<span class="sd">            solver is used. Otherwise, if the input data is larger than 500x500</span>
+<span class="sd">            and the number of components to extract is lower than 80% of the</span>
+<span class="sd">            smallest dimension of the data, then the more efficient</span>
+<span class="sd">            &quot;randomized&quot; method is selected. Otherwise the exact &quot;full&quot; SVD is</span>
+<span class="sd">            computed and optionally truncated afterwards.</span>
+<span class="sd">        &quot;full&quot; :</span>
+<span class="sd">            Run exact full SVD calling the standard LAPACK solver via</span>
+<span class="sd">            `scipy.linalg.svd` and select the components by postprocessing</span>
+<span class="sd">        &quot;covariance_eigh&quot; :</span>
+<span class="sd">            Precompute the covariance matrix (on centered data), run a</span>
+<span class="sd">            classical eigenvalue decomposition on the covariance matrix</span>
+<span class="sd">            typically using LAPACK and select the components by postprocessing.</span>
+<span class="sd">            This solver is very efficient for n_samples &gt;&gt; n_features and small</span>
+<span class="sd">            n_features. It is, however, not tractable otherwise for large</span>
+<span class="sd">            n_features (large memory footprint required to materialize the</span>
+<span class="sd">            covariance matrix). Also note that compared to the &quot;full&quot; solver,</span>
+<span class="sd">            this solver effectively doubles the condition number and is</span>
+<span class="sd">            therefore less numerical stable (e.g. on input data with a large</span>
+<span class="sd">            range of singular values).</span>
+<span class="sd">        &quot;arpack&quot; :</span>
+<span class="sd">            Run SVD truncated to `n_components` calling ARPACK solver via</span>
+<span class="sd">            `scipy.sparse.linalg.svds`. It requires strictly</span>
+<span class="sd">            `0 &lt; n_components &lt; min(X.shape)`</span>
+<span class="sd">        &quot;randomized&quot; :</span>
+<span class="sd">            Run randomized SVD by the method of Halko et al.</span>
+
+<span class="sd">        .. versionadded:: 0.18.0</span>
+
+<span class="sd">        .. versionchanged:: 1.5</span>
+<span class="sd">            Added the &#39;covariance_eigh&#39; solver.</span>
+
+<span class="sd">    tol : float, default=0.0</span>
+<span class="sd">        Tolerance for singular values computed by svd_solver == &#39;arpack&#39;.</span>
+<span class="sd">        Must be of range [0.0, infinity).</span>
+
+<span class="sd">        .. versionadded:: 0.18.0</span>
+
+<span class="sd">    iterated_power : int or &#39;auto&#39;, default=&#39;auto&#39;</span>
+<span class="sd">        Number of iterations for the power method computed by</span>
+<span class="sd">        svd_solver == &#39;randomized&#39;.</span>
+<span class="sd">        Must be of range [0, infinity).</span>
+
+<span class="sd">        .. versionadded:: 0.18.0</span>
+
+<span class="sd">    n_oversamples : int, default=10</span>
+<span class="sd">        This parameter is only relevant when `svd_solver=&quot;randomized&quot;`.</span>
+<span class="sd">        It corresponds to the additional number of random vectors to sample the</span>
+<span class="sd">        range of `X` so as to ensure proper conditioning. See</span>
+<span class="sd">        :func:`~sklearn.utils.extmath.randomized_svd` for more details.</span>
+
+<span class="sd">        .. versionadded:: 1.1</span>
+
+<span class="sd">    power_iteration_normalizer : {&#39;auto&#39;, &#39;QR&#39;, &#39;LU&#39;, &#39;none&#39;}, default=&#39;auto&#39;</span>
+<span class="sd">        Power iteration normalizer for randomized SVD solver.</span>
+<span class="sd">        Not used by ARPACK. See :func:`~sklearn.utils.extmath.randomized_svd`</span>
+<span class="sd">        for more details.</span>
+
+<span class="sd">        .. versionadded:: 1.1</span>
+
+<span class="sd">    random_state : int, RandomState instance or None, default=None</span>
+<span class="sd">        Used when the &#39;arpack&#39; or &#39;randomized&#39; solvers are used. Pass an int</span>
+<span class="sd">        for reproducible results across multiple function calls.</span>
+<span class="sd">        See :term:`Glossary &lt;random_state&gt;`.</span>
+
+<span class="sd">        .. versionadded:: 0.18.0</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    components_ : ndarray of shape (n_components, n_features)</span>
+<span class="sd">        Principal axes in feature space, representing the directions of</span>
+<span class="sd">        maximum variance in the data. Equivalently, the right singular</span>
+<span class="sd">        vectors of the centered input data, parallel to its eigenvectors.</span>
+<span class="sd">        The components are sorted by decreasing ``explained_variance_``.</span>
+
+<span class="sd">    explained_variance_ : ndarray of shape (n_components,)</span>
+<span class="sd">        The amount of variance explained by each of the selected components.</span>
+<span class="sd">        The variance estimation uses `n_samples - 1` degrees of freedom.</span>
+
+<span class="sd">        Equal to n_components largest eigenvalues</span>
+<span class="sd">        of the covariance matrix of X.</span>
+
+<span class="sd">        .. versionadded:: 0.18</span>
+
+<span class="sd">    explained_variance_ratio_ : ndarray of shape (n_components,)</span>
+<span class="sd">        Percentage of variance explained by each of the selected components.</span>
+
+<span class="sd">        If ``n_components`` is not set then all components are stored and the</span>
+<span class="sd">        sum of the ratios is equal to 1.0.</span>
+
+<span class="sd">    singular_values_ : ndarray of shape (n_components,)</span>
+<span class="sd">        The singular values corresponding to each of the selected components.</span>
+<span class="sd">        The singular values are equal to the 2-norms of the ``n_components``</span>
+<span class="sd">        variables in the lower-dimensional space.</span>
+
+<span class="sd">        .. versionadded:: 0.19</span>
+
+<span class="sd">    mean_ : ndarray of shape (n_features,)</span>
+<span class="sd">        Per-feature empirical mean, estimated from the training set.</span>
+
+<span class="sd">        Equal to `X.mean(axis=0)`.</span>
+
+<span class="sd">    n_components_ : int</span>
+<span class="sd">        The estimated number of components. When n_components is set</span>
+<span class="sd">        to &#39;mle&#39; or a number between 0 and 1 (with svd_solver == &#39;full&#39;) this</span>
+<span class="sd">        number is estimated from input data. Otherwise it equals the parameter</span>
+<span class="sd">        n_components, or the lesser value of n_features and n_samples</span>
+<span class="sd">        if n_components is None.</span>
+
+<span class="sd">    n_samples_ : int</span>
+<span class="sd">        Number of samples in the training data.</span>
+
+<span class="sd">    noise_variance_ : float</span>
+<span class="sd">        The estimated noise covariance following the Probabilistic PCA model</span>
+<span class="sd">        from Tipping and Bishop 1999. See &quot;Pattern Recognition and</span>
+<span class="sd">        Machine Learning&quot; by C. Bishop, 12.2.1 p. 574 or</span>
+<span class="sd">        http://www.miketipping.com/papers/met-mppca.pdf. It is required to</span>
+<span class="sd">        compute the estimated data covariance and score samples.</span>
+
+<span class="sd">        Equal to the average of (min(n_features, n_samples) - n_components)</span>
+<span class="sd">        smallest eigenvalues of the covariance matrix of X.</span>
+
+<span class="sd">    n_features_in_ : int</span>
+<span class="sd">        Number of features seen during :term:`fit`.</span>
+
+<span class="sd">        .. versionadded:: 0.24</span>
+
+<span class="sd">    feature_names_in_ : ndarray of shape (`n_features_in_`,)</span>
+<span class="sd">        Names of features seen during :term:`fit`. Defined only when `X`</span>
+<span class="sd">        has feature names that are all strings.</span>
+
+<span class="sd">        .. versionadded:: 1.0</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KernelPCA : Kernel Principal Component Analysis.</span>
+<span class="sd">    SparsePCA : Sparse Principal Component Analysis.</span>
+<span class="sd">    TruncatedSVD : Dimensionality reduction using truncated SVD.</span>
+<span class="sd">    IncrementalPCA : Incremental Principal Component Analysis.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    For n_components == &#39;mle&#39;, this class uses the method from:</span>
+<span class="sd">    `Minka, T. P.. &quot;Automatic choice of dimensionality for PCA&quot;.</span>
+<span class="sd">    In NIPS, pp. 598-604 &lt;https://tminka.github.io/papers/pca/minka-pca.pdf&gt;`_</span>
+
+<span class="sd">    Implements the probabilistic PCA model from:</span>
+<span class="sd">    `Tipping, M. E., and Bishop, C. M. (1999). &quot;Probabilistic principal</span>
+<span class="sd">    component analysis&quot;. Journal of the Royal Statistical Society:</span>
+<span class="sd">    Series B (Statistical Methodology), 61(3), 611-622.</span>
+<span class="sd">    &lt;http://www.miketipping.com/papers/met-mppca.pdf&gt;`_</span>
+<span class="sd">    via the score and score_samples methods.</span>
+
+<span class="sd">    For svd_solver == &#39;arpack&#39;, refer to `scipy.sparse.linalg.svds`.</span>
+
+<span class="sd">    For svd_solver == &#39;randomized&#39;, see:</span>
+<span class="sd">    :doi:`Halko, N., Martinsson, P. G., and Tropp, J. A. (2011).</span>
+<span class="sd">    &quot;Finding structure with randomness: Probabilistic algorithms for</span>
+<span class="sd">    constructing approximate matrix decompositions&quot;.</span>
+<span class="sd">    SIAM review, 53(2), 217-288.</span>
+<span class="sd">    &lt;10.1137/090771806&gt;`</span>
+<span class="sd">    and also</span>
+<span class="sd">    :doi:`Martinsson, P. G., Rokhlin, V., and Tygert, M. (2011).</span>
+<span class="sd">    &quot;A randomized algorithm for the decomposition of matrices&quot;.</span>
+<span class="sd">    Applied and Computational Harmonic Analysis, 30(1), 47-68.</span>
+<span class="sd">    &lt;10.1016/j.acha.2010.02.003&gt;`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.decomposition import PCA</span>
+<span class="sd">    &gt;&gt;&gt; X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])</span>
+<span class="sd">    &gt;&gt;&gt; pca = PCA(n_components=2)</span>
+<span class="sd">    &gt;&gt;&gt; pca.fit(X)</span>
+<span class="sd">    PCA(n_components=2)</span>
+<span class="sd">    &gt;&gt;&gt; print(pca.explained_variance_ratio_)</span>
+<span class="sd">    [0.9924... 0.0075...]</span>
+<span class="sd">    &gt;&gt;&gt; print(pca.singular_values_)</span>
+<span class="sd">    [6.30061... 0.54980...]</span>
+
+<span class="sd">    &gt;&gt;&gt; pca = PCA(n_components=2, svd_solver=&#39;full&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; pca.fit(X)</span>
+<span class="sd">    PCA(n_components=2, svd_solver=&#39;full&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print(pca.explained_variance_ratio_)</span>
+<span class="sd">    [0.9924... 0.00755...]</span>
+<span class="sd">    &gt;&gt;&gt; print(pca.singular_values_)</span>
+<span class="sd">    [6.30061... 0.54980...]</span>
+
+<span class="sd">    &gt;&gt;&gt; pca = PCA(n_components=1, svd_solver=&#39;arpack&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; pca.fit(X)</span>
+<span class="sd">    PCA(n_components=1, svd_solver=&#39;arpack&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print(pca.explained_variance_ratio_)</span>
+<span class="sd">    [0.99244...]</span>
+<span class="sd">    &gt;&gt;&gt; print(pca.singular_values_)</span>
+<span class="sd">    [6.30061...]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_parameter_constraints</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;n_components&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">Interval</span><span class="p">(</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">),</span>
+            <span class="n">Interval</span><span class="p">(</span><span class="n">RealNotInt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;neither&quot;</span><span class="p">),</span>
+            <span class="n">StrOptions</span><span class="p">({</span><span class="s2">&quot;mle&quot;</span><span class="p">}),</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;copy&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;boolean&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;whiten&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;boolean&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;svd_solver&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">StrOptions</span><span class="p">({</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="s2">&quot;covariance_eigh&quot;</span><span class="p">,</span> <span class="s2">&quot;arpack&quot;</span><span class="p">,</span> <span class="s2">&quot;randomized&quot;</span><span class="p">})</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;tol&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">Real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)],</span>
+        <span class="s2">&quot;iterated_power&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">StrOptions</span><span class="p">({</span><span class="s2">&quot;auto&quot;</span><span class="p">}),</span>
+            <span class="n">Interval</span><span class="p">(</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;n_oversamples&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)],</span>
+        <span class="s2">&quot;power_iteration_normalizer&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">StrOptions</span><span class="p">({</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;QR&quot;</span><span class="p">,</span> <span class="s2">&quot;LU&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">})],</span>
+        <span class="s2">&quot;random_state&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;random_state&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="PCA.__init__">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.preprocessor.sklearn_wrapped.PCA.html#cuvis_ai.preprocessor.sklearn_wrapped.PCA.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">whiten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">svd_solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">iterated_power</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">n_oversamples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">power_iteration_normalizer</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span> <span class="o">=</span> <span class="n">whiten</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span> <span class="o">=</span> <span class="n">svd_solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterated_power</span> <span class="o">=</span> <span class="n">iterated_power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_oversamples</span> <span class="o">=</span> <span class="n">n_oversamples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_iteration_normalizer</span> <span class="o">=</span> <span class="n">power_iteration_normalizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span></div>
+
+
+    <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model with X.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix} of shape (n_samples, n_features)</span>
+<span class="sd">            Training data, where `n_samples` is the number of samples</span>
+<span class="sd">            and `n_features` is the number of features.</span>
+
+<span class="sd">        y : Ignored</span>
+<span class="sd">            Ignored.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns the instance itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model with X and apply the dimensionality reduction on X.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix} of shape (n_samples, n_features)</span>
+<span class="sd">            Training data, where `n_samples` is the number of samples</span>
+<span class="sd">            and `n_features` is the number of features.</span>
+
+<span class="sd">        y : Ignored</span>
+<span class="sd">            Ignored.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : ndarray of shape (n_samples, n_components)</span>
+<span class="sd">            Transformed values.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method returns a Fortran-ordered array. To convert it to a</span>
+<span class="sd">        C-ordered array, use &#39;np.ascontiguousarray&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="p">,</span> <span class="n">xp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">U</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components_</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span><span class="p">:</span>
+                <span class="c1"># X_new = X * V / S * sqrt(n_samples) = U * sqrt(n_samples)</span>
+                <span class="n">U</span> <span class="o">*=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># X_new = X * V = U * S * Vt * V = U * S</span>
+                <span class="n">U</span> <span class="o">*=</span> <span class="n">S</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components_</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">U</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># solver=&quot;covariance_eigh&quot; does not compute U at fit time.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="o">=</span><span class="n">x_is_centered</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch to the right submethod depending on the chosen solver.&quot;&quot;&quot;</span>
+        <span class="n">xp</span><span class="p">,</span> <span class="n">is_array_api_compliant</span> <span class="o">=</span> <span class="n">get_namespace</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># Raise an error for sparse input and unsupported svd_solver</span>
+        <span class="k">if</span> <span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;arpack&quot;</span><span class="p">,</span> <span class="s2">&quot;covariance_eigh&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;PCA only support sparse inputs with the &quot;arpack&quot; and&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39; &quot;covariance_eigh&quot; solvers, while &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span><span class="si">}</span><span class="s1">&quot; was passed. See&#39;</span>
+                <span class="s2">&quot; TruncatedSVD for a possible alternative.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span> <span class="o">==</span> <span class="s2">&quot;arpack&quot;</span> <span class="ow">and</span> <span class="n">is_array_api_compliant</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;PCA with svd_solver=&#39;arpack&#39; is not supported for Array API inputs.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Validate the data, without ever forcing a copy as any solver that</span>
+        <span class="c1"># supports sparse input data and the `covariance_eigh` solver are</span>
+        <span class="c1"># written in a way to avoid the need for any inplace modification of</span>
+        <span class="c1"># the input data contrary to the other solvers.</span>
+        <span class="c1"># The copy will happen</span>
+        <span class="c1"># later, only if needed, once the solver negotiation below is done.</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">validate_data</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="n">xp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">xp</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span>
+            <span class="n">force_writeable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">accept_sparse</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;csr&quot;</span><span class="p">,</span> <span class="s2">&quot;csc&quot;</span><span class="p">),</span>
+            <span class="n">ensure_2d</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span> <span class="ow">and</span> <span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">=</span> <span class="s2">&quot;arpack&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">!=</span> <span class="s2">&quot;arpack&quot;</span><span class="p">:</span>
+                <span class="n">n_components</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n_components</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="c1"># Tall and skinny problems are best handled by precomputing the</span>
+            <span class="c1"># covariance matrix.</span>
+            <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1_000</span> <span class="ow">and</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">=</span> <span class="s2">&quot;covariance_eigh&quot;</span>
+            <span class="c1"># Small problem or n_components == &#39;mle&#39;, just call full PCA</span>
+            <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">500</span> <span class="ow">or</span> <span class="n">n_components</span> <span class="o">==</span> <span class="s2">&quot;mle&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">=</span> <span class="s2">&quot;full&quot;</span>
+            <span class="k">elif</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">n_components</span> <span class="o">&lt;</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">=</span> <span class="s2">&quot;randomized&quot;</span>
+            <span class="c1"># This is also the case of n_components in (0, 1)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">=</span> <span class="s2">&quot;full&quot;</span>
+
+        <span class="c1"># Call different fits for either full or truncated SVD</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="s2">&quot;covariance_eigh&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_full</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">is_array_api_compliant</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;arpack&quot;</span><span class="p">,</span> <span class="s2">&quot;randomized&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_truncated</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">xp</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">is_array_api_compliant</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model by computing full SVD on X.&quot;&quot;&quot;</span>
+        <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="n">n_components</span> <span class="o">==</span> <span class="s2">&quot;mle&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&lt;</span> <span class="n">n_features</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;n_components=&#39;mle&#39; is only supported if n_samples &gt;= n_features&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">n_components</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;n_components=</span><span class="si">{</span><span class="n">n_components</span><span class="si">}</span><span class="s2"> must be between 0 and &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;min(n_samples, n_features)=</span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span><span class="w"> </span><span class="n">n_features</span><span class="p">)</span><span class="si">}</span><span class="s2"> with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;svd_solver=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span><span class="si">!r}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># When X is a scipy sparse matrix, self.mean_ is a numpy matrix, so we need</span>
+        <span class="c1"># to transform it to a 1D array. Note that this is not the case when X</span>
+        <span class="c1"># is a scipy sparse array.</span>
+        <span class="c1"># TODO: remove the following two lines when scikit-learn only depends</span>
+        <span class="c1"># on scipy versions that no longer support scipy.sparse matrices.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
+            <span class="n">X_centered</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="n">X</span>
+            <span class="n">X_centered</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span>
+            <span class="n">x_is_centered</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_array_api_compliant</span><span class="p">:</span>
+                <span class="c1"># Use scipy.linalg with NumPy/SciPy inputs for the sake of not</span>
+                <span class="c1"># introducing unanticipated behavior changes. In the long run we</span>
+                <span class="c1"># could instead decide to always use xp.linalg.svd for all inputs,</span>
+                <span class="c1"># but that would make this code rely on numpy&#39;s SVD instead of</span>
+                <span class="c1"># scipy&#39;s. It&#39;s not 100% clear whether they use the same LAPACK</span>
+                <span class="c1"># solver by default though (assuming both are built against the</span>
+                <span class="c1"># same BLAS).</span>
+                <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">explained_variance_</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span> <span class="o">==</span> <span class="s2">&quot;covariance_eigh&quot;</span>
+            <span class="c1"># In the following, we center the covariance matrix C afterwards</span>
+            <span class="c1"># (without centering the data X first) to avoid an unnecessary copy</span>
+            <span class="c1"># of X. Note that the mean_ attribute is still needed to center</span>
+            <span class="c1"># test data in the transform method.</span>
+            <span class="c1">#</span>
+            <span class="c1"># Note: at the time of writing, `xp.cov` does not exist in the</span>
+            <span class="c1"># Array API standard:</span>
+            <span class="c1"># https://github.com/data-apis/array-api/issues/43</span>
+            <span class="c1">#</span>
+            <span class="c1"># Besides, using `numpy.cov`, as of numpy 1.26.0, would not be</span>
+            <span class="c1"># memory efficient for our use case when `n_samples &gt;&gt; n_features`:</span>
+            <span class="c1"># `numpy.cov` centers a copy of the data before computing the</span>
+            <span class="c1"># matrix product instead of subtracting a small `(n_features,</span>
+            <span class="c1"># n_features)` square matrix from the gram matrix X.T @ X, as we do</span>
+            <span class="c1"># below.</span>
+            <span class="n">x_is_centered</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X</span>
+            <span class="n">C</span> <span class="o">-=</span> <span class="p">(</span>
+                <span class="n">n_samples</span>
+                <span class="o">*</span> <span class="n">xp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">xp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">C</span> <span class="o">/=</span> <span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">eigenvals</span><span class="p">,</span> <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+
+            <span class="c1"># When X is a scipy sparse matrix, the following two datastructures</span>
+            <span class="c1"># are returned as instances of the soft-deprecated numpy.matrix</span>
+            <span class="c1"># class. Note that this problem does not occur when X is a scipy</span>
+            <span class="c1"># sparse array (or another other kind of supported array).</span>
+            <span class="c1"># TODO: remove the following two lines when scikit-learn only</span>
+            <span class="c1"># depends on scipy versions that no longer support scipy.sparse</span>
+            <span class="c1"># matrices.</span>
+            <span class="n">eigenvals</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">eigenvals</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+            <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">)</span>
+
+            <span class="n">eigenvals</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">eigenvals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># The covariance matrix C is positive semi-definite by</span>
+            <span class="c1"># construction. However, the eigenvalues returned by xp.linalg.eigh</span>
+            <span class="c1"># can be slightly negative due to numerical errors. This would be</span>
+            <span class="c1"># an issue for the subsequent sqrt, hence the manual clipping.</span>
+            <span class="n">eigenvals</span><span class="p">[</span><span class="n">eigenvals</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">explained_variance_</span> <span class="o">=</span> <span class="n">eigenvals</span>
+
+            <span class="c1"># Re-construct SVD of centered X indirectly and make it consistent</span>
+            <span class="c1"># with the other solvers.</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigenvals</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">Vt</span> <span class="o">=</span> <span class="n">eigenvecs</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># flip eigenvectors&#39; sign to enforce deterministic output</span>
+        <span class="n">U</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">svd_flip</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">Vt</span><span class="p">,</span> <span class="n">u_based_decision</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">components_</span> <span class="o">=</span> <span class="n">Vt</span>
+
+        <span class="c1"># Get variance explained by singular values</span>
+        <span class="n">total_var</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">explained_variance_</span><span class="p">)</span>
+        <span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="n">explained_variance_</span> <span class="o">/</span> <span class="n">total_var</span>
+        <span class="n">singular_values_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Store the singular values.</span>
+
+        <span class="c1"># Postprocess the number of components required</span>
+        <span class="k">if</span> <span class="n">n_components</span> <span class="o">==</span> <span class="s2">&quot;mle&quot;</span><span class="p">:</span>
+            <span class="n">n_components</span> <span class="o">=</span> <span class="n">_infer_dimension</span><span class="p">(</span><span class="n">explained_variance_</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n_components</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="c1"># number of components for which the cumulated explained</span>
+            <span class="c1"># variance percentage is superior to the desired threshold</span>
+            <span class="c1"># side=&#39;right&#39; ensures that number of features selected</span>
+            <span class="c1"># their variance is always greater than n_components float</span>
+            <span class="c1"># passed. More discussion in issue: #15669</span>
+            <span class="k">if</span> <span class="n">is_array_api_compliant</span><span class="p">:</span>
+                <span class="c1"># Convert to numpy as xp.cumsum and xp.searchsorted are not</span>
+                <span class="c1"># part of the Array API standard yet:</span>
+                <span class="c1">#</span>
+                <span class="c1"># https://github.com/data-apis/array-api/issues/597</span>
+                <span class="c1"># https://github.com/data-apis/array-api/issues/688</span>
+                <span class="c1">#</span>
+                <span class="c1"># Furthermore, it&#39;s not always safe to call them for namespaces</span>
+                <span class="c1"># that already implement them: for instance as</span>
+                <span class="c1"># cupy.searchsorted does not accept a float as second argument.</span>
+                <span class="n">explained_variance_ratio_np</span> <span class="o">=</span> <span class="n">_convert_to_numpy</span><span class="p">(</span>
+                    <span class="n">explained_variance_ratio_</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">explained_variance_ratio_np</span> <span class="o">=</span> <span class="n">explained_variance_ratio_</span>
+            <span class="n">ratio_cumsum</span> <span class="o">=</span> <span class="n">stable_cumsum</span><span class="p">(</span><span class="n">explained_variance_ratio_np</span><span class="p">)</span>
+            <span class="n">n_components</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">ratio_cumsum</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Compute noise covariance using Probabilistic PCA model</span>
+        <span class="c1"># The sigma2 maximum likelihood (cf. eq. 12.46)</span>
+        <span class="k">if</span> <span class="n">n_components</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise_variance_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">explained_variance_</span><span class="p">[</span><span class="n">n_components</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise_variance_</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples_</span> <span class="o">=</span> <span class="n">n_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components_</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="c1"># Assign a copy of the result of the truncation of the components in</span>
+        <span class="c1"># order to:</span>
+        <span class="c1"># - release the memory used by the discarded components,</span>
+        <span class="c1"># - ensure that the kept components are allocated contiguously in</span>
+        <span class="c1">#   memory to make the transform method faster by leveraging cache</span>
+        <span class="c1">#   locality.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">components_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">,</span> <span class="p">:],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># We do the same for the other arrays for the sake of consistency.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">explained_variance_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">explained_variance_ratio_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">singular_values_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">singular_values_</span><span class="p">[:</span><span class="n">n_components</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="p">,</span> <span class="n">xp</span>
+
+    <span class="k">def</span> <span class="nf">_fit_truncated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_components</span><span class="p">,</span> <span class="n">xp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model by computing truncated SVD (by ARPACK or randomized)</span>
+<span class="sd">        on X.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">svd_solver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_svd_solver</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;n_components=</span><span class="si">%r</span><span class="s2"> cannot be a string with svd_solver=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="n">svd_solver</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">n_components</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;n_components=</span><span class="si">%r</span><span class="s2"> must be between 1 and &quot;</span>
+                <span class="s2">&quot;min(n_samples, n_features)=</span><span class="si">%r</span><span class="s2"> with &quot;</span>
+                <span class="s2">&quot;svd_solver=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">),</span> <span class="n">svd_solver</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">svd_solver</span> <span class="o">==</span> <span class="s2">&quot;arpack&quot;</span> <span class="ow">and</span> <span class="n">n_components</span> <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;n_components=</span><span class="si">%r</span><span class="s2"> must be strictly less than &quot;</span>
+                <span class="s2">&quot;min(n_samples, n_features)=</span><span class="si">%r</span><span class="s2"> with &quot;</span>
+                <span class="s2">&quot;svd_solver=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">),</span> <span class="n">svd_solver</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="c1"># Center data</span>
+        <span class="n">total_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">mean_variance_axis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">total_var</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="n">n_samples</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># ddof=1</span>
+            <span class="n">X_centered</span> <span class="o">=</span> <span class="n">_implicit_column_offset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span><span class="p">)</span>
+            <span class="n">x_is_centered</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">X_centered</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="k">else</span> <span class="n">X</span>
+            <span class="n">X_centered</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span>
+            <span class="n">x_is_centered</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span>
+
+        <span class="k">if</span> <span class="n">svd_solver</span> <span class="o">==</span> <span class="s2">&quot;arpack&quot;</span><span class="p">:</span>
+            <span class="n">v0</span> <span class="o">=</span> <span class="n">_init_arpack_v0</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">random_state</span><span class="p">)</span>
+            <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">svds</span><span class="p">(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span> <span class="n">v0</span><span class="o">=</span><span class="n">v0</span><span class="p">)</span>
+            <span class="c1"># svds doesn&#39;t abide by scipy.linalg.svd/randomized_svd</span>
+            <span class="c1"># conventions, so reverse its outputs.</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># flip eigenvectors&#39; sign to enforce deterministic output</span>
+            <span class="n">U</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">svd_flip</span><span class="p">(</span><span class="n">U</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">Vt</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">u_based_decision</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">svd_solver</span> <span class="o">==</span> <span class="s2">&quot;randomized&quot;</span><span class="p">:</span>
+            <span class="c1"># sign flipping is done inside</span>
+            <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">randomized_svd</span><span class="p">(</span>
+                <span class="n">X_centered</span><span class="p">,</span>
+                <span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span>
+                <span class="n">n_oversamples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_oversamples</span><span class="p">,</span>
+                <span class="n">n_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iterated_power</span><span class="p">,</span>
+                <span class="n">power_iteration_normalizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">power_iteration_normalizer</span><span class="p">,</span>
+                <span class="n">flip_sign</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">U</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">svd_flip</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">Vt</span><span class="p">,</span> <span class="n">u_based_decision</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples_</span> <span class="o">=</span> <span class="n">n_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="n">Vt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components_</span> <span class="o">=</span> <span class="n">n_components</span>
+
+        <span class="c1"># Get variance explained by singular values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Workaround in-place variance calculation since at the time numpy</span>
+        <span class="c1"># did not have a way to calculate variance in-place.</span>
+        <span class="c1">#</span>
+        <span class="c1"># TODO: update this code to either:</span>
+        <span class="c1"># * Use the array-api variance calculation, unless memory usage suffers</span>
+        <span class="c1"># * Update sklearn.utils.extmath._incremental_mean_and_var to support array-api</span>
+        <span class="c1"># See: https://github.com/scikit-learn/scikit-learn/pull/18689#discussion_r1335540991</span>
+        <span class="k">if</span> <span class="n">total_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">X_centered</span> <span class="o">**=</span> <span class="mi">2</span>
+            <span class="n">total_var</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X_centered</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span> <span class="o">/</span> <span class="n">total_var</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">singular_values_</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Store the singular values.</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components_</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise_variance_</span> <span class="o">=</span> <span class="n">total_var</span> <span class="o">-</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise_variance_</span> <span class="o">/=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_components</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise_variance_</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">x_is_centered</span><span class="p">,</span> <span class="n">xp</span>
+
+    <span class="k">def</span> <span class="nf">score_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the log-likelihood of each sample.</span>
+
+<span class="sd">        See. &quot;Pattern Recognition and Machine Learning&quot;</span>
+<span class="sd">        by C. Bishop, 12.2.1 p. 574</span>
+<span class="sd">        or http://www.miketipping.com/papers/met-mppca.pdf</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+<span class="sd">            The data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ll : ndarray of shape (n_samples,)</span>
+<span class="sd">            Log-likelihood of each sample under the current model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">xp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_namespace</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="n">xp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">xp</span><span class="o">.</span><span class="n">float32</span><span class="p">],</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">Xr</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span>
+        <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_precision</span><span class="p">()</span>
+        <span class="n">log_like</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">xp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Xr</span> <span class="o">*</span> <span class="p">(</span><span class="n">Xr</span> <span class="o">@</span> <span class="n">precision</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">log_like</span> <span class="o">-=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_features</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">fast_logdet</span><span class="p">(</span><span class="n">precision</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">log_like</span>
+
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the average log-likelihood of all samples.</span>
+
+<span class="sd">        See. &quot;Pattern Recognition and Machine Learning&quot;</span>
+<span class="sd">        by C. Bishop, 12.2.1 p. 574</span>
+<span class="sd">        or http://www.miketipping.com/papers/met-mppca.pdf</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+<span class="sd">            The data.</span>
+
+<span class="sd">        y : Ignored</span>
+<span class="sd">            Ignored.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ll : float</span>
+<span class="sd">            Average log-likelihood of the samples under the current model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_namespace</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">__sklearn_tags__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">transformer_tags</span><span class="o">.</span><span class="n">preserves_dtype</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;float64&quot;</span><span class="p">,</span> <span class="s2">&quot;float32&quot;</span><span class="p">]</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">array_api_support</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">tags</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cubert GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

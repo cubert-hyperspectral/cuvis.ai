@@ -37,7 +37,7 @@ jobs:
           curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
           python3.10 -m venv venv
           source venv/bin/activate
-          python3.10 -m pip install numpy=1.25.0
+          python3.10 -m pip install numpy==1.22.0
           cd cuvis.pyil
           git submodule update --init --recursive
           mkdir build
@@ -61,6 +61,7 @@ jobs:
           python3.10 -c "import cuvis; import cuvis_ai"
       - name: Build Documentation
         run:  |
+            source venv/bin/activate
             mkdir -p docs/_build
             sphinx-build -M html docs docs/_build
             touch docs/_build/html/.nojekyll

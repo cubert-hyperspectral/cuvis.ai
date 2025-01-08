@@ -3,7 +3,8 @@ import functools
 import torch
 
 from ..utils.numpy import *
-from ..utils.torch import InputDimension, guess_input_dimensionalty
+from ..utils.torch import InputDimension, guess_input_dimensionalty, extract_state_dict
+from ..utils.dict import remove_prefix
 from .node import Node
 from .base import BaseSupervised, BaseUnsupervised
 from pathlib import Path
@@ -22,7 +23,7 @@ class SkorchWrapped:
 
 
 def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
-    data_independent = {}  # obj.net.get_params()
+    data_independent = obj.model_args_no_prefix.copy()
     if not obj.initialized:
         return {'params': data_independent}
 
@@ -36,12 +37,18 @@ def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
 
 
 def _load_skorch_model(obj, cls, params: dict, data_dir: Path) -> None:
-    data_independent_keys = set(cls.get_params(obj).keys())
+    data_independent_keys = set(remove_prefix(
+        obj.net.get_params(obj), 'module__', True).keys())
 
     params_independent = {key: params['params'][key]
                           for key in data_independent_keys}
 
-    cls.set_params(obj, **params_independent)
+    params_independent_with_prefix = {f'module__{k}': v for k,
+                                      v in params_independent.items()}
+
+    obj.net.set_params(**params_independent_with_prefix)
+    obj.model_args = params_independent
+    obj.model_args_no_prefix = params_independent_with_prefix
 
     if 'state' not in params.keys():
         return
@@ -52,11 +59,12 @@ def _load_skorch_model(obj, cls, params: dict, data_dir: Path) -> None:
     params_dependent = {key: params['state'][key]
                         for key in data_dependent_keys}
 
-    for k, v in params_dependent.items():
-        try:
-            setattr(obj, k, v)
-        except:
-            print(f'Could not set state attribute {k} for {obj.id}')  # nopep8
+    weights = params_dependent['weights']
+
+    loaded_weights = extract_state_dict(torch.load(
+        weights, weights_only=True), format='torch')
+
+    obj.net.module_.load_state_dict(loaded_weights)
     obj.initialized = True
     obj._derive_values()
 
@@ -72,7 +80,7 @@ def _wrap_supervised_class(cls):
         __doc__ = cls.__doc__
         __module__ = cls.__module__
 
-        def __init__(self, *args, criterion=torch.nn.NLLLoss, **kwargs):
+        def __init__(self, *args, criterion=None, **kwargs):
             super(SkorchWrappedSupervised, self).__init__()
             self.input_size = (-1, -1, -1)
             self.output_size = (-1, -1, -1)
@@ -83,10 +91,7 @@ def _wrap_supervised_class(cls):
             self.model_args_no_prefix = {k: v for k,
                                          v in kwargs.items()}
 
-            self.criterion = criterion
-
-            self.expected_dim = guess_input_dimensionalty(
-                cls(**self.model_args_no_prefix))
+            self.criterion = torch.nn.NLLLoss
 
             self.net = skorch.NeuralNetClassifier(
                 module=cls,
@@ -94,6 +99,9 @@ def _wrap_supervised_class(cls):
                 train_split=None,
                 **self.model_args
             )
+            self.net.initialize()
+
+            self.expected_dim = guess_input_dimensionalty(self.net.module_)
 
         @Node.input_dim.getter
         def input_dim(self):
@@ -165,7 +173,7 @@ def _wrap_unsupervised_class(cls):
         __doc__ = cls.__doc__
         __module__ = cls.__module__
 
-        def __init__(self, *args, criterion, **kwargs):
+        def __init__(self, *args, criterion=None, **kwargs):
             super(SkorchWrappedUnsupervised, self).__init__()
             self._input_size = (-1, -1, -1)
             self._output_size = (-1, -1, -1)
@@ -176,10 +184,7 @@ def _wrap_unsupervised_class(cls):
             self.model_args_no_prefix = {k: v for k,
                                          v in kwargs.items()}
 
-            self.criterion = criterion
-
-            self.expected_dim = guess_input_dimensionalty(
-                cls(**self.model_args_no_prefix))
+            self.criterion = torch.nn.NLLLoss
 
             self.net = skorch.NeuralNet(
                 module=cls,
@@ -187,6 +192,9 @@ def _wrap_unsupervised_class(cls):
                 train_split=None,
                 **self.model_args
             )
+            self.net.initialize()
+
+            self.expected_dim = guess_input_dimensionalty(self.net.module_)
 
         @Node.input_dim.getter
         def input_dim(self):

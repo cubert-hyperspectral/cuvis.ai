@@ -271,7 +271,11 @@ class Graph():
             cls = getattr(import_module(node_module), node_class)
             if not issubclass(cls, Node):
                 cls = make_node(cls)
-            stage = cls()
+
+            if 'params' in params.keys():
+                stage = cls(**params['params'])
+            else:
+                stage = cls()
             stage.load(params, data_dir)
             self.nodes[key] = stage
 

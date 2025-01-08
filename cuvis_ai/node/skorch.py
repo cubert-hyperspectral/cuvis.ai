@@ -66,7 +66,6 @@ def _load_skorch_model(obj, cls, params: dict, data_dir: Path) -> None:
 
     obj.net.module_.load_state_dict(loaded_weights)
     obj.initialized = True
-    obj._derive_values()
 
 
 def _wrap_preprocessor_class(cls):
@@ -132,7 +131,7 @@ def _wrap_supervised_class(cls):
 
         def forward(self, X: np.ndarray):
             flattened_data = flatten_batch_and_spatial(X)
-            transformed_data = self.net.predict_proba(self, flattened_data)
+            transformed_data = self.net.forward(self, flattened_data)
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
@@ -227,11 +226,11 @@ def _wrap_unsupervised_class(cls):
                 flattened_data = flatten_batch_and_spatial(X)
             elif self.expected_dim == InputDimension.Three:
                 flattened_data = np.moveaxis(X, -1, -3)
-            transformed_data = self.net.predict_proba(flattened_data)
+            transformed_data = self.net.forward(flattened_data).numpy()
             if self.expected_dim == InputDimension.One:
                 return unflatten_batch_and_spatial(transformed_data, X.shape)
             elif self.expected_dim == InputDimension.Three:
-                return np.moveaxis(X, -1, -3)
+                return np.moveaxis(transformed_data, -3, -1)
 
         def serialize(self, data_dir: Path) -> dict:
             return _serialize_skorch_model(self, cls, data_dir)

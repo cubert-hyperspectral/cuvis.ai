@@ -325,6 +325,7 @@ class Graph():
                 graph_data = serial.load()
 
                 new_graph.load(graph_data, '.')
+        return new_graph
 
     def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None, backend: str = 'memory') -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         if backend == 'memory':

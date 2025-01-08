@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from enum import Enum
+from .dict import remove_prefix
 
 
 class InputDimension(Enum):
@@ -52,3 +53,19 @@ def get_output_shape(input_shape, model):
     with torch.no_grad():
         output = model(dummy_input)
     return output.shape
+
+
+def guess_state_dict_format(state_dict):
+    keys = set(state_dict.keys())
+    if 'pytorch-lightning_version' in keys:
+        return 'lightning'
+
+
+def extract_state_dict(state_dict, format='torch'):
+    existing_format = guess_state_dict_format(state_dict)
+
+    if existing_format == 'lightning':
+        if format == 'torch':
+            return remove_prefix(state_dict['state_dict'], 'model.', keep_only=True)
+
+    return state_dict

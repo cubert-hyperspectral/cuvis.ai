@@ -271,7 +271,11 @@ class Graph():
             cls = getattr(import_module(node_module), node_class)
             if not issubclass(cls, Node):
                 cls = make_node(cls)
-            stage = cls()
+
+            if 'params' in params.keys():
+                stage = cls(**params['params'])
+            else:
+                stage = cls()
             stage.load(params, data_dir)
             self.nodes[key] = stage
 
@@ -321,6 +325,7 @@ class Graph():
                 graph_data = serial.load()
 
                 new_graph.load(graph_data, '.')
+        return new_graph
 
     def forward(self, X: np.ndarray, Y: Optional[Union[np.ndarray, List]] = None, M: Optional[Union[np.ndarray, List]] = None, backend: str = 'memory') -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         if backend == 'memory':

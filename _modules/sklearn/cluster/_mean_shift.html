@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>sklearn.cluster._mean_shift &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -88,20 +88,20 @@
 <span class="c1"># Authors: The scikit-learn developers</span>
 <span class="c1"># SPDX-License-Identifier: BSD-3-Clause</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.._config</span> <span class="kn">import</span> <span class="n">config_context</span>
-<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span><span class="p">,</span> <span class="n">_fit_context</span>
-<span class="kn">from</span> <span class="nn">..metrics.pairwise</span> <span class="kn">import</span> <span class="n">pairwise_distances_argmin</span>
-<span class="kn">from</span> <span class="nn">..neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_random_state</span><span class="p">,</span> <span class="n">gen_batches</span>
-<span class="kn">from</span> <span class="nn">..utils._param_validation</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">validate_params</span>
-<span class="kn">from</span> <span class="nn">..utils.parallel</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
-<span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="kn">import</span> <span class="n">check_is_fitted</span><span class="p">,</span> <span class="n">validate_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._config</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span><span class="p">,</span> <span class="n">_fit_context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..metrics.pairwise</span><span class="w"> </span><span class="kn">import</span> <span class="n">pairwise_distances_argmin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..neighbors</span><span class="w"> </span><span class="kn">import</span> <span class="n">NearestNeighbors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_random_state</span><span class="p">,</span> <span class="n">gen_batches</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils._param_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">validate_params</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.parallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_is_fitted</span><span class="p">,</span> <span class="n">validate_data</span>
 
 
 <span class="nd">@validate_params</span><span class="p">(</span>
@@ -114,7 +114,7 @@
     <span class="p">},</span>
     <span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">estimate_bandwidth</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantile</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">estimate_bandwidth</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantile</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the bandwidth to use with the mean-shift algorithm.</span>
 
 <span class="sd">    This function takes time at least quadratic in `n_samples`. For large</span>
@@ -181,7 +181,7 @@
 
 
 <span class="c1"># separate function for each seed&#39;s iterative loop</span>
-<span class="k">def</span> <span class="nf">_mean_shift_single_seed</span><span class="p">(</span><span class="n">my_mean</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">nbrs</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_mean_shift_single_seed</span><span class="p">(</span><span class="n">my_mean</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">nbrs</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">):</span>
     <span class="c1"># For each seed, climb gradient until convergence or max_iter</span>
     <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">nbrs</span><span class="o">.</span><span class="n">get_params</span><span class="p">()[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span>
     <span class="n">stop_thresh</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="o">*</span> <span class="n">bandwidth</span>  <span class="c1"># when mean has converged</span>
@@ -208,7 +208,7 @@
     <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;array-like&quot;</span><span class="p">]},</span>
     <span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">mean_shift</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_shift</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">bandwidth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -320,7 +320,7 @@
     <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">labels_</span>
 
 
-<span class="k">def</span> <span class="nf">get_bin_seeds</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">bin_size</span><span class="p">,</span> <span class="n">min_bin_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bin_seeds</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">bin_size</span><span class="p">,</span> <span class="n">min_bin_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find seeds for mean_shift.</span>
 
 <span class="sd">    Finds seeds by first binning data onto a grid whose lines are</span>
@@ -373,7 +373,7 @@
     <span class="k">return</span> <span class="n">bin_seeds</span>
 
 
-<span class="k">class</span> <span class="nc">MeanShift</span><span class="p">(</span><span class="n">ClusterMixin</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeanShift</span><span class="p">(</span><span class="n">ClusterMixin</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean shift clustering using a flat kernel.</span>
 
 <span class="sd">    Mean shift clustering aims to discover &quot;blobs&quot; in a smooth density of</span>
@@ -522,7 +522,7 @@
 
 <div class="viewcode-block" id="MeanShift.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.html#cuvis_ai.unsupervised.sklearn_wrapped.MeanShift.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">bandwidth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -543,7 +543,7 @@
 
 
     <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform clustering.</span>
 
 <span class="sd">        Parameters</span>
@@ -636,7 +636,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">=</span> <span class="n">cluster_centers</span><span class="p">,</span> <span class="n">labels</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the closest cluster each sample in X belongs to.</span>
 
 <span class="sd">        Parameters</span>

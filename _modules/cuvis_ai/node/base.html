@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.node.base &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,16 +74,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.node.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">from</span> <span class="nn">..node</span> <span class="kn">import</span> <span class="n">CubeConsumer</span><span class="p">,</span> <span class="n">LabelConsumer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node</span><span class="w"> </span><span class="kn">import</span> <span class="n">CubeConsumer</span><span class="p">,</span> <span class="n">LabelConsumer</span>
 
 
 <div class="viewcode-block" id="Preprocessor">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.Preprocessor.html#cuvis_ai.node.base.Preprocessor">[docs]</a>
-<span class="k">class</span> <span class="nc">Preprocessor</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Preprocessor</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class for data preprocessing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -91,7 +91,7 @@
 <div class="viewcode-block" id="Preprocessor.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.Preprocessor.html#cuvis_ai.node.base.Preprocessor.fit">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the preprocessor to the data.</span>
 
@@ -110,7 +110,7 @@
 <div class="viewcode-block" id="Preprocessor.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.Preprocessor.html#cuvis_ai.node.base.Preprocessor.forward">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="k">pass</span></div>
 </div>
 
@@ -118,19 +118,19 @@
 
 <div class="viewcode-block" id="BaseSupervised">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseSupervised.html#cuvis_ai.node.base.BaseSupervised">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseSupervised</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">,</span> <span class="n">LabelConsumer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseSupervised</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">,</span> <span class="n">LabelConsumer</span><span class="p">):</span>
 
 <div class="viewcode-block" id="BaseSupervised.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseSupervised.html#cuvis_ai.node.base.BaseSupervised.fit">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="BaseSupervised.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseSupervised.html#cuvis_ai.node.base.BaseSupervised.forward">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="k">pass</span></div>
 </div>
 
@@ -138,7 +138,7 @@
 
 <div class="viewcode-block" id="BaseUnsupervised">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseUnsupervised</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseUnsupervised</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract node for all unsupervised classifiers to follow.</span>
 
 <span class="sd">    Parameters</span>
@@ -150,7 +150,7 @@
 <div class="viewcode-block" id="BaseUnsupervised.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised.fit">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;_summary_</span>
 
 <span class="sd">        Parameters</span>
@@ -164,7 +164,7 @@
 <div class="viewcode-block" id="BaseUnsupervised.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseUnsupervised.html#cuvis_ai.node.base.BaseUnsupervised.forward">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform </span>
 
 <span class="sd">        Parameters</span>
@@ -184,12 +184,12 @@
 
 <div class="viewcode-block" id="BaseTransformation">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseTransformation.html#cuvis_ai.node.base.BaseTransformation">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseTransformation</span><span class="p">(</span><span class="n">CubeConsumer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseTransformation</span><span class="p">(</span><span class="n">CubeConsumer</span><span class="p">):</span>
 
 <div class="viewcode-block" id="BaseTransformation.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.base.BaseTransformation.html#cuvis_ai.node.base.BaseTransformation.forward">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="k">pass</span></div>
 </div>
 

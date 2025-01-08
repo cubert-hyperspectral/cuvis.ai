@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.deciders.combining_decider &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -75,32 +75,32 @@
              
   <h1>Source code for cuvis_ai.deciders.combining_decider</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">.base_decider</span> <span class="kn">import</span> <span class="n">BaseDecider</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base_decider</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDecider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">..utils.numpy</span> <span class="kn">import</span> <span class="n">flatten_batch_and_spatial</span><span class="p">,</span> <span class="n">unflatten_batch_and_spatial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">flatten_batch_and_spatial</span><span class="p">,</span> <span class="n">unflatten_batch_and_spatial</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pk</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pk</span>
 
 
 <div class="viewcode-block" id="all_agree">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.all_agree.html#cuvis_ai.deciders.combining_decider.all_agree">[docs]</a>
-<span class="k">def</span> <span class="nf">all_agree</span><span class="p">(</span><span class="n">decisions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_agree</span><span class="p">(</span><span class="n">decisions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">decisions</span> <span class="o">==</span> <span class="n">decisions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
 
 
 <div class="viewcode-block" id="at_least_n_agree">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.at_least_n_agree.html#cuvis_ai.deciders.combining_decider.at_least_n_agree">[docs]</a>
-<span class="k">def</span> <span class="nf">at_least_n_agree</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">at_least_n_agree</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">decisions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">decisions</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">n</span></div>
 
 
 
 <div class="viewcode-block" id="CombiningDecider">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.CombiningDecider.html#cuvis_ai.deciders.combining_decider.CombiningDecider">[docs]</a>
-<span class="k">class</span> <span class="nc">CombiningDecider</span><span class="p">(</span><span class="n">BaseDecider</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CombiningDecider</span><span class="p">(</span><span class="n">BaseDecider</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decider using values of multiple channels to classify the result.</span>
 <span class="sd">    The data of all channels at a spatial location are utilized in the chosen decision strategy to classify each data point.</span>
 
@@ -115,7 +115,7 @@
 
 <div class="viewcode-block" id="CombiningDecider.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.CombiningDecider.html#cuvis_ai.deciders.combining_decider.CombiningDecider.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rule</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rule</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">channel_count</span>
@@ -125,7 +125,7 @@
 
 <div class="viewcode-block" id="CombiningDecider.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.CombiningDecider.html#cuvis_ai.deciders.combining_decider.CombiningDecider.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the chosen :arg:`rule` to the input data.</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -142,11 +142,11 @@
 
 
     <span class="nd">@BaseDecider</span><span class="o">.</span><span class="n">input_dim</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">]</span>
 
     <span class="nd">@BaseDecider</span><span class="o">.</span><span class="n">output_dim</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the provided shape for the output data.</span>
 <span class="sd">        If a dimension is not important it will return -1 in the specific position.</span>
@@ -160,7 +160,7 @@
 
 <div class="viewcode-block" id="CombiningDecider.serialize">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.CombiningDecider.html#cuvis_ai.deciders.combining_decider.CombiningDecider.serialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the class into a serialized representation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -179,7 +179,7 @@
 
 <div class="viewcode-block" id="CombiningDecider.load">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.combining_decider.CombiningDecider.html#cuvis_ai.deciders.combining_decider.CombiningDecider.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load this node from a serialized graph.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;class_count&quot;</span><span class="p">])</span>

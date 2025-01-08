@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.pipeline.meta_routing &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -75,13 +75,13 @@
              
   <h1>Source code for cuvis_ai.pipeline.meta_routing</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">..node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
 <div class="viewcode-block" id="traverse">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.meta_routing.traverse.html#cuvis_ai.pipeline.meta_routing.traverse">[docs]</a>
-<span class="k">def</span> <span class="nf">traverse</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">route</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">traverse</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">route</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">route</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -92,14 +92,14 @@
 
 <div class="viewcode-block" id="get_route">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.meta_routing.get_route.html#cuvis_ai.pipeline.meta_routing.get_route">[docs]</a>
-<span class="k">def</span> <span class="nf">get_route</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_route</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="get_forward_metadata">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.meta_routing.get_forward_metadata.html#cuvis_ai.pipeline.meta_routing.get_forward_metadata">[docs]</a>
-<span class="k">def</span> <span class="nf">get_forward_metadata</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_forward_metadata</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">requested_meta</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_forward_requested_meta</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">get_requested_metadata</span><span class="p">(</span><span class="n">requested_meta</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span></div>
 
@@ -107,7 +107,7 @@
 
 <div class="viewcode-block" id="get_fit_metadata">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.meta_routing.get_fit_metadata.html#cuvis_ai.pipeline.meta_routing.get_fit_metadata">[docs]</a>
-<span class="k">def</span> <span class="nf">get_fit_metadata</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_fit_metadata</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">requested_meta</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_fit_requested_meta</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">get_requested_metadata</span><span class="p">(</span><span class="n">requested_meta</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span></div>
 
@@ -115,7 +115,7 @@
 
 <div class="viewcode-block" id="get_requested_metadata">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.meta_routing.get_requested_metadata.html#cuvis_ai.pipeline.meta_routing.get_requested_metadata">[docs]</a>
-<span class="k">def</span> <span class="nf">get_requested_metadata</span><span class="p">(</span><span class="n">requested</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_requested_metadata</span><span class="p">(</span><span class="n">requested</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">additional_meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">requested</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">additional_meta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>

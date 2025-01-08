@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.data.cocolabels &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,21 +74,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.data.cocolabels</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">dataclass_wizard</span> <span class="kn">import</span> <span class="n">JSONWizard</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">pycocotools.coco</span> <span class="kn">import</span> <span class="n">COCO</span>
-<span class="kn">from</span> <span class="nn">torchvision.tv_tensors</span> <span class="kn">import</span> <span class="n">BoundingBoxes</span><span class="p">,</span> <span class="n">Mask</span>
-<span class="kn">from</span> <span class="nn">skimage.draw</span> <span class="kn">import</span> <span class="n">polygon2mask</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclass_wizard</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONWizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pycocotools.coco</span><span class="w"> </span><span class="kn">import</span> <span class="n">COCO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.tv_tensors</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoundingBoxes</span><span class="p">,</span> <span class="n">Mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage.draw</span><span class="w"> </span><span class="kn">import</span> <span class="n">polygon2mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
 <div class="viewcode-block" id="RLE2mask">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.RLE2mask.html#cuvis_ai.data.cocolabels.RLE2mask">[docs]</a>
-<span class="k">def</span> <span class="nf">RLE2mask</span><span class="p">(</span><span class="n">rle</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">mask_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">RLE2mask</span><span class="p">(</span><span class="n">rle</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">mask_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mask_size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">ids</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
@@ -104,7 +104,7 @@
 <div class="viewcode-block" id="Info">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.Info.html#cuvis_ai.data.cocolabels.Info">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Info</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Info</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -116,7 +116,7 @@
 <div class="viewcode-block" id="License">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.License.html#cuvis_ai.data.cocolabels.License">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">License</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">License</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
@@ -126,7 +126,7 @@
 <div class="viewcode-block" id="Category">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.Category.html#cuvis_ai.data.cocolabels.Category">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Category</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Category</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">supercategory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
@@ -136,7 +136,7 @@
 <div class="viewcode-block" id="Image">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.Image.html#cuvis_ai.data.cocolabels.Image">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Image</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
@@ -152,7 +152,7 @@
 <div class="viewcode-block" id="Annotation">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.Annotation.html#cuvis_ai.data.cocolabels.Annotation">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Annotation</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Annotation</span><span class="p">(</span><span class="n">JSONWizard</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">image_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">category_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -165,7 +165,7 @@
 
 <div class="viewcode-block" id="Annotation.to_torchvision">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.Annotation.html#cuvis_ai.data.cocolabels.Annotation.to_torchvision">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_torchvision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_torchvision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to convert bounding boxes and segmentation polygons to torchvision tensors.&quot;&quot;&quot;</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -185,16 +185,16 @@
 
 <div class="viewcode-block" id="QueryableList">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.QueryableList.html#cuvis_ai.data.cocolabels.QueryableList">[docs]</a>
-<span class="k">class</span> <span class="nc">QueryableList</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QueryableList</span><span class="p">:</span>
 <div class="viewcode-block" id="QueryableList.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.QueryableList.html#cuvis_ai.data.cocolabels.QueryableList.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="n">items</span></div>
 
 
 <div class="viewcode-block" id="QueryableList.where">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.QueryableList.html#cuvis_ai.data.cocolabels.QueryableList.where">[docs]</a>
-    <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">conditions</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">where</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">conditions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filter items based on conditions.</span>
 <span class="sd">        :param conditions: Keyword arguments representing field=value filters.</span>
@@ -207,24 +207,24 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">filtered_items</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
 
 
 
 <div class="viewcode-block" id="COCOData">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.COCOData.html#cuvis_ai.data.cocolabels.COCOData">[docs]</a>
-<span class="k">class</span> <span class="nc">COCOData</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">COCOData</span><span class="p">():</span>
 
 <div class="viewcode-block" id="COCOData.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.COCOData.html#cuvis_ai.data.cocolabels.COCOData.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coco</span><span class="p">:</span> <span class="n">COCO</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coco</span><span class="p">:</span> <span class="n">COCO</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_coco</span> <span class="o">=</span> <span class="n">coco</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_ids</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_annotations</span> <span class="o">=</span> <span class="kc">None</span>
@@ -234,33 +234,33 @@
 <div class="viewcode-block" id="COCOData.from_path">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.data.cocolabels.COCOData.html#cuvis_ai.data.cocolabels.COCOData.from_path">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">COCO</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">image_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coco</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ids</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Info</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Info</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Info</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coco</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">License</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">License</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Info</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coco</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;licenses&#39;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryableList</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryableList</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_annotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_annotations</span> <span class="o">=</span> <span class="n">QueryableList</span><span class="p">([</span><span class="n">Annotation</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
                 <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coco</span><span class="o">.</span><span class="n">anns</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_annotations</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Image</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_images</span> <span class="o">=</span> <span class="p">[</span><span class="n">Image</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                             <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coco</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>

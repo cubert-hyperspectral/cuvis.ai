@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.deciders.base_decider &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,19 +74,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.deciders.base_decider</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">..utils.numpy</span> <span class="kn">import</span> <span class="n">get_shape_without_batch</span><span class="p">,</span> <span class="n">check_array_shape</span>
-<span class="kn">from</span> <span class="nn">..node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">..node.Consumers</span> <span class="kn">import</span> <span class="o">*</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_shape_without_batch</span><span class="p">,</span> <span class="n">check_array_shape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node.Consumers</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="BaseDecider">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseDecider</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseDecider</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class for Decision Making Nodes.</span>
 
@@ -96,13 +96,13 @@
 
 <div class="viewcode-block" id="BaseDecider.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="BaseDecider.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="c1"># TODO refactor the thing with the empty fits</span>
         <span class="k">pass</span></div>
 
@@ -110,7 +110,7 @@
 <div class="viewcode-block" id="BaseDecider.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider.forward">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict labels based on the input labels.</span>
 
@@ -130,7 +130,7 @@
 <div class="viewcode-block" id="BaseDecider.serialize">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider.serialize">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the class into a serialized representation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -140,7 +140,7 @@
 <div class="viewcode-block" id="BaseDecider.load">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.deciders.base_decider.BaseDecider.html#cuvis_ai.deciders.base_decider.BaseDecider.load">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load from serialized format into an object</span>
 <span class="sd">        &quot;&quot;&quot;</span>

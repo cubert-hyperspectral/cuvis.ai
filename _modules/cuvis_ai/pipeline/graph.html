@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.pipeline.graph &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,45 +74,45 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.pipeline.graph</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterator</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span> <span class="nn">pkg_resources</span>  <span class="c1"># part of setuptools</span>
-<span class="kn">from</span> <span class="nn">..node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">..node.wrap</span> <span class="kn">import</span> <span class="n">make_node</span>
-<span class="kn">from</span> <span class="nn">..node.Consumers</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..data.OutputFormat</span> <span class="kn">import</span> <span class="n">OutputFormat</span>
-<span class="kn">from</span> <span class="nn">..utils.numpy</span> <span class="kn">import</span> <span class="n">get_shape_without_batch</span><span class="p">,</span> <span class="n">check_array_shape</span>
-<span class="kn">from</span> <span class="nn">..utils.filesystem</span> <span class="kn">import</span> <span class="n">change_working_dir</span>
-<span class="kn">from</span> <span class="nn">..utils.serializer</span> <span class="kn">import</span> <span class="n">YamlSerializer</span>
-<span class="kn">from</span> <span class="nn">..utils.dependencies</span> <span class="kn">import</span> <span class="n">get_installed_packages_str</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
-<span class="kn">from</span> <span class="nn">.executor</span> <span class="kn">import</span> <span class="n">MemoryExecutor</span><span class="p">,</span> <span class="n">HummingBirdExecutor</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">..node.skorch</span> <span class="kn">import</span> <span class="n">SkorchWrapped</span>
-<span class="kn">from</span> <span class="nn">..node.sklearn</span> <span class="kn">import</span> <span class="n">SklearnWrapped</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">expanduser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pkg_resources</span>  <span class="c1"># part of setuptools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node.wrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_node</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node.Consumers</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..data.OutputFormat</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputFormat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_shape_without_batch</span><span class="p">,</span> <span class="n">check_array_shape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.filesystem</span><span class="w"> </span><span class="kn">import</span> <span class="n">change_working_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.serializer</span><span class="w"> </span><span class="kn">import</span> <span class="n">YamlSerializer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_installed_packages_str</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryExecutor</span><span class="p">,</span> <span class="n">HummingBirdExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node.skorch</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkorchWrapped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node.sklearn</span><span class="w"> </span><span class="kn">import</span> <span class="n">SklearnWrapped</span>
 
 
 <div class="viewcode-block" id="Graph">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph">[docs]</a>
-<span class="k">class</span> <span class="nc">Graph</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Main class for connecting nodes in a CUVIS.AI processing graph</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Graph.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">=</span> <span class="kc">None</span>
@@ -121,7 +121,7 @@
 
 <div class="viewcode-block" id="Graph.add_node">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.add_node">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">|</span> <span class="n">Node</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">|</span> <span class="n">Node</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new node into the graph structure</span>
 
 <span class="sd">        Parameters</span>
@@ -174,7 +174,7 @@
 
 <div class="viewcode-block" id="Graph.add_base_node">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.add_base_node">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_base_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_base_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds new node into the graph by creating the first entry point.</span>
 
 <span class="sd">        Parameters</span>
@@ -189,7 +189,7 @@
 
 <div class="viewcode-block" id="Graph.add_edge">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.add_edge">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">node2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">node2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds sequential nodes to create a directed edge.</span>
 <span class="sd">        At least one of the nodes should already be in the graph.</span>
 
@@ -214,7 +214,7 @@
 
 <div class="viewcode-block" id="Graph.custom_copy">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.custom_copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">custom_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">custom_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Create a new instance of the class</span>
         <span class="n">new_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
 
@@ -226,7 +226,7 @@
         <span class="k">return</span> <span class="n">new_instance</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose with *other*.</span>
 
 <span class="sd">        Example:</span>
@@ -244,13 +244,13 @@
             <span class="n">new_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">sink_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_graph</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">def</span> <span class="nf">_verify_input_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_input_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Private function to validate the integrity of data passed between nodes.</span>
 
 <span class="sd">        Returns</span>
@@ -267,7 +267,7 @@
                 <span class="c1"># return True</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_verify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Private function to verify the integrity of the processing graph.</span>
 
 <span class="sd">        Returns</span>
@@ -292,7 +292,7 @@
 
 <div class="viewcode-block" id="Graph.delete_node">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.delete_node">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Node</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Node</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes a node from the graph.</span>
 <span class="sd">        To successfully remove a node, it must not have successors.</span>
 
@@ -326,11 +326,11 @@
 
 <div class="viewcode-block" id="Graph.serialize">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.serialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert graph structure and all contained nodes to a serializable YAML format.</span>
 <span class="sd">        Numeric data and fit models will be stored in zipped directory named with current time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">version</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
 
         <span class="n">nodes_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;__node_module__&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="vm">__module__</span><span class="p">),</span>
@@ -354,7 +354,7 @@
 
 <div class="viewcode-block" id="Graph.load">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
 
         <span class="n">installed_cuvis_version</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="s1">&#39;cuvis_ai&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span>
@@ -372,7 +372,11 @@
             <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="n">node_module</span><span class="p">),</span> <span class="n">node_class</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Node</span><span class="p">):</span>
                 <span class="bp">cls</span> <span class="o">=</span> <span class="n">make_node</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-            <span class="n">stage</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="s1">&#39;params&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">stage</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stage</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
             <span class="n">stage</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage</span>
 
@@ -392,7 +396,7 @@
 
 <div class="viewcode-block" id="Graph.save_to_file">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.save_to_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">filepath</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -411,7 +415,7 @@
 <div class="viewcode-block" id="Graph.load_from_file">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.load_from_file">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct the graph from a file path defining the location of a zip archive.</span>
 
 <span class="sd">        Parameters</span>
@@ -427,19 +431,20 @@
                 <span class="n">serial</span> <span class="o">=</span> <span class="n">YamlSerializer</span><span class="p">(</span><span class="n">tmpDir</span><span class="p">,</span> <span class="s1">&#39;main&#39;</span><span class="p">)</span>
                 <span class="n">graph_data</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 
-                <span class="n">new_graph</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">graph_data</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span></div>
+                <span class="n">new_graph</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">graph_data</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_graph</span></div>
 
 
 <div class="viewcode-block" id="Graph.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;memory&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;memory&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;memory&#39;</span><span class="p">:</span>
             <span class="n">executor</span> <span class="o">=</span> <span class="n">MemoryExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;hummingbird&#39;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">hummingbird.ml</span> <span class="kn">import</span> <span class="n">convert</span>
-            <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">hummingbird.ml</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 
-            <span class="k">def</span> <span class="nf">convert_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">convert_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
                 <span class="n">new_node</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
                 <span class="k">if</span> <span class="s1">&#39;_wrapped&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">SklearnWrapped</span><span class="p">):</span>
                     <span class="n">new_node</span><span class="o">.</span><span class="n">_wrapped</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">_wrapped</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">)</span>
@@ -456,21 +461,21 @@
 
 <div class="viewcode-block" id="Graph.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">executor</span> <span class="o">=</span> <span class="n">MemoryExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
         <span class="n">executor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Graph.train">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.train">[docs]</a>
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_dl</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">test_dl</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_dl</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">test_dl</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">):</span>
         <span class="n">executor</span> <span class="o">=</span> <span class="n">MemoryExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span><span class="p">)</span>
         <span class="n">executor</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">train_dl</span><span class="p">,</span> <span class="n">test_dl</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">torch_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">torch_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list with all pytorch layers in the Graph.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -481,7 +486,7 @@
 
 <div class="viewcode-block" id="Graph.parameters">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.parameters">[docs]</a>
-    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all (pytorch-) parameters in all layers contained in the Graph. &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">torch_layers</span><span class="p">:</span>
             <span class="k">yield from</span> <span class="n">layer</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span></div>
@@ -489,7 +494,7 @@
 
 <div class="viewcode-block" id="Graph.freeze">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph.freeze">[docs]</a>
-    <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
                 <span class="n">node</span><span class="o">.</span><span class="n">freezed</span> <span class="o">=</span> <span class="kc">True</span>

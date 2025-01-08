@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.utils.numpy &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -75,18 +75,18 @@
              
   <h1>Source code for cuvis_ai.utils.numpy</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">cv2</span> <span class="k">as</span> <span class="nn">cv</span>
-<span class="kn">import</span> <span class="nn">pycocotools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pycocotools</span>
 
 
 <div class="viewcode-block" id="get_shape_without_batch">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.get_shape_without_batch.html#cuvis_ai.utils.numpy.get_shape_without_batch">[docs]</a>
-<span class="k">def</span> <span class="nf">get_shape_without_batch</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">()):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_shape_without_batch</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">()):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ignore</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">ignore</span> <span class="o">=</span> <span class="p">(</span><span class="n">ignore</span><span class="p">,)</span>
 
@@ -119,7 +119,7 @@
 
 <div class="viewcode-block" id="check_array_shape">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.check_array_shape.html#cuvis_ai.utils.numpy.check_array_shape">[docs]</a>
-<span class="k">def</span> <span class="nf">check_array_shape</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">wanted_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_array_shape</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">wanted_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
     <span class="k">match</span> <span class="n">array</span><span class="p">:</span>
         <span class="k">case</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">():</span>
             <span class="n">array_shape</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span>
@@ -139,7 +139,7 @@
 
 <div class="viewcode-block" id="flatten_spatial">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.flatten_spatial.html#cuvis_ai.utils.numpy.flatten_spatial">[docs]</a>
-<span class="k">def</span> <span class="nf">flatten_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="c1"># Array is of shape [width, height, channels]</span>
         <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -152,7 +152,7 @@
 
 <div class="viewcode-block" id="flatten_batch_and_spatial">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.flatten_batch_and_spatial.html#cuvis_ai.utils.numpy.flatten_batch_and_spatial">[docs]</a>
-<span class="k">def</span> <span class="nf">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="c1"># Array is of shape [width, height, channels]</span>
         <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -166,7 +166,7 @@
 
 <div class="viewcode-block" id="unflatten_batch_and_spatial">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.unflatten_batch_and_spatial.html#cuvis_ai.utils.numpy.unflatten_batch_and_spatial">[docs]</a>
-<span class="k">def</span> <span class="nf">unflatten_batch_and_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unflatten_batch_and_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input array must be 2D or 1D.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">orig_shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
@@ -177,7 +177,7 @@
 
 <div class="viewcode-block" id="unflatten_spatial">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.unflatten_spatial.html#cuvis_ai.utils.numpy.unflatten_spatial">[docs]</a>
-<span class="k">def</span> <span class="nf">unflatten_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unflatten_spatial</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input array must be 2D or 3D.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">orig_shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
@@ -188,7 +188,7 @@
 
 <div class="viewcode-block" id="flatten_labels">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.flatten_labels.html#cuvis_ai.utils.numpy.flatten_labels">[docs]</a>
-<span class="k">def</span> <span class="nf">flatten_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="c1"># Array is of shape [width, height]</span>
         <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -202,7 +202,7 @@
 
 <div class="viewcode-block" id="unflatten_labels">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.unflatten_labels.html#cuvis_ai.utils.numpy.unflatten_labels">[docs]</a>
-<span class="k">def</span> <span class="nf">unflatten_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unflatten_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input array must be 1D or 2D.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">orig_shape</span><span class="p">)</span></div>
@@ -211,7 +211,7 @@
 
 <div class="viewcode-block" id="flatten_batch_and_labels">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.flatten_batch_and_labels.html#cuvis_ai.utils.numpy.flatten_batch_and_labels">[docs]</a>
-<span class="k">def</span> <span class="nf">flatten_batch_and_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_batch_and_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="c1"># Array is of shape [width, height]</span>
         <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -225,7 +225,7 @@
 
 <div class="viewcode-block" id="unflatten_batch_and_labels">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.unflatten_batch_and_labels.html#cuvis_ai.utils.numpy.unflatten_batch_and_labels">[docs]</a>
-<span class="k">def</span> <span class="nf">unflatten_batch_and_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unflatten_batch_and_labels</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input array must be 1D.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">orig_shape</span><span class="p">)</span></div>
@@ -233,7 +233,7 @@
 
 <div class="viewcode-block" id="binary_mask_to_rle">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.binary_mask_to_rle.html#cuvis_ai.utils.numpy.binary_mask_to_rle">[docs]</a>
-<span class="k">def</span> <span class="nf">binary_mask_to_rle</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">binary_mask_to_rle</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    converts a binary mask to RLE shamelessly copied from https://stackoverflow.com/a/76990451</span>
 <span class="sd">    :param binary_mask:</span>
@@ -258,7 +258,7 @@
 
 <div class="viewcode-block" id="gen_coco_labels">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.utils.numpy.gen_coco_labels.html#cuvis_ai.utils.numpy.gen_coco_labels">[docs]</a>
-<span class="k">def</span> <span class="nf">gen_coco_labels</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">label_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span><span class="n">img_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_object_per_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_coco_labels</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">label_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span><span class="n">img_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_object_per_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    generating coco labels from numpy image and mask, occluded objects can not be labeled correctly at the moment</span>
 <span class="sd">    :param mask: mask should be a mask containing zeros for background and integers for labels</span>

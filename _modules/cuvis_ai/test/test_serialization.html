@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.test.test_serialization &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,18 +74,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.test.test_serialization</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">unittest</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">..utils.test</span> <span class="kn">import</span> <span class="n">get_np_dummy_data</span>
-<span class="kn">from</span> <span class="nn">..preprocessor</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">NMF</span>
-<span class="kn">from</span> <span class="nn">..unsupervised</span> <span class="kn">import</span> <span class="n">GMM</span><span class="p">,</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">MeanShift</span>
-<span class="kn">from</span> <span class="nn">..transformation</span> <span class="kn">import</span> <span class="n">Reflectance</span><span class="p">,</span> <span class="n">TorchTransformation</span><span class="p">,</span> <span class="n">TorchVisionTransformation</span>
-<span class="kn">from</span> <span class="nn">..supervised</span> <span class="kn">import</span> <span class="n">SVM</span><span class="p">,</span> <span class="n">QDA</span><span class="p">,</span> <span class="n">LDA</span>
-<span class="kn">from</span> <span class="nn">..tv_transforms</span> <span class="kn">import</span> <span class="n">Bandpass</span>
-<span class="kn">from</span> <span class="nn">..utils.serializer</span> <span class="kn">import</span> <span class="n">YamlSerializer</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">unittest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.test</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_np_dummy_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..preprocessor</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">NMF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..unsupervised</span><span class="w"> </span><span class="kn">import</span> <span class="n">GMM</span><span class="p">,</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">MeanShift</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..transformation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reflectance</span><span class="p">,</span> <span class="n">TorchTransformation</span><span class="p">,</span> <span class="n">TorchVisionTransformation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..supervised</span><span class="w"> </span><span class="kn">import</span> <span class="n">SVM</span><span class="p">,</span> <span class="n">QDA</span><span class="p">,</span> <span class="n">LDA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..tv_transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bandpass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.serializer</span><span class="w"> </span><span class="kn">import</span> <span class="n">YamlSerializer</span>
 
 
 <span class="n">TYPES_TO_CHECK</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
@@ -94,11 +94,11 @@
 
 <div class="viewcode-block" id="TestNodeSerialization">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestNodeSerialization.html#cuvis_ai.test.test_serialization.TestNodeSerialization">[docs]</a>
-<span class="k">class</span> <span class="nc">TestNodeSerialization</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestNodeSerialization</span><span class="p">():</span>
 
 <div class="viewcode-block" id="TestNodeSerialization.test_serialization">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestNodeSerialization.html#cuvis_ai.test.test_serialization.TestNodeSerialization.test_serialization">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_serialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_serialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">TEST_DIR</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">node_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">TEST_DIR</span><span class="p">)</span>
@@ -139,11 +139,11 @@
 
 <div class="viewcode-block" id="TestPreprocessorPCA">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestPreprocessorPCA.html#cuvis_ai.test.test_serialization.TestPreprocessorPCA">[docs]</a>
-<span class="k">class</span> <span class="nc">TestPreprocessorPCA</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPreprocessorPCA</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestPreprocessorPCA.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestPreprocessorPCA.html#cuvis_ai.test.test_serialization.TestPreprocessorPCA.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -152,11 +152,11 @@
 
 <div class="viewcode-block" id="TestPreprocessorNMF">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestPreprocessorNMF.html#cuvis_ai.test.test_serialization.TestPreprocessorNMF">[docs]</a>
-<span class="k">class</span> <span class="nc">TestPreprocessorNMF</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPreprocessorNMF</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestPreprocessorNMF.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestPreprocessorNMF.html#cuvis_ai.test.test_serialization.TestPreprocessorNMF.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -165,11 +165,11 @@
 
 <div class="viewcode-block" id="TestUnsupervisedKMeans">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestUnsupervisedKMeans.html#cuvis_ai.test.test_serialization.TestUnsupervisedKMeans">[docs]</a>
-<span class="k">class</span> <span class="nc">TestUnsupervisedKMeans</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupervisedKMeans</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestUnsupervisedKMeans.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestUnsupervisedKMeans.html#cuvis_ai.test.test_serialization.TestUnsupervisedKMeans.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -178,11 +178,11 @@
 
 <div class="viewcode-block" id="TestUnsupervisedGMM">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestUnsupervisedGMM.html#cuvis_ai.test.test_serialization.TestUnsupervisedGMM">[docs]</a>
-<span class="k">class</span> <span class="nc">TestUnsupervisedGMM</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupervisedGMM</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestUnsupervisedGMM.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestUnsupervisedGMM.html#cuvis_ai.test.test_serialization.TestUnsupervisedGMM.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">GMM</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -191,11 +191,11 @@
 
 <div class="viewcode-block" id="TestUnsupervisedMeanShift">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestUnsupervisedMeanShift.html#cuvis_ai.test.test_serialization.TestUnsupervisedMeanShift">[docs]</a>
-<span class="k">class</span> <span class="nc">TestUnsupervisedMeanShift</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupervisedMeanShift</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestUnsupervisedMeanShift.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestUnsupervisedMeanShift.html#cuvis_ai.test.test_serialization.TestUnsupervisedMeanShift.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">MeanShift</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -204,11 +204,11 @@
 
 <div class="viewcode-block" id="TestTransformationTorch">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestTransformationTorch.html#cuvis_ai.test.test_serialization.TestTransformationTorch">[docs]</a>
-<span class="k">class</span> <span class="nc">TestTransformationTorch</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestTransformationTorch</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestTransformationTorch.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestTransformationTorch.html#cuvis_ai.test.test_serialization.TestTransformationTorch.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">TorchTransformation</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="n">operand_b</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -217,11 +217,11 @@
 
 <div class="viewcode-block" id="TestTransformationTorchVision">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestTransformationTorchVision.html#cuvis_ai.test.test_serialization.TestTransformationTorchVision">[docs]</a>
-<span class="k">class</span> <span class="nc">TestTransformationTorchVision</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestTransformationTorchVision</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestTransformationTorchVision.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestTransformationTorchVision.html#cuvis_ai.test.test_serialization.TestTransformationTorchVision.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">TorchVisionTransformation</span><span class="p">(</span><span class="n">Bandpass</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -230,11 +230,11 @@
 
 <div class="viewcode-block" id="TestTransformationReflectance">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestTransformationReflectance.html#cuvis_ai.test.test_serialization.TestTransformationReflectance">[docs]</a>
-<span class="k">class</span> <span class="nc">TestTransformationReflectance</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestTransformationReflectance</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestTransformationReflectance.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestTransformationReflectance.html#cuvis_ai.test.test_serialization.TestTransformationReflectance.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">Reflectance</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -259,11 +259,11 @@
 
 <div class="viewcode-block" id="TestSupervisedLDA">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestSupervisedLDA.html#cuvis_ai.test.test_serialization.TestSupervisedLDA">[docs]</a>
-<span class="k">class</span> <span class="nc">TestSupervisedLDA</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestSupervisedLDA</span><span class="p">(</span><span class="n">TestNodeSerialization</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestSupervisedLDA.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_serialization.TestSupervisedLDA.html#cuvis_ai.test.test_serialization.TestSupervisedLDA.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">LDA</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span>
                       <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.test.test_unsupervised_structural &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,28 +74,28 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.test.test_unsupervised_structural</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">unittest</span>
 
-<span class="kn">from</span> <span class="nn">..unsupervised</span> <span class="kn">import</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">GMM</span><span class="p">,</span> <span class="n">MeanShift</span>
-<span class="kn">from</span> <span class="nn">..utils.test</span> <span class="kn">import</span> <span class="n">get_np_dummy_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..unsupervised</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">GMM</span><span class="p">,</span> <span class="n">MeanShift</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.test</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_np_dummy_data</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 
 
 <div class="viewcode-block" id="TestUnsupervisedNode">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode">[docs]</a>
-<span class="k">class</span> <span class="nc">TestUnsupervisedNode</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupervisedNode</span><span class="p">():</span>
 
 <div class="viewcode-block" id="TestUnsupervisedNode.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># setup is handled by the decorator</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="TestUnsupervisedNode.test_initialization">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.test_initialization">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">initialized</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">output_dim</span><span class="p">)</span></div>
@@ -103,7 +103,7 @@
 
 <div class="viewcode-block" id="TestUnsupervisedNode.test_correct_input_dim">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.test_correct_input_dim">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_correct_input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_correct_input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">check_input_dim</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
@@ -115,19 +115,19 @@
 
 <div class="viewcode-block" id="TestUnsupervisedNode.test_incorrect_input_dim">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.test_incorrect_input_dim">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_incorrect_input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_incorrect_input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">check_input_dim</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="TestUnsupervisedNode.test_correct_output_dim">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.test_correct_output_dim">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_correct_output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_correct_output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">check_output_dim</span><span class="p">((</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="TestUnsupervisedNode.test_passthrough">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedNode.test_passthrough">[docs]</a>
-    <span class="k">def</span> <span class="nf">test_passthrough</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_passthrough</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># check if passthrough generates the correct shape</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
@@ -147,11 +147,11 @@
 
 <div class="viewcode-block" id="TestUnsupervisedKMeans">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans">[docs]</a>
-<span class="k">class</span> <span class="nc">TestUnsupervisedKMeans</span><span class="p">(</span><span class="n">TestUnsupervisedNode</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupervisedKMeans</span><span class="p">(</span><span class="n">TestUnsupervisedNode</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestUnsupervisedKMeans.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedKMeans.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>
@@ -160,11 +160,11 @@
 
 <div class="viewcode-block" id="TestUnsupervisedGMM">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedGMM.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedGMM">[docs]</a>
-<span class="k">class</span> <span class="nc">TestUnsupervisedGMM</span><span class="p">(</span><span class="n">TestUnsupervisedNode</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupervisedGMM</span><span class="p">(</span><span class="n">TestUnsupervisedNode</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestUnsupervisedGMM.setUp">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedGMM.html#cuvis_ai.test.test_unsupervised_structural.TestUnsupervisedGMM.setUp">[docs]</a>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">GMM</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">get_np_dummy_data</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)))</span></div>
 </div>

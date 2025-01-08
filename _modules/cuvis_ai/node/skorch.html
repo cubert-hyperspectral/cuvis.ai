@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.node.skorch &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -75,33 +75,34 @@
              
   <h1>Source code for cuvis_ai.node.skorch</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">..utils.numpy</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..utils.torch</span> <span class="kn">import</span> <span class="n">InputDimension</span><span class="p">,</span> <span class="n">guess_input_dimensionalty</span>
-<span class="kn">from</span> <span class="nn">.node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseSupervised</span><span class="p">,</span> <span class="n">BaseUnsupervised</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputDimension</span><span class="p">,</span> <span class="n">guess_input_dimensionalty</span><span class="p">,</span> <span class="n">extract_state_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.dict</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_prefix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSupervised</span><span class="p">,</span> <span class="n">BaseUnsupervised</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">skorch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skorch</span>
 
-<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 
 
 <div class="viewcode-block" id="SkorchWrapped">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.node.skorch.SkorchWrapped.html#cuvis_ai.node.skorch.SkorchWrapped">[docs]</a>
-<span class="k">class</span> <span class="nc">SkorchWrapped</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SkorchWrapped</span><span class="p">:</span>
     <span class="k">pass</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_serialize_skorch_model</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">data_independent</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># obj.net.get_params()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_serialize_skorch_model</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">data_independent</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">model_args_no_prefix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">data_independent</span><span class="p">}</span>
 
@@ -114,13 +115,19 @@
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">data_independent</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">data_dependend</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">_load_skorch_model</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">data_independent_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_skorch_model</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">data_independent_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">remove_prefix</span><span class="p">(</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="s1">&#39;module__&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="n">params_independent</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
                           <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_independent_keys</span><span class="p">}</span>
 
-    <span class="bp">cls</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">params_independent</span><span class="p">)</span>
+    <span class="n">params_independent_with_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;module__</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span>
+                                      <span class="n">v</span> <span class="ow">in</span> <span class="n">params_independent</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">params_independent_with_prefix</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">model_args</span> <span class="o">=</span> <span class="n">params_independent</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">model_args_no_prefix</span> <span class="o">=</span> <span class="n">params_independent_with_prefix</span>
 
     <span class="k">if</span> <span class="s1">&#39;state&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">return</span>
@@ -131,27 +138,27 @@
     <span class="n">params_dependent</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
                         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_dependent_keys</span><span class="p">}</span>
 
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params_dependent</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not set state attribute </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># nopep8</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">params_dependent</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span>
+
+    <span class="n">loaded_weights</span> <span class="o">=</span> <span class="n">extract_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+        <span class="n">weights</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;torch&#39;</span><span class="p">)</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">module_</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">loaded_weights</span><span class="p">)</span>
     <span class="n">obj</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">obj</span><span class="o">.</span><span class="n">_derive_values</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">_wrap_preprocessor_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_preprocessor_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
-<span class="k">def</span> <span class="nf">_wrap_supervised_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_supervised_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 
-    <span class="k">class</span> <span class="nc">SkorchWrappedSupervised</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">BaseSupervised</span><span class="p">,</span> <span class="n">SkorchWrapped</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SkorchWrappedSupervised</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">BaseSupervised</span><span class="p">,</span> <span class="n">SkorchWrapped</span><span class="p">):</span>
 
         <span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="vm">__module__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">NLLLoss</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">SkorchWrappedSupervised</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -162,10 +169,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model_args_no_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span>
                                          <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">=</span> <span class="n">guess_input_dimensionalty</span><span class="p">(</span>
-                <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_args_no_prefix</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">NLLLoss</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">skorch</span><span class="o">.</span><span class="n">NeuralNetClassifier</span><span class="p">(</span>
                 <span class="n">module</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span>
@@ -173,16 +177,19 @@
                 <span class="n">train_split</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_args</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">=</span> <span class="n">guess_input_dimensionalty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">module_</span><span class="p">)</span>
 
         <span class="nd">@Node</span><span class="o">.</span><span class="n">input_dim</span><span class="o">.</span><span class="n">getter</span>
-        <span class="k">def</span> <span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span>
 
         <span class="nd">@Node</span><span class="o">.</span><span class="n">output_dim</span><span class="o">.</span><span class="n">getter</span>
-        <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span>
 
-        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">==</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">One</span><span class="p">:</span>
                 <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
                 <span class="n">flattened_label</span> <span class="o">=</span> <span class="n">flatten_labels</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
@@ -201,12 +208,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-            <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flattened_data</span><span class="p">)</span>
+            <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flattened_data</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">unflatten_batch_and_spatial</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
             <span class="n">data_independent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="n">data_dependend</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">attr</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
@@ -215,7 +222,7 @@
             <span class="p">}</span>
             <span class="k">return</span> <span class="n">data_independent</span> <span class="o">|</span> <span class="n">data_dependend</span>
 
-        <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data_independent_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
             <span class="n">data_dependent_keys</span> <span class="o">=</span> <span class="p">{</span>
@@ -237,14 +244,14 @@
     <span class="k">return</span> <span class="n">SkorchWrappedSupervised</span>
 
 
-<span class="k">def</span> <span class="nf">_wrap_unsupervised_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_unsupervised_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 
-    <span class="k">class</span> <span class="nc">SkorchWrappedUnsupervised</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">BaseUnsupervised</span><span class="p">,</span> <span class="n">SkorchWrapped</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SkorchWrappedUnsupervised</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">BaseUnsupervised</span><span class="p">,</span> <span class="n">SkorchWrapped</span><span class="p">):</span>
 
         <span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="vm">__module__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">SkorchWrappedUnsupervised</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -255,10 +262,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model_args_no_prefix</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span>
                                          <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">=</span> <span class="n">guess_input_dimensionalty</span><span class="p">(</span>
-                <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_args_no_prefix</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">NLLLoss</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">skorch</span><span class="o">.</span><span class="n">NeuralNet</span><span class="p">(</span>
                 <span class="n">module</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span>
@@ -266,16 +270,19 @@
                 <span class="n">train_split</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_args</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">=</span> <span class="n">guess_input_dimensionalty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">module_</span><span class="p">)</span>
 
         <span class="nd">@Node</span><span class="o">.</span><span class="n">input_dim</span><span class="o">.</span><span class="n">getter</span>
-        <span class="k">def</span> <span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span>
 
         <span class="nd">@Node</span><span class="o">.</span><span class="n">output_dim</span><span class="o">.</span><span class="n">getter</span>
-        <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span>
 
-        <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">==</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">One</span><span class="p">:</span>
                 <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -293,21 +300,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_output_size</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">==</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">One</span><span class="p">:</span>
                 <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">flatten_batch_and_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">==</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">Three</span><span class="p">:</span>
                 <span class="n">flattened_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">)</span>
-            <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span>
+            <span class="n">transformed_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">flattened_data</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">==</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">One</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">unflatten_batch_and_spatial</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_dim</span> <span class="o">==</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">Three</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_serialize_skorch_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_load_skorch_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span>
 
     <span class="n">SkorchWrappedUnsupervised</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
@@ -315,14 +322,14 @@
     <span class="k">return</span> <span class="n">SkorchWrappedUnsupervised</span>
 
 
-<span class="k">def</span> <span class="nf">_wrap_torch_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_torch_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_wrap_unsupervised_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Called on unsupported class&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_wrap_torch_instance</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_wrap_torch_instance</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="bp">cls</span> <span class="o">=</span> <span class="n">_wrap_torch_class</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
 
     <span class="n">params</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>

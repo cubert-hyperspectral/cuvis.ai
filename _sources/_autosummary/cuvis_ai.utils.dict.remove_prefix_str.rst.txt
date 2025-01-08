@@ -1,0 +1,6 @@
+cuvis\_ai.utils.dict.remove\_prefix\_str
+========================================
+
+.. currentmodule:: cuvis_ai.utils.dict
+
+.. autofunction:: remove_prefix_str

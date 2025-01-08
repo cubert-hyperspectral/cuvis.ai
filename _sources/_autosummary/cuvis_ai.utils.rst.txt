@@ -29,6 +29,7 @@ cuvis\_ai.utils
    :recursive:
 
    dependencies
+   dict
    filesystem
    nn_config
    numpy

@@ -1,0 +1,6 @@
+cuvis\_ai.utils.torch.guess\_state\_dict\_format
+================================================
+
+.. currentmodule:: cuvis_ai.utils.torch
+
+.. autofunction:: guess_state_dict_format

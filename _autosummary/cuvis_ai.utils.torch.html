@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.utils.torch &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cuvis_ai.utils.torch.get_output_shape" href="cuvis_ai.utils.torch.get_output_shape.html" />
+    <link rel="next" title="cuvis_ai.utils.torch.extract_state_dict" href="cuvis_ai.utils.torch.extract_state_dict.html" />
     <link rel="prev" title="cuvis_ai.utils.test.get_np_dummy_data" href="cuvis_ai.utils.test.get_np_dummy_data.html" /> 
 </head>
 
@@ -63,14 +63,17 @@
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.utils.html">cuvis_ai.utils</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.dependencies.html">cuvis_ai.utils.dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.dict.html">cuvis_ai.utils.dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.filesystem.html">cuvis_ai.utils.filesystem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.nn_config.html">cuvis_ai.utils.nn_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.numpy.html">cuvis_ai.utils.numpy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.serializer.html">cuvis_ai.utils.serializer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.test.html">cuvis_ai.utils.test</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">cuvis_ai.utils.torch</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.torch.extract_state_dict.html">cuvis_ai.utils.torch.extract_state_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.torch.get_output_shape.html">cuvis_ai.utils.torch.get_output_shape</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.torch.guess_input_dimensionalty.html">cuvis_ai.utils.torch.guess_input_dimensionalty</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.torch.guess_state_dict_format.html">cuvis_ai.utils.torch.guess_state_dict_format</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.torch.InputDimension.html">cuvis_ai.utils.torch.InputDimension</a></li>
 </ul>
 </li>
@@ -112,11 +115,17 @@
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.utils.torch.get_output_shape.html#cuvis_ai.utils.torch.get_output_shape" title="cuvis_ai.utils.torch.get_output_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_shape</span></code></a>(input_shape, model)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.utils.torch.extract_state_dict.html#cuvis_ai.utils.torch.extract_state_dict" title="cuvis_ai.utils.torch.extract_state_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_state_dict</span></code></a>(state_dict[, format])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.utils.torch.guess_input_dimensionalty.html#cuvis_ai.utils.torch.guess_input_dimensionalty" title="cuvis_ai.utils.torch.guess_input_dimensionalty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess_input_dimensionalty</span></code></a>(model)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.utils.torch.get_output_shape.html#cuvis_ai.utils.torch.get_output_shape" title="cuvis_ai.utils.torch.get_output_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_shape</span></code></a>(input_shape, model)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="cuvis_ai.utils.torch.guess_input_dimensionalty.html#cuvis_ai.utils.torch.guess_input_dimensionalty" title="cuvis_ai.utils.torch.guess_input_dimensionalty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess_input_dimensionalty</span></code></a>(model)</p></td>
 <td><p>Inspects the first layer of a PyTorch model to guess if the model expects 1D (flattened), 2D (spatial), or 3D input data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="cuvis_ai.utils.torch.guess_state_dict_format.html#cuvis_ai.utils.torch.guess_state_dict_format" title="cuvis_ai.utils.torch.guess_state_dict_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess_state_dict_format</span></code></a>(state_dict)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -135,7 +144,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cuvis_ai.utils.test.get_np_dummy_data.html" class="btn btn-neutral float-left" title="cuvis_ai.utils.test.get_np_dummy_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuvis_ai.utils.torch.get_output_shape.html" class="btn btn-neutral float-right" title="cuvis_ai.utils.torch.get_output_shape" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuvis_ai.utils.torch.extract_state_dict.html" class="btn btn-neutral float-right" title="cuvis_ai.utils.torch.extract_state_dict" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

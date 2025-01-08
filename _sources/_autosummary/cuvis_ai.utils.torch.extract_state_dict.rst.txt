@@ -1,0 +1,6 @@
+cuvis\_ai.utils.torch.extract\_state\_dict
+==========================================
+
+.. currentmodule:: cuvis_ai.utils.torch
+
+.. autofunction:: extract_state_dict

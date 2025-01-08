@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>sklearn.cluster._kmeans &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -79,52 +79,52 @@
 <span class="c1"># Authors: The scikit-learn developers</span>
 <span class="c1"># SPDX-License-Identifier: BSD-3-Clause</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Real</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.sparse</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
 
-<span class="kn">from</span> <span class="nn">..base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseEstimator</span><span class="p">,</span>
     <span class="n">ClassNamePrefixFeaturesOutMixin</span><span class="p">,</span>
     <span class="n">ClusterMixin</span><span class="p">,</span>
     <span class="n">TransformerMixin</span><span class="p">,</span>
     <span class="n">_fit_context</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">ConvergenceWarning</span>
-<span class="kn">from</span> <span class="nn">..metrics.pairwise</span> <span class="kn">import</span> <span class="n">_euclidean_distances</span><span class="p">,</span> <span class="n">euclidean_distances</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_random_state</span>
-<span class="kn">from</span> <span class="nn">..utils._openmp_helpers</span> <span class="kn">import</span> <span class="n">_openmp_effective_n_threads</span>
-<span class="kn">from</span> <span class="nn">..utils._param_validation</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">StrOptions</span><span class="p">,</span> <span class="n">validate_params</span>
-<span class="kn">from</span> <span class="nn">..utils.extmath</span> <span class="kn">import</span> <span class="n">row_norms</span><span class="p">,</span> <span class="n">stable_cumsum</span>
-<span class="kn">from</span> <span class="nn">..utils.parallel</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvergenceWarning</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..metrics.pairwise</span><span class="w"> </span><span class="kn">import</span> <span class="n">_euclidean_distances</span><span class="p">,</span> <span class="n">euclidean_distances</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_random_state</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils._openmp_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">_openmp_effective_n_threads</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils._param_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">StrOptions</span><span class="p">,</span> <span class="n">validate_params</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.extmath</span><span class="w"> </span><span class="kn">import</span> <span class="n">row_norms</span><span class="p">,</span> <span class="n">stable_cumsum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.parallel</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_get_threadpool_controller</span><span class="p">,</span>
     <span class="n">_threadpool_controller_decorator</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..utils.sparsefuncs</span> <span class="kn">import</span> <span class="n">mean_variance_axis</span>
-<span class="kn">from</span> <span class="nn">..utils.sparsefuncs_fast</span> <span class="kn">import</span> <span class="n">assign_rows_csr</span>
-<span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.sparsefuncs</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_variance_axis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.sparsefuncs_fast</span><span class="w"> </span><span class="kn">import</span> <span class="n">assign_rows_csr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.validation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_check_sample_weight</span><span class="p">,</span>
     <span class="n">_is_arraylike_not_scalar</span><span class="p">,</span>
     <span class="n">check_is_fitted</span><span class="p">,</span>
     <span class="n">validate_data</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._k_means_common</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._k_means_common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CHUNK_SIZE</span><span class="p">,</span>
     <span class="n">_inertia_dense</span><span class="p">,</span>
     <span class="n">_inertia_sparse</span><span class="p">,</span>
     <span class="n">_is_same_clustering</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._k_means_elkan</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._k_means_elkan</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">elkan_iter_chunked_dense</span><span class="p">,</span>
     <span class="n">elkan_iter_chunked_sparse</span><span class="p">,</span>
     <span class="n">init_bounds_dense</span><span class="p">,</span>
     <span class="n">init_bounds_sparse</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._k_means_lloyd</span> <span class="kn">import</span> <span class="n">lloyd_iter_chunked_dense</span><span class="p">,</span> <span class="n">lloyd_iter_chunked_sparse</span>
-<span class="kn">from</span> <span class="nn">._k_means_minibatch</span> <span class="kn">import</span> <span class="n">_minibatch_update_dense</span><span class="p">,</span> <span class="n">_minibatch_update_sparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._k_means_lloyd</span><span class="w"> </span><span class="kn">import</span> <span class="n">lloyd_iter_chunked_dense</span><span class="p">,</span> <span class="n">lloyd_iter_chunked_sparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._k_means_minibatch</span><span class="w"> </span><span class="kn">import</span> <span class="n">_minibatch_update_dense</span><span class="p">,</span> <span class="n">_minibatch_update_sparse</span>
 
 <span class="c1">###############################################################################</span>
 <span class="c1"># Initialization heuristic</span>
@@ -141,7 +141,7 @@
     <span class="p">},</span>
     <span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">kmeans_plusplus</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kmeans_plusplus</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="n">n_clusters</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -247,7 +247,7 @@
     <span class="k">return</span> <span class="n">centers</span><span class="p">,</span> <span class="n">indices</span>
 
 
-<span class="k">def</span> <span class="nf">_kmeans_plusplus</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kmeans_plusplus</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span> <span class="n">n_clusters</span><span class="p">,</span> <span class="n">x_squared_norms</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">n_local_trials</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computational component for initialization of n_clusters by</span>
@@ -352,7 +352,7 @@
 <span class="c1"># K-means batch estimation by EM (expectation maximization)</span>
 
 
-<span class="k">def</span> <span class="nf">_tolerance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tolerance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a tolerance which is dependent on the dataset.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">tol</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
@@ -371,7 +371,7 @@
     <span class="p">},</span>
     <span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">k_means</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">k_means</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="n">n_clusters</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -529,7 +529,7 @@
         <span class="k">return</span> <span class="n">est</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">,</span> <span class="n">est</span><span class="o">.</span><span class="n">labels_</span><span class="p">,</span> <span class="n">est</span><span class="o">.</span><span class="n">inertia_</span>
 
 
-<span class="k">def</span> <span class="nf">_kmeans_single_elkan</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kmeans_single_elkan</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="n">sample_weight</span><span class="p">,</span>
     <span class="n">centers_init</span><span class="p">,</span>
@@ -697,7 +697,7 @@
 <span class="c1"># Threadpoolctl context to limit the number of threads in second level of</span>
 <span class="c1"># nested parallelism (i.e. BLAS) to avoid oversubscription.</span>
 <span class="nd">@_threadpool_controller_decorator</span><span class="p">(</span><span class="n">limits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">user_api</span><span class="o">=</span><span class="s2">&quot;blas&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_kmeans_single_lloyd</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kmeans_single_lloyd</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="n">sample_weight</span><span class="p">,</span>
     <span class="n">centers_init</span><span class="p">,</span>
@@ -828,7 +828,7 @@
     <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">inertia</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 
 
-<span class="k">def</span> <span class="nf">_labels_inertia</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">n_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">return_inertia</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_labels_inertia</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">n_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">return_inertia</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;E step of the K-means EM algorithm.</span>
 
 <span class="sd">    Compute the labels and the inertia of the given samples and centers.</span>
@@ -904,7 +904,7 @@
 <span class="p">)(</span><span class="n">_labels_inertia</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_BaseKMeans</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_BaseKMeans</span><span class="p">(</span>
     <span class="n">ClassNamePrefixFeaturesOutMixin</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">,</span> <span class="n">ClusterMixin</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ABC</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for KMeans and MiniBatchKMeans&quot;&quot;&quot;</span>
@@ -922,7 +922,7 @@
         <span class="s2">&quot;random_state&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;random_state&quot;</span><span class="p">],</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_clusters</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -941,7 +941,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
 
-    <span class="k">def</span> <span class="nf">_check_params_vs_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">default_n_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_params_vs_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">default_n_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># n_clusters</span>
         <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -977,13 +977,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_n_init</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_warn_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_active_threads</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_warn_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_active_threads</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Issue an estimator specific warning when vcomp and mkl are both present</span>
 
 <span class="sd">        This method is called by `_check_mkl_vcomp`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_check_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check when vcomp and mkl are both present&quot;&quot;&quot;</span>
         <span class="c1"># The BLAS call inside a prange in lloyd_iter_chunked_dense is known to</span>
         <span class="c1"># cause a small memory leak when there are less chunks than the number</span>
@@ -1003,7 +1003,7 @@
             <span class="k">if</span> <span class="n">has_vcomp</span> <span class="ow">and</span> <span class="n">has_mkl</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_warn_mkl_vcomp</span><span class="p">(</span><span class="n">n_active_threads</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_validate_center_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">centers</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_center_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">centers</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if centers is compatible with X and n_clusters.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">centers</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1016,7 +1016,7 @@
                 <span class="sa">f</span><span class="s2">&quot;match the number of features of the data </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_test_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_test_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">validate_data</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">X</span><span class="p">,</span>
@@ -1028,7 +1028,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
 
-    <span class="k">def</span> <span class="nf">_init_centroids</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_centroids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">X</span><span class="p">,</span>
         <span class="n">x_squared_norms</span><span class="p">,</span>
@@ -1114,7 +1114,7 @@
 
         <span class="k">return</span> <span class="n">centers</span>
 
-    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute cluster centers and predict cluster index for each sample.</span>
 
 <span class="sd">        Convenience method; equivalent to calling fit(X) followed by</span>
@@ -1139,7 +1139,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span>
 
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the closest cluster each sample in X belongs to.</span>
 
 <span class="sd">        In the vector quantization literature, `cluster_centers_` is called</span>
@@ -1173,7 +1173,7 @@
 
         <span class="k">return</span> <span class="n">labels</span>
 
-    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute clustering and transform X to cluster-distance space.</span>
 
 <span class="sd">        Equivalent to fit(X).transform(X), but more efficiently implemented.</span>
@@ -1197,7 +1197,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform X to a cluster-distance space.</span>
 
 <span class="sd">        In the new space, each dimension is the distance to the cluster</span>
@@ -1219,11 +1219,11 @@
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_test_data</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Guts of transform method; no input validation.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">euclidean_distances</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Opposite of the value of X on the K-means objective.</span>
 
 <span class="sd">        Parameters</span>
@@ -1254,7 +1254,7 @@
         <span class="k">return</span> <span class="o">-</span><span class="n">scores</span>
 
 
-<span class="k">class</span> <span class="nc">KMeans</span><span class="p">(</span><span class="n">_BaseKMeans</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KMeans</span><span class="p">(</span><span class="n">_BaseKMeans</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;K-Means clustering.</span>
 
 <span class="sd">    Read more in the :ref:`User Guide &lt;k_means&gt;`.</span>
@@ -1444,7 +1444,7 @@
 
 <div class="viewcode-block" id="KMeans.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.unsupervised.sklearn_wrapped.KMeans.html#cuvis_ai.unsupervised.sklearn_wrapped.KMeans.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_clusters</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1471,7 +1471,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithm</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_check_params_vs_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_params_vs_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_check_params_vs_input</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">default_n_init</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_algorithm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span>
@@ -1485,7 +1485,7 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_algorithm</span> <span class="o">=</span> <span class="s2">&quot;lloyd&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_warn_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_active_threads</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_warn_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_active_threads</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Warn when vcomp and mkl are both present&quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;KMeans is known to have a memory leak on Windows &quot;</span>
@@ -1495,7 +1495,7 @@
         <span class="p">)</span>
 
     <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute k-means clustering.</span>
 
 <span class="sd">        Parameters</span>
@@ -1625,7 +1625,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 
-<span class="k">def</span> <span class="nf">_mini_batch_step</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_mini_batch_step</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
     <span class="n">sample_weight</span><span class="p">,</span>
     <span class="n">centers</span><span class="p">,</span>
@@ -1746,7 +1746,7 @@
     <span class="k">return</span> <span class="n">inertia</span>
 
 
-<span class="k">class</span> <span class="nc">MiniBatchKMeans</span><span class="p">(</span><span class="n">_BaseKMeans</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MiniBatchKMeans</span><span class="p">(</span><span class="n">_BaseKMeans</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mini-Batch K-Means clustering.</span>
 
@@ -1952,7 +1952,7 @@
         <span class="s2">&quot;reassignment_ratio&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">Real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)],</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_clusters</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1984,7 +1984,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">init_size</span> <span class="o">=</span> <span class="n">init_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reassignment_ratio</span> <span class="o">=</span> <span class="n">reassignment_ratio</span>
 
-    <span class="k">def</span> <span class="nf">_check_params_vs_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_params_vs_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_check_params_vs_input</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">default_n_init</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -2015,7 +2015,7 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reassignment_ratio</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_warn_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_active_threads</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_warn_mkl_vcomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_active_threads</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Warn when vcomp and mkl are both present&quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;MiniBatchKMeans is known to have a memory leak on &quot;</span>
@@ -2026,7 +2026,7 @@
             <span class="sa">f</span><span class="s2">&quot;OMP_NUM_THREADS=</span><span class="si">{</span><span class="n">n_active_threads</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_mini_batch_convergence</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mini_batch_convergence</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">centers_squared_diff</span><span class="p">,</span> <span class="n">batch_inertia</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to encapsulate the early stopping logic&quot;&quot;&quot;</span>
@@ -2091,7 +2091,7 @@
 
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_random_reassign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_random_reassign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a random reassignment needs to be done.</span>
 
 <span class="sd">        Do random reassignments each time 10 * n_clusters samples have been</span>
@@ -2108,7 +2108,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the centroids on X by chunking it into mini-batches.</span>
 
 <span class="sd">        Parameters</span>
@@ -2265,7 +2265,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@_fit_context</span><span class="p">(</span><span class="n">prefer_skip_nested_validation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">partial_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">partial_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update k means estimate on a single mini-batch X.</span>
 
 <span class="sd">        Parameters</span>

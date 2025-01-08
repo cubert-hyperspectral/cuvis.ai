@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.distance.distance &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,20 +74,20 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.distance.distance</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">..node</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">CubeConsumer</span>
-<span class="kn">from</span> <span class="nn">..utils.numpy</span> <span class="kn">import</span> <span class="n">flatten_spatial</span><span class="p">,</span> <span class="n">flatten_labels</span><span class="p">,</span> <span class="n">unflatten_spatial</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">typing</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">CubeConsumer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">flatten_spatial</span><span class="p">,</span> <span class="n">flatten_labels</span><span class="p">,</span> <span class="n">unflatten_spatial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
 
 <div class="viewcode-block" id="AbstractDistance">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance">[docs]</a>
-<span class="k">class</span> <span class="nc">AbstractDistance</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractDistance</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">CubeConsumer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class for data preprocessing.</span>
 
@@ -107,7 +107,7 @@
 
 <div class="viewcode-block" id="AbstractDistance.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize distance metric</span>
 
 <span class="sd">        Parameters</span>
@@ -123,7 +123,7 @@
 <div class="viewcode-block" id="AbstractDistance.spectra_to_array">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.spectra_to_array">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">spectra_to_array</span><span class="p">(</span><span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectra_to_array</span><span class="p">(</span><span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert list of spectra to a numpy array</span>
 
 <span class="sd">        Parameters</span>
@@ -150,14 +150,14 @@
 
 <div class="viewcode-block" id="AbstractDistance.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="AbstractDistance.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass the data through comparative function</span>
 
 <span class="sd">        Parameters</span>
@@ -197,7 +197,7 @@
 
 <div class="viewcode-block" id="AbstractDistance.serialize">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.serialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert distance node to serializable format</span>
 
 <span class="sd">        Parameters</span>
@@ -219,7 +219,7 @@
 
 <div class="viewcode-block" id="AbstractDistance.load">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load dumped parameters to recreate the distance object</span>
 
 <span class="sd">        Parameters</span>
@@ -239,7 +239,7 @@
 <div class="viewcode-block" id="AbstractDistance.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.AbstractDistance.html#cuvis_ai.distance.distance.AbstractDistance.score">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Abstract distance method implemented by every distance type</span>
 
 <span class="sd">        Parameters</span>
@@ -253,7 +253,7 @@
 
 
     <span class="nd">@Node</span><span class="o">.</span><span class="n">input_dim</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get required input dimension</span>
 
 <span class="sd">        Returns</span>
@@ -269,7 +269,7 @@
             <span class="k">return</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@Node</span><span class="o">.</span><span class="n">output_dim</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get required output dimension</span>
 
 <span class="sd">        Returns</span>
@@ -284,7 +284,7 @@
 
 <div class="viewcode-block" id="SpectralAngle">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.SpectralAngle.html#cuvis_ai.distance.distance.SpectralAngle">[docs]</a>
-<span class="k">class</span> <span class="nc">SpectralAngle</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpectralAngle</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Cosine distance between spectra according to the Spectral Angle Mapper (SAM) formula.</span>
 
 <span class="sd">    Nota Bene: Measurements should be normalized as large values skews this calculation towards π/2.</span>
@@ -297,7 +297,7 @@
 
 <div class="viewcode-block" id="SpectralAngle.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.SpectralAngle.html#cuvis_ai.distance.distance.SpectralAngle.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct SAM </span>
 
 <span class="sd">        Parameters</span>
@@ -311,7 +311,7 @@
 <div class="viewcode-block" id="SpectralAngle.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.SpectralAngle.html#cuvis_ai.distance.distance.SpectralAngle.score">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>
@@ -348,7 +348,7 @@
 
 <div class="viewcode-block" id="Euclidean">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Euclidean.html#cuvis_ai.distance.distance.Euclidean">[docs]</a>
-<span class="k">class</span> <span class="nc">Euclidean</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Euclidean</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate L2 (Euclidean) Distance.</span>
 
 <span class="sd">    Parameters</span>
@@ -359,7 +359,7 @@
 
 <div class="viewcode-block" id="Euclidean.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Euclidean.html#cuvis_ai.distance.distance.Euclidean.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Euclidean distance node. </span>
 
 <span class="sd">        Parameters</span>
@@ -373,7 +373,7 @@
 <div class="viewcode-block" id="Euclidean.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Euclidean.html#cuvis_ai.distance.distance.Euclidean.score">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>
@@ -403,7 +403,7 @@
 
 <div class="viewcode-block" id="Manhattan">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Manhattan.html#cuvis_ai.distance.distance.Manhattan">[docs]</a>
-<span class="k">class</span> <span class="nc">Manhattan</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Manhattan</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate L1 (Manhattan) Distance.</span>
 
 <span class="sd">    Parameters</span>
@@ -414,7 +414,7 @@
 
 <div class="viewcode-block" id="Manhattan.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Manhattan.html#cuvis_ai.distance.distance.Manhattan.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Manhattan distance node. </span>
 
 <span class="sd">        Parameters</span>
@@ -428,7 +428,7 @@
 <div class="viewcode-block" id="Manhattan.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Manhattan.html#cuvis_ai.distance.distance.Manhattan.score">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="Canberra">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Canberra.html#cuvis_ai.distance.distance.Canberra">[docs]</a>
-<span class="k">class</span> <span class="nc">Canberra</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Canberra</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate  Weighted L1 (Canberra) Distance.</span>
 
 <span class="sd">    Parameters</span>
@@ -469,7 +469,7 @@
 
 <div class="viewcode-block" id="Canberra.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Canberra.html#cuvis_ai.distance.distance.Canberra.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Canberra distance node. </span>
 
 <span class="sd">        Parameters</span>
@@ -483,7 +483,7 @@
 <div class="viewcode-block" id="Canberra.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Canberra.html#cuvis_ai.distance.distance.Canberra.score">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>
@@ -513,7 +513,7 @@
 
 <div class="viewcode-block" id="Minkowski">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Minkowski.html#cuvis_ai.distance.distance.Minkowski">[docs]</a>
-<span class="k">class</span> <span class="nc">Minkowski</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Minkowski</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;N-th degree normed vector space (Minkowski) Distance.</span>
 
 <span class="sd">    Parameters</span>
@@ -524,7 +524,7 @@
 
 <div class="viewcode-block" id="Minkowski.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Minkowski.html#cuvis_ai.distance.distance.Minkowski.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">degree</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">degree</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Minkowski distance node.</span>
 
 <span class="sd">        Parameters</span>
@@ -540,7 +540,7 @@
 
 <div class="viewcode-block" id="Minkowski.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.Minkowski.html#cuvis_ai.distance.distance.Minkowski.score">[docs]</a>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>
@@ -568,7 +568,7 @@
 
 <div class="viewcode-block" id="GFC">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.GFC.html#cuvis_ai.distance.distance.GFC">[docs]</a>
-<span class="k">class</span> <span class="nc">GFC</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GFC</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Goodness-of-fit Coefficient (GFC)</span>
 
 <span class="sd">    Citation:</span>
@@ -583,7 +583,7 @@
 
 <div class="viewcode-block" id="GFC.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.GFC.html#cuvis_ai.distance.distance.GFC.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct GFC distance node.</span>
 
 <span class="sd">        Parameters</span>
@@ -596,7 +596,7 @@
 
 <div class="viewcode-block" id="GFC.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.GFC.html#cuvis_ai.distance.distance.GFC.score">[docs]</a>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>
@@ -626,7 +626,7 @@
 
 <div class="viewcode-block" id="ECS">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.ECS.html#cuvis_ai.distance.distance.ECS">[docs]</a>
-<span class="k">class</span> <span class="nc">ECS</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ECS</span><span class="p">(</span><span class="n">AbstractDistance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Euclidean Distance of Cumulative Spectrum (ECS)</span>
 
 <span class="sd">    Parameters</span>
@@ -637,7 +637,7 @@
 
 <div class="viewcode-block" id="ECS.__init__">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.ECS.html#cuvis_ai.distance.distance.ECS.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an ECS distance node.</span>
 
 <span class="sd">        Parameters</span>
@@ -654,7 +654,7 @@
 
 
     <span class="nd">@Node</span><span class="o">.</span><span class="n">input_dim</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the required input dimension</span>
 
 <span class="sd">        Returns</span>
@@ -667,7 +667,7 @@
 
 <div class="viewcode-block" id="ECS.score">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.distance.distance.ECS.html#cuvis_ai.distance.distance.ECS.score">[docs]</a>
-    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ref_spectra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Score new datacubes against reference spectra.</span>
 
 <span class="sd">        Parameters</span>

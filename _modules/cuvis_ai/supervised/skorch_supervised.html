@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuvis_ai.supervised.skorch_supervised &mdash; Cuvis AI 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -74,29 +74,29 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuvis_ai.supervised.skorch_supervised</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">..node.base</span> <span class="kn">import</span> <span class="n">BaseSupervised</span>
-<span class="kn">from</span> <span class="nn">skorch</span> <span class="kn">import</span> <span class="n">NeuralNetClassifier</span>
-<span class="kn">from</span> <span class="nn">..utils.nn_config</span> <span class="kn">import</span> <span class="n">Optimizer</span>
-<span class="kn">from</span> <span class="nn">..utils.numpy</span> <span class="kn">import</span> <span class="n">flatten_spatial</span><span class="p">,</span> <span class="n">flatten_labels</span><span class="p">,</span> <span class="n">unflatten_spatial</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span> <span class="k">as</span> <span class="n">torch_optim</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">..node.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSupervised</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skorch</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeuralNetClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.nn_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">flatten_spatial</span><span class="p">,</span> <span class="n">flatten_labels</span><span class="p">,</span> <span class="n">unflatten_spatial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.optim.optimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optimizer</span> <span class="k">as</span> <span class="n">torch_optim</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 
 
 <div class="viewcode-block" id="SkorchSupervised">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.supervised.skorch_supervised.SkorchSupervised.html#cuvis_ai.supervised.skorch_supervised.SkorchSupervised">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">SkorchSupervised</span><span class="p">(</span><span class="n">BaseSupervised</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SkorchSupervised</span><span class="p">(</span><span class="n">BaseSupervised</span><span class="p">):</span>
     <span class="n">epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">torch_optim</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -109,7 +109,7 @@
 
 <div class="viewcode-block" id="SkorchSupervised.fit">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.supervised.skorch_supervised.SkorchSupervised.html#cuvis_ai.supervised.skorch_supervised.SkorchSupervised.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="n">flatten_image</span> <span class="o">=</span> <span class="n">flatten_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="n">flatten_l</span> <span class="o">=</span> <span class="n">flatten_labels</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
@@ -122,7 +122,7 @@
 
 <div class="viewcode-block" id="SkorchSupervised.forward">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.supervised.skorch_supervised.SkorchSupervised.html#cuvis_ai.supervised.skorch_supervised.SkorchSupervised.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="n">flatten_image</span> <span class="o">=</span> <span class="n">flatten_spatial</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">flatten_image</span><span class="p">)</span>
@@ -132,13 +132,13 @@
 
 <div class="viewcode-block" id="SkorchSupervised.serialize">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.supervised.skorch_supervised.SkorchSupervised.html#cuvis_ai.supervised.skorch_supervised.SkorchSupervised.serialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="SkorchSupervised.load">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.supervised.skorch_supervised.SkorchSupervised.html#cuvis_ai.supervised.skorch_supervised.SkorchSupervised.load">[docs]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">():</span>
         <span class="k">pass</span></div>
 </div>
 

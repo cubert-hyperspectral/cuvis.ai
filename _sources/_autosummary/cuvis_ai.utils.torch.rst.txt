@@ -14,8 +14,10 @@ cuvis\_ai.utils.torch
    .. autosummary::
       :toctree:                                          
    
+      extract_state_dict
       get_output_shape
       guess_input_dimensionalty
+      guess_state_dict_format
    
    
 

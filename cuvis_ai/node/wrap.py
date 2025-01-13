@@ -3,15 +3,20 @@ from types import MethodWrapperType, ModuleType
 import inspect
 import torch
 import sklearn
+import torchvision
+import torchvision.transforms.v2
 
 from .sklearn import _wrap_sklearn_class, _wrap_sklearn_instance
 from .skorch import _wrap_torch_class, _wrap_torch_instance
+from .torchvision import _wrap_torchvision_class, _wrap_torchvision_instance
 
 
 def _wrap_class(cls):
 
     if issubclass(cls, sklearn.base.BaseEstimator):
         return _wrap_sklearn_class(cls)
+    elif issubclass(cls, torchvision.transforms.v2.Transform):
+        return _wrap_torchvision_class(cls)
     elif issubclass(cls, torch.nn.Module):
         return _wrap_torch_class(cls)
     else:
@@ -22,6 +27,8 @@ def _wrap_instance(obj):
 
     if isinstance(obj, sklearn.base.BaseEstimator):
         return _wrap_sklearn_instance(obj)
+    elif isinstance(obj, torchvision.transforms.v2.Transform):
+        return _wrap_torchvision_instance(obj)
     elif isinstance(obj, torch.nn.Module):
         return _wrap_torch_instance(obj)
     else:

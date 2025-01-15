@@ -79,15 +79,20 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sklearn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.transforms.v2</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.sklearn</span><span class="w"> </span><span class="kn">import</span> <span class="n">_wrap_sklearn_class</span><span class="p">,</span> <span class="n">_wrap_sklearn_instance</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.skorch</span><span class="w"> </span><span class="kn">import</span> <span class="n">_wrap_torch_class</span><span class="p">,</span> <span class="n">_wrap_torch_instance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">_wrap_torchvision_class</span><span class="p">,</span> <span class="n">_wrap_torchvision_instance</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_wrap_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseEstimator</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_wrap_sklearn_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">Transform</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_wrap_torchvision_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_wrap_torch_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -98,6 +103,8 @@
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseEstimator</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_wrap_sklearn_instance</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">Transform</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_wrap_torchvision_instance</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_wrap_torch_instance</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>

@@ -1253,6 +1253,11 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">scores</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">__sklearn_tags__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">input_tags</span><span class="o">.</span><span class="n">sparse</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">tags</span>
+
 
 <span class="k">class</span><span class="w"> </span><span class="nc">KMeans</span><span class="p">(</span><span class="n">_BaseKMeans</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;K-Means clustering.</span>
@@ -1289,8 +1294,11 @@
 <span class="sd">        * If a callable is passed, it should take arguments X, n_clusters and a\</span>
 <span class="sd">        random state and return an initialization.</span>
 
-<span class="sd">        For an example of how to use the different `init` strategy, see the example</span>
-<span class="sd">        entitled :ref:`sphx_glr_auto_examples_cluster_plot_kmeans_digits.py`.</span>
+<span class="sd">        For an example of how to use the different `init` strategies, see</span>
+<span class="sd">        :ref:`sphx_glr_auto_examples_cluster_plot_kmeans_digits.py`.</span>
+
+<span class="sd">        For an evaluation of the impact of initialization, see the example</span>
+<span class="sd">        :ref:`sphx_glr_auto_examples_cluster_plot_kmeans_stability_low_dim_dense.py`.</span>
 
 <span class="sd">    n_init : &#39;auto&#39; or int, default=&#39;auto&#39;</span>
 <span class="sd">        Number of times the k-means algorithm is run with different centroid</span>
@@ -1778,6 +1786,9 @@
 
 <span class="sd">        If a callable is passed, it should take arguments X, n_clusters and a</span>
 <span class="sd">        random state and return an initialization.</span>
+
+<span class="sd">        For an evaluation of the impact of initialization, see the example</span>
+<span class="sd">        :ref:`sphx_glr_auto_examples_cluster_plot_kmeans_stability_low_dim_dense.py`.</span>
 
 <span class="sd">    max_iter : int, default=100</span>
 <span class="sd">        Maximum number of iterations over the complete dataset before</span>

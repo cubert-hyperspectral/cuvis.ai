@@ -930,6 +930,11 @@
         <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
         <span class="n">tags</span><span class="o">.</span><span class="n">transformer_tags</span><span class="o">.</span><span class="n">preserves_dtype</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;float64&quot;</span><span class="p">,</span> <span class="s2">&quot;float32&quot;</span><span class="p">]</span>
         <span class="n">tags</span><span class="o">.</span><span class="n">array_api_support</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">input_tags</span><span class="o">.</span><span class="n">sparse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;arpack&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;covariance_eigh&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">tags</span>
 </pre></div>
 

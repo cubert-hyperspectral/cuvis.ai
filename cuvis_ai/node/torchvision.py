@@ -1,17 +1,22 @@
 
 import numpy as np
 from typing import Any, Union
+import functools
 
 import torchvision.transforms.v2
 from .base import BaseTransformation
 from . import Node
 import torchvision
 import torch
+import enum
 
 
 def _wrap_torchvision_transform(cls):
 
     class WrappedTorchVisionTransformation(Node, BaseTransformation):
+
+        __doc__ = cls.__doc__
+        __module__ = cls.__module__
 
         def __init__(self, *args, **kwargs):
             super().__init__()
@@ -19,17 +24,6 @@ def _wrap_torchvision_transform(cls):
             self.initialized = self.tv_transform is not None
 
         def forward(self, X: np.ndarray) -> Any:
-            """ Transform data and labels according to the torchvision transform this node represents.
-            Parameters
-            ----------
-            X : np.ndarray
-                Expects a numpy array or torch tensor (data, [labels, [metadata]]) as returned by dataloaders or just a single tensor.
-            Returns
-            -------
-            Tuple
-                The transformed data including any labels and meta-data passed in, if any.
-            """
-
             if isinstance(X, np.ndarray):
                 return self.tv_transform(torch.as_tensor(X).permute([0, 3, 1, 2])).permute([0, 2, 3, 1]).numpy()
 
@@ -50,7 +44,18 @@ def _wrap_torchvision_transform(cls):
                 print('Module not fully initialized, skipping output!')
                 return dict()
 
-            data_independent = self.tv_transform.make_params()
+            data_independent = {}
+            for name, value in self.tv_transform.__dict__.items():
+
+                if name.startswith("_") or name == "training":
+                    continue
+
+                # if not isinstance(value, (bool, int, float, str, tuple, list, enum.Enum)):
+                if not isinstance(value, (bool, int, float, str, tuple, list)):
+
+                    continue
+
+                data_independent[name] = value
             return {'params': data_independent}
 
         def load(self, params: dict, serial_dir: str):
@@ -58,6 +63,11 @@ def _wrap_torchvision_transform(cls):
             self.id = params.get('id')
             self.tv_transform = cls(**params['params'])
             self.initialized = True
+
+    WrappedTorchVisionTransformation.__name__ = cls.__name__
+    functools.update_wrapper(
+        WrappedTorchVisionTransformation.__init__, cls.__init__)
+    return WrappedTorchVisionTransformation
 
 
 def _wrap_torchvision_class(cls):

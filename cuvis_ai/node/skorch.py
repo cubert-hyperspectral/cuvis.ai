@@ -203,6 +203,10 @@ def _wrap_unsupervised_class(cls):
         def output_dim(self):
             return self._output_size
 
+        @property
+        def model(self):
+            return self.net.module_
+
         def fit(self, X: np.ndarray, warm_start=False):
 
             if self.expected_dim == InputDimension.One:

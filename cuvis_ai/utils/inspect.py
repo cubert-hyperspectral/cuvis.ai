@@ -1,5 +1,7 @@
 import inspect
-
+import ast
+import sys
+import importlib
 
 def get_members(module):
     def predicate(x): return inspect.ismodule or inspect.function
@@ -24,14 +26,56 @@ def get_imports(c):
     return imports
 
 
-def get_src(c, imports=True):
-    src = []
+def get_source_file(c):
+    source_file = inspect.getsourcefile(c)
+    with open(source_file, 'r') as f:
+        return f.read()
+
+
+def get_referenced(c):
+
+    referenced = set()
     source_code = inspect.getsource(c)
+    tree = ast.parse(source_code)
+    for node in ast.walk(tree):
+        # print(f'{node} -- name:{node.__dict__.get('name', None)} -- value:{node.__dict__.get('value', None)}')
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            # Check for class instantiations
+            referenced.add(node.func.id)
+    return referenced
+
+
+
+
+def get_src(c, imports=True, visited=set()):
+    if c in visited:
+        return []
+    visited.add(c)
+
+
+    src = []
+    try:
+        source_code = inspect.getsource(c)
+    except TypeError as e:
+        print(e)
+        return []
 
     if imports:
         import_lines = get_imports(c)
         src += import_lines
         src.append('\n')
 
+    ref_classes = get_referenced(c)
+    for ref_class_name in ref_classes:
+        try:
+            ref_class = sys.modules[c.__module__].__dict__[ref_class_name]
+            if inspect.isclass(ref_class) and ref_class.__module__ not in ['builtins', 'collections']:
+                src += get_src(ref_class, imports=False, visited=visited)
+                src.append('\n')
+        except KeyError as e:
+            print(f'Cant find class {e}')
+            pass
+
     src += source_code
+
     return src

@@ -29,8 +29,8 @@ def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
 
     f_params = f'{uuid.uuid4()}.pth'
 
-    obj.net.save_params(f_params=f_params)
-
+    sd = obj.net.module_.state_dict()
+    torch.save(sd, Path(data_dir) / f_params)
     data_dependend = {'weights': f_params}
 
     return {'params': data_independent, 'state': data_dependend}

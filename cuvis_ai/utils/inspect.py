@@ -38,10 +38,12 @@ def get_referenced(c):
     source_code = inspect.getsource(c)
     tree = ast.parse(source_code)
     for node in ast.walk(tree):
-        # print(f'{node} -- name:{node.__dict__.get('name', None)} -- value:{node.__dict__.get('value', None)}')
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
             # Check for class instantiations
             referenced.add(node.func.id)
+        elif isinstance(node, ast.Attribute) and  isinstance(node.value, ast.Name):
+            # Check for enum instanciations
+            referenced.add(node.value.id)
     return referenced
 
 

@@ -4,7 +4,7 @@ import torch
 
 from ..utils.numpy import *
 from ..utils.torch import InputDimension, guess_input_dimensionalty, extract_state_dict
-from ..utils.dict import remove_prefix
+from ..utils.dict import remove_prefix, add_prefix
 from .node import Node
 from .base import BaseSupervised, BaseUnsupervised
 from pathlib import Path
@@ -29,8 +29,8 @@ def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
 
     f_params = f'{uuid.uuid4()}.pth'
 
-    obj.net.save_params(f_params=f_params)
-
+    sd = obj.net.module_.state_dict()
+    torch.save(sd, Path(data_dir) / f_params)
     data_dependend = {'weights': f_params}
 
     return {'params': data_independent, 'state': data_dependend}
@@ -189,6 +189,7 @@ def _wrap_unsupervised_class(cls):
                 module=cls,
                 criterion=self.criterion,
                 train_split=None,
+                device='cuda',
                 **self.model_args
             )
             self.net.initialize()
@@ -226,11 +227,17 @@ def _wrap_unsupervised_class(cls):
             self.initialized = True
 
         def forward(self, X: np.ndarray):
+            import time
+
             if self.expected_dim == InputDimension.One:
                 flattened_data = flatten_batch_and_spatial(X)
             elif self.expected_dim == InputDimension.Three:
                 flattened_data = np.moveaxis(X, -1, -3)
-            transformed_data = self.net.forward(flattened_data).numpy()
+            flattened_data = torch.from_numpy(flattened_data)
+            start_time = time.time()
+            transformed_data = self.net.forward(flattened_data)
+            print("--- %s seconds ---" % (time.time() - start_time))
+            transformed_data = transformed_data.to('cpu').numpy()
             if self.expected_dim == InputDimension.One:
                 return unflatten_batch_and_spatial(transformed_data, X.shape)
             elif self.expected_dim == InputDimension.Three:

@@ -45,7 +45,7 @@ def guess_input_dimensionalty(model: nn.Module) -> InputDimension:
     elif isinstance(first_layer, nn.Linear):
         return InputDimension.One  # Linear layer, likely expects flattened data
 
-    return InputDimension.Unknown
+    return guess_input_dimensionalty(first_layer)
 
 
 def get_output_shape(input_shape, model):

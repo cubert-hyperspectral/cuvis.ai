@@ -1,0 +1,6 @@
+cuvis\_ai.utils.dict.add\_prefix
+================================
+
+.. currentmodule:: cuvis_ai.utils.dict
+
+.. autofunction:: add_prefix

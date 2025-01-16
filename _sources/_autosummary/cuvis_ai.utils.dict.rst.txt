@@ -14,6 +14,7 @@ cuvis\_ai.utils.dict
    .. autosummary::
       :toctree:                                          
    
+      add_prefix
       remove_prefix
       remove_prefix_str
    

@@ -126,7 +126,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_layer</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">One</span>  <span class="c1"># Linear layer, likely expects flattened data</span>
 
-    <span class="k">return</span> <span class="n">InputDimension</span><span class="o">.</span><span class="n">Unknown</span></div>
+    <span class="k">return</span> <span class="n">guess_input_dimensionalty</span><span class="p">(</span><span class="n">first_layer</span><span class="p">)</span></div>
 
 
 

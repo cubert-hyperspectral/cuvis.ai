@@ -1,0 +1,6 @@
+cuvis\_ai.utils.inspect.get\_src
+================================
+
+.. currentmodule:: cuvis_ai.utils.inspect
+
+.. autofunction:: get_src

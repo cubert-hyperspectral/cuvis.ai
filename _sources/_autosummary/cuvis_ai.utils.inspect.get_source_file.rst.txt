@@ -1,0 +1,6 @@
+cuvis\_ai.utils.inspect.get\_source\_file
+=========================================
+
+.. currentmodule:: cuvis_ai.utils.inspect
+
+.. autofunction:: get_source_file

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cuvis_ai.utils.dict.remove_prefix_str &mdash; Cuvis AI 0.1.0 documentation</title>
+  <title>cuvis_ai.utils.inspect.get_members &mdash; Cuvis AI 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cuvis_ai.utils.filesystem" href="cuvis_ai.utils.filesystem.html" />
-    <link rel="prev" title="cuvis_ai.utils.dict.remove_prefix" href="cuvis_ai.utils.dict.remove_prefix.html" /> 
+    <link rel="next" title="cuvis_ai.utils.inspect.get_referenced" href="cuvis_ai.utils.inspect.get_referenced.html" />
+    <link rel="prev" title="cuvis_ai.utils.inspect.get_imports" href="cuvis_ai.utils.inspect.get_imports.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -62,14 +62,16 @@
 <li class="toctree-l2"><a class="reference internal" href="cuvis_ai.unsupervised.html">cuvis_ai.unsupervised</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.utils.html">cuvis_ai.utils</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.dependencies.html">cuvis_ai.utils.dependencies</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.utils.dict.html">cuvis_ai.utils.dict</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.dict.add_prefix.html">cuvis_ai.utils.dict.add_prefix</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.dict.remove_prefix.html">cuvis_ai.utils.dict.remove_prefix</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.utils.dict.remove_prefix_str</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.dict.html">cuvis_ai.utils.dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.filesystem.html">cuvis_ai.utils.filesystem</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.utils.inspect.html">cuvis_ai.utils.inspect</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.inspect.get_imports.html">cuvis_ai.utils.inspect.get_imports</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.utils.inspect.get_members</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.inspect.get_referenced.html">cuvis_ai.utils.inspect.get_referenced</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.inspect.get_source_file.html">cuvis_ai.utils.inspect.get_source_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.utils.inspect.get_src.html">cuvis_ai.utils.inspect.get_src</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.filesystem.html">cuvis_ai.utils.filesystem</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.inspect.html">cuvis_ai.utils.inspect</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.nn_config.html">cuvis_ai.utils.nn_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.numpy.html">cuvis_ai.utils.numpy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.utils.serializer.html">cuvis_ai.utils.serializer</a></li>
@@ -98,10 +100,10 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="cuvis_ai.html">cuvis_ai</a></li>
           <li class="breadcrumb-item"><a href="cuvis_ai.utils.html">cuvis_ai.utils</a></li>
-          <li class="breadcrumb-item"><a href="cuvis_ai.utils.dict.html">cuvis_ai.utils.dict</a></li>
-      <li class="breadcrumb-item active">cuvis_ai.utils.dict.remove_prefix_str</li>
+          <li class="breadcrumb-item"><a href="cuvis_ai.utils.inspect.html">cuvis_ai.utils.inspect</a></li>
+      <li class="breadcrumb-item active">cuvis_ai.utils.inspect.get_members</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/_autosummary/cuvis_ai.utils.dict.remove_prefix_str.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/_autosummary/cuvis_ai.utils.inspect.get_members.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -109,11 +111,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="cuvis-ai-utils-dict-remove-prefix-str">
-<h1>cuvis_ai.utils.dict.remove_prefix_str<a class="headerlink" href="#cuvis-ai-utils-dict-remove-prefix-str" title="Link to this heading"></a></h1>
+  <section id="cuvis-ai-utils-inspect-get-members">
+<h1>cuvis_ai.utils.inspect.get_members<a class="headerlink" href="#cuvis-ai-utils-inspect-get-members" title="Link to this heading"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="cuvis_ai.utils.dict.remove_prefix_str">
-<span class="sig-prename descclassname"><span class="pre">cuvis_ai.utils.dict.</span></span><span class="sig-name descname"><span class="pre">remove_prefix_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/utils/dict.html#remove_prefix_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.dict.remove_prefix_str" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="cuvis_ai.utils.inspect.get_members">
+<span class="sig-prename descclassname"><span class="pre">cuvis_ai.utils.inspect.</span></span><span class="sig-name descname"><span class="pre">get_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/utils/inspect.html#get_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.utils.inspect.get_members" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -122,8 +124,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuvis_ai.utils.dict.remove_prefix.html" class="btn btn-neutral float-left" title="cuvis_ai.utils.dict.remove_prefix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuvis_ai.utils.filesystem.html" class="btn btn-neutral float-right" title="cuvis_ai.utils.filesystem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuvis_ai.utils.inspect.get_imports.html" class="btn btn-neutral float-left" title="cuvis_ai.utils.inspect.get_imports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.utils.inspect.get_referenced.html" class="btn btn-neutral float-right" title="cuvis_ai.utils.inspect.get_referenced" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

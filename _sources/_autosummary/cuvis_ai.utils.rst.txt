@@ -31,6 +31,7 @@ cuvis\_ai.utils
    dependencies
    dict
    filesystem
+   inspect
    nn_config
    numpy
    serializer

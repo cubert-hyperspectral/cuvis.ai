@@ -1,0 +1,6 @@
+cuvis\_ai.utils.inspect.get\_referenced
+=======================================
+
+.. currentmodule:: cuvis_ai.utils.inspect
+
+.. autofunction:: get_referenced

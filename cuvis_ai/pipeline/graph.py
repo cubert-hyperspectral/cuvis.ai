@@ -1,6 +1,7 @@
 import os
 import shutil
 import torch
+import sys
 from typing import Any
 from datetime import datetime
 from os.path import expanduser
@@ -20,7 +21,7 @@ from ..utils.dependencies import get_installed_packages_str
 import numpy as np
 import tempfile
 from pathlib import Path
-from importlib import import_module
+import importlib
 from .executor import MemoryExecutor, HummingBirdExecutor
 from copy import copy, deepcopy
 from functools import lru_cache
@@ -233,12 +234,25 @@ class Graph():
         Numeric data and fit models will be stored in zipped directory named with current time.
         """
         from importlib.metadata import version
+        data_dir = Path(data_dir)
+        nodes_data = {}
+        for key, node in self.nodes.items():
+            serialized = node.serialize(data_dir)
+            node_data = {'__node_module__': str(node.__module__),
+                         '__node_class__': str(node.__class__.__name__)}
 
-        nodes_data = {
-            key: {'__node_module__': str(node.__module__),
-                  '__node_class__': str(node.__class__.__name__),
-                  **node.serialize(data_dir)}
-            for key, node in self.nodes.items()}
+            # maybe serialize source code
+            if 'code' in serialized.keys():
+                import cuvis_ai.utils.inspect as ins
+                cls = serialized.pop('code')
+                node_code = ins.get_src(cls)
+                with open(data_dir / f'{cls.__name__}.py', 'w') as f:
+                    f.writelines(node_code)
+                node_data['__node_code__'] = f'{cls.__name__}.py'
+
+            node_data |= serialized
+            nodes_data[key] = node_data
+
         edges_data = [{'from': start, 'to': end}
                       for start, end in list(self.graph.edges)]
 
@@ -254,6 +268,7 @@ class Graph():
         return output
 
     def load(self, structure: dict, data_dir: Path) -> None:
+        data_dir = Path(data_dir)
         self.name = structure.get('name')
 
         installed_cuvis_version = pkg_resources.require('cuvis_ai')[0].version
@@ -263,12 +278,25 @@ class Graph():
             raise ValueError(f'Incorrect version of cuvis_ai package. Installed {installed_cuvis_version} but serialized with {serialized_cuvis_version}')  # nopep8
         if not structure.get('nodes'):
             print('No node information available!')
+
+        LOAD_SOURCE_FILES = True
+
         for key, params in structure.get('nodes').items():
 
             node_module = params.get('__node_module__')
             node_class = params.get('__node_class__')
+            node_code = params.get('__node_code__', None)
 
-            cls = getattr(import_module(node_module), node_class)
+            if not node_code is None and LOAD_SOURCE_FILES:
+                spec = importlib.util.spec_from_file_location(
+                    node_module, data_dir / node_code)
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[node_module] = module
+                spec.loader.exec_module(module)
+                cls = getattr(
+                    module, node_class)
+            else:
+                cls = getattr(importlib.import_module(node_module), node_class)
             if not issubclass(cls, Node):
                 cls = make_node(cls)
 

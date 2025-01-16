@@ -135,30 +135,10 @@ def _wrap_supervised_class(cls):
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            data_independent = self.net.get_params(self)
-            data_dependend = {
-                attr: getattr(self, attr)
-                for attr in dir(self)
-                if attr.endswith("_") and not callable(getattr(self, attr)) and not attr.startswith("__")
-            }
-            return data_independent | data_dependend
+            return _serialize_skorch_model(self, cls, data_dir)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            data_independent_keys = set(self.net.get_params(self).keys())
-
-            data_dependent_keys = {
-                key for key in params.keys() if key not in data_independent_keys and key.endswith("_")}
-
-            params_independent = {key: params[key]
-                                  for key in data_independent_keys}
-
-            self.net.set_params(self, **params_independent)
-
-            params_dependent = {key: params[key]
-                                for key in data_dependent_keys}
-
-            for k, v in params_dependent.items():
-                setattr(self, k, v)
+            return _load_skorch_model(self, cls, params, data_dir)
 
     SkorchWrappedSupervised.__name__ = cls.__name__
     functools.update_wrapper(SkorchWrappedSupervised.__init__, cls.__init__)

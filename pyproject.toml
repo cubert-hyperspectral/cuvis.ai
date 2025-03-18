@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cuvis_ai"
-version = "0.1.0"
+version = "0.1.0a1"
 description = "The CUVIS.AI Toolset"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -15,7 +15,7 @@ authors = [
 
 dependencies = [
 "cuvis",
-"setuptools; python_version>='3.12'"  # Only for Python 3.12+,
+"setuptools; python_version>='3.12'",  # Only for Python 3.12+
 "torch",
 "torchvision",
 "scikit-learn",
@@ -31,7 +31,7 @@ dependencies = [
 "torchvision",
 "scikit-image",
 "gdown",
-"dataclass-wizard"
+"dataclass-wizard",
 ]
 
 classifiers = [

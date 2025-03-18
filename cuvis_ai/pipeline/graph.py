@@ -29,6 +29,12 @@ from ..node.skorch import SkorchWrapped
 from ..node.sklearn import SklearnWrapped
 
 
+def maybe_wrap_node(node):
+    if isinstance(node, Node):
+        return node
+    return make_node(node)
+
+
 class Graph():
     """Main class for connecting nodes in a CUVIS.AI processing graph
     """
@@ -97,6 +103,8 @@ class Graph():
         node : Node
             CUVIS.AI node to add to the graph
         """
+        node = maybe_wrap_node(node)
+
         self.graph.add_node(node.id)
         self.nodes[node.id] = node
         self.entry_point = node.id
@@ -112,6 +120,10 @@ class Graph():
         node2 : Node
             Child node.
         """
+
+        node = maybe_wrap_node(node)
+        node2 = maybe_wrap_node(node2)
+
         self.graph.add_edge(node.id, node2.id)
         self.nodes[node.id] = node
         self.nodes[node2.id] = node2

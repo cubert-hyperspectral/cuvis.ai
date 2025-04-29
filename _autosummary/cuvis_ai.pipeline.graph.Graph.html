@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cuvis_ai.pipeline.meta_routing" href="cuvis_ai.pipeline.meta_routing.html" />
-    <link rel="prev" title="cuvis_ai.pipeline.graph" href="cuvis_ai.pipeline.graph.html" /> 
+    <link rel="prev" title="cuvis_ai.pipeline.graph.maybe_wrap_node" href="cuvis_ai.pipeline.graph.maybe_wrap_node.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,6 +57,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="cuvis_ai.pipeline.html">cuvis_ai.pipeline</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cuvis_ai.pipeline.executor.html">cuvis_ai.pipeline.executor</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="cuvis_ai.pipeline.graph.html">cuvis_ai.pipeline.graph</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuvis_ai.pipeline.graph.maybe_wrap_node.html">cuvis_ai.pipeline.graph.maybe_wrap_node</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cuvis_ai.pipeline.graph.Graph</a></li>
 </ul>
 </li>
@@ -294,13 +295,13 @@ Numeric data and fit models will be stored in zipped directory named with curren
 
 <dl class="py property">
 <dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.torch_layers">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">torch_layers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><span class="pre">Module</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.torch_layers" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">torch_layers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><span class="pre">Module</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.torch_layers" title="Link to this definition"></a></dt>
 <dd><p>Get a list with all pytorch layers in the Graph.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuvis_ai.pipeline.graph.Graph.train">
-<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.5)"><span class="pre">DataLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.5)"><span class="pre">DataLoader</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.train" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.7)"><span class="pre">DataLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.7)"><span class="pre">DataLoader</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cuvis_ai/pipeline/graph.html#Graph.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuvis_ai.pipeline.graph.Graph.train" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -311,7 +312,7 @@ Numeric data and fit models will be stored in zipped directory named with curren
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuvis_ai.pipeline.graph.html" class="btn btn-neutral float-left" title="cuvis_ai.pipeline.graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuvis_ai.pipeline.graph.maybe_wrap_node.html" class="btn btn-neutral float-left" title="cuvis_ai.pipeline.graph.maybe_wrap_node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cuvis_ai.pipeline.meta_routing.html" class="btn btn-neutral float-right" title="cuvis_ai.pipeline.meta_routing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -1,0 +1,6 @@
+cuvis\_ai.pipeline.graph.maybe\_wrap\_node
+==========================================
+
+.. currentmodule:: cuvis_ai.pipeline.graph
+
+.. autofunction:: maybe_wrap_node

@@ -105,6 +105,15 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..node.sklearn</span><span class="w"> </span><span class="kn">import</span> <span class="n">SklearnWrapped</span>
 
 
+<div class="viewcode-block" id="maybe_wrap_node">
+<a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.maybe_wrap_node.html#cuvis_ai.pipeline.graph.maybe_wrap_node">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">maybe_wrap_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Node</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">node</span>
+    <span class="k">return</span> <span class="n">make_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="Graph">
 <a class="viewcode-back" href="../../../_autosummary/cuvis_ai.pipeline.graph.Graph.html#cuvis_ai.pipeline.graph.Graph">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">():</span>
@@ -183,6 +192,8 @@
 <span class="sd">        node : Node</span>
 <span class="sd">            CUVIS.AI node to add to the graph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">maybe_wrap_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entry_point</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span></div>
@@ -201,6 +212,10 @@
 <span class="sd">        node2 : Node</span>
 <span class="sd">            Child node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">node</span> <span class="o">=</span> <span class="n">maybe_wrap_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">node2</span> <span class="o">=</span> <span class="n">maybe_wrap_node</span><span class="p">(</span><span class="n">node2</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">node2</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node2</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node2</span>

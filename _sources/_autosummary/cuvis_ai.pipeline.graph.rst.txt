@@ -9,6 +9,13 @@ cuvis\_ai.pipeline.graph
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                          
+   
+      maybe_wrap_node
+   
    
 
    

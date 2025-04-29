@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - hotfix/fix_gh_pages_workflow
 
 permissions:
   contents: write
@@ -19,10 +20,10 @@ jobs:
           wget https://cloud.cubert-gmbh.de/index.php/s/qpxkyWkycrmBK9m/download
           unzip download
           cd Cuvis\ 3.3
-          cd Cuvis\ 3.3.0
+          cd Cuvis\ 3.3.1
           cd Ubuntu\ 20.04-amd64-nocuda/
-          sudo apt install ./cuviscommon_3.3.0-1.deb -y
-          sudo dpkg -i --force-overwrite ./libcuvis_3.3.0-1.deb
+          sudo apt install ./cuviscommon_3.3.1-1.deb -y
+          sudo dpkg -i --force-overwrite ./libcuvis_3.3.1-1.deb
           cd ../../..
       - name: Checkout Cuvis Pyil
         uses: actions/checkout@v4

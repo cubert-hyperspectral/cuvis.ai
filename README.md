@@ -2,6 +2,8 @@
 
 # cuvis.ai
 
+*The project is still maturing. We will make occasional breaking changes and add missing features on our way to v1.*
+
 cuvis.ai is a software toolkit designed to facilitate the development of artificial intelligence (AI) and machine 
 learning applications for hyperspectral measurements.
 

@@ -5,10 +5,8 @@ FROM nhansoncubert/cuvis_noetic:latest
 RUN rm -rf /catkin_ws
 
 WORKDIR /install/cuvis.ai
-RUN mkdir -p /install/cuvis.ai/docs/_build
 COPY cuvis_ai cuvis_ai/
 COPY setup.py setup.py
 COPY entrypoint.sh entrypoint.sh
-COPY requirements.txt requirements.txt
-COPY docs docs/
+COPY pyproject.toml pyproject.toml
 ENV CUVIS=/lib/cuvis

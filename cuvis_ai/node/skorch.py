@@ -25,7 +25,7 @@ class SkorchWrapped:
 def _serialize_skorch_model(obj, cls, data_dir: Path) -> dict:
     data_independent = obj.model_args_no_prefix.copy()
     if not obj.initialized:
-        return {'params': data_independent}
+        return {'params': data_independent, 'code': cls}
 
     f_params = f'{uuid.uuid4()}.pth'
 

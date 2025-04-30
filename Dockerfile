@@ -1,4 +1,4 @@
-FROM ttl.sh/91a06dbb-c918-4f4b-be3c-10843f73d3b0:2h
+FROM ttl.sh/5a2c954f-7f29-4782-b829-4d7812e6736d
 
 WORKDIR /app
 COPY cuvis_ai cuvis_ai/

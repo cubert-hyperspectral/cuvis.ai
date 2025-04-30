@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /app/cuvis.ai
+cd /app/cuvis_ai
 python3.10 -m pip install .
 echo "======================="
 echo "Test CUVIS.AI is importable"

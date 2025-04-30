@@ -2,7 +2,7 @@
 
 cd /app
 python3.10 -m pip install .
-python3.10 -m pip install opencv-python-headless
+python3.10 -m pip install opencv-python-headless tzdata
 echo "======================="
 echo "Test CUVIS.AI is importable"
 echo "======================="

@@ -1,10 +1,6 @@
-FROM nhansoncubert/cuvis_noetic:latest
+FROM ttl.sh/91a06dbb-c918-4f4b-be3c-10843f73d3b0:2h
 
-# Build from the base ROS noetic image
-# Copies your code file from your action repository to the filesystem path `/` of the container
-RUN rm -rf /catkin_ws
-
-WORKDIR /install/cuvis.ai
+WORKDIR /app
 COPY cuvis_ai cuvis_ai/
 COPY entrypoint.sh entrypoint.sh
 COPY pyproject.toml pyproject.toml

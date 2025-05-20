@@ -1,4 +1,4 @@
-FROM ttl.sh/606ac5b5-0f8a-4e75-855b-9774ce7b801e
+FROM cubertgmbh/cuvis_python:3.3.1-ubuntu22.04
 
 WORKDIR /app
 COPY cuvis_ai cuvis_ai/

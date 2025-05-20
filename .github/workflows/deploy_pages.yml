@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/switch_gh_pages_docker
 
 permissions:
   contents: write

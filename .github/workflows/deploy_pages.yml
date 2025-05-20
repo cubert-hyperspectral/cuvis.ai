@@ -11,25 +11,14 @@ permissions:
 jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }}
-    runs-on: cubertgmbh/cuvis_python:3.3.1-ubuntu22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Cuvis AI
         uses: actions/checkout@v4
-      - name: Install Cuvis AI
-        run: |
-          python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          python3.10 -m pip install .
-          python3.10 -m pip install -r docs/requirements.txt
-          python3.10 -m pip show cuvis
-          export CUVIS=/lib/cuvis
-          echo "Test Cuvis AI importable"
-          python3.10 -c "import cuvis; import cuvis_ai"
-      - name: Build Documentation
-        run: |
-          export CUVIS=/lib/cuvis
-          mkdir -p docs/_build
-          sphinx-build -M html docs docs/_build
-          touch docs/_build/html/.nojekyll
+      - name: Build docker images
+        run: docker build -t "cuvis_ai" .
+      - name: Run docker container and build Documentations
+        run: docker run --mount type=bind,source="$(pwd)"/docs,target=/app/docs cuvis_ai /bin/bash  /app/build_docs.sh
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

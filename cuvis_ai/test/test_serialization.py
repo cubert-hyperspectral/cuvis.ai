@@ -1,12 +1,11 @@
 import unittest
-import yaml
 import os
 import shutil
 import numpy as np
 from ..utils.test import get_np_dummy_data
 from ..preprocessor import PCA, NMF
 from ..unsupervised import GMM, KMeans, MeanShift
-from ..transformation import Reflectance, TorchTransformation, TorchVisionTransformation
+from ..transformation import Reflectance, TorchTransformation
 from ..supervised import SVM, QDA, LDA
 from ..tv_transforms import Bandpass
 from ..utils.serializer import YamlSerializer
@@ -100,7 +99,7 @@ class TestTransformationTorch(TestNodeSerialization, unittest.TestCase):
 class TestTransformationTorchVision(TestNodeSerialization, unittest.TestCase):
 
     def setUp(self):
-        self.node = TorchVisionTransformation(Bandpass(5, 10))
+        self.node = Bandpass(5, 10)
         self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
 

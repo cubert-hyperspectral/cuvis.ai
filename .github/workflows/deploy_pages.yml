@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/switch_gh_pages_docker
 
 permissions:
   contents: write
@@ -10,47 +11,12 @@ permissions:
 jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }}
-    runs-on: ubuntu-22.04
+    runs-on: cubertgmbh/cuvis_python:3.3.1-ubuntu22.04
     steps:
       - name: Checkout Cuvis AI
         uses: actions/checkout@v4
-      - name: Install Cuvis
-        run: |
-          wget https://cloud.cubert-gmbh.de/index.php/s/qpxkyWkycrmBK9m/download
-          unzip download
-          cd Cuvis\ 3.3
-          cd Cuvis\ 3.3.1
-          cd Ubuntu\ 22.04-amd64-nocuda/
-          sudo apt install ./cuviscommon_3.3.1-1.deb -y
-          sudo dpkg -i --force-overwrite ./libcuvis_3.3.1-1.deb
-          cd ../../..
-      - name: Checkout Cuvis Pyil
-        uses: actions/checkout@v4
-        with:
-          repository: cubert-hyperspectral/cuvis.pyil
-          path: cuvis.pyil
-      - name: Install Cuvis Pyil
-        run: |
-          sudo add-apt-repository ppa:deadsnakes/ppa
-          sudo apt install python3.10 python3.10-venv python3.10-dev
-          curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
-          python3.10 -m venv venv
-          source venv/bin/activate
-          python3.10 -m pip install numpy==1.22.0
-          cd cuvis.pyil
-          git submodule update --init --recursive
-          mkdir build
-          cd build
-          cmake  -DCMAKE_BUILD_TYPE=Release -DDOXYGEN_BUILD_DOCUMENTATION=OFF -DPython_ROOT_DIR=../../venv ..
-          cmake --build . --target cuvis_pyil --config Release
-          cp ./_cuvis_pyil.so ../cuvis_il
-          cp ./cuvis_il.py ../cuvis_il
-          cd ..
-          python -m pip install .
-          cd ..
       - name: Install Cuvis AI
         run: |
-          source venv/bin/activate
           python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           python3.10 -m pip install .
           python3.10 -m pip install -r docs/requirements.txt
@@ -59,14 +25,12 @@ jobs:
           echo "Test Cuvis AI importable"
           python3.10 -c "import cuvis; import cuvis_ai"
       - name: Build Documentation
-        run:  |
-            source venv/bin/activate
-            export CUVIS=/lib/cuvis
-            mkdir -p docs/_build
-            sphinx-build -M html docs docs/_build
-            touch docs/_build/html/.nojekyll
+        run: |
+          export CUVIS=/lib/cuvis
+          mkdir -p docs/_build
+          sphinx-build -M html docs docs/_build
+          touch docs/_build/html/.nojekyll
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: ./docs/_build/html/
-

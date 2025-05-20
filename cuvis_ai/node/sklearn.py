@@ -63,8 +63,6 @@ def _load_sklearn_model(obj, cls, params: dict, data_dir: Path) -> None:
             setattr(obj, k, v)
         except:
             print(f'Could not set state attribute {k} for {obj.id}')  # nopep8
-    obj.initialized = True
-    obj._derive_values()
 
 
 def _wrap_preprocessor_class(cls):
@@ -114,7 +112,9 @@ def _wrap_preprocessor_class(cls):
             return _serialize_sklearn_model(self._wrapped, cls, data_dir, self.initialized)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            return _load_sklearn_model(self._wrapped, cls, params, data_dir)
+            _load_sklearn_model(self._wrapped, cls, params, data_dir)
+            self.initialized = True
+            self._derive_values()
 
     SklearnWrappedPreprocessor.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedPreprocessor.__init__, cls.__init__)
@@ -172,7 +172,9 @@ def _wrap_supervised_class(cls):
             return _serialize_sklearn_model(self._wrapped, cls, data_dir, self.initialized)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            return _load_sklearn_model(self._wrapped, cls, params, data_dir)
+            _load_sklearn_model(self._wrapped, cls, params, data_dir)
+            self.initialized = True
+            self._derive_values()
 
     SklearnWrappedSupervised.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedSupervised.__init__, cls.__init__)
@@ -230,7 +232,9 @@ def _wrap_unsupervised_class(cls):
             return _serialize_sklearn_model(self._wrapped, cls, data_dir, self.initialized)
 
         def load(self, params: dict, data_dir: Path) -> None:
-            return _load_sklearn_model(self._wrapped, cls, params, data_dir)
+            _load_sklearn_model(self._wrapped, cls, params, data_dir)
+            self.initialized = True
+            self._derive_values()
 
     SklearnWrappedUnsupervised.__name__ = cls.__name__
     functools.update_wrapper(SklearnWrappedUnsupervised.__init__, cls.__init__)

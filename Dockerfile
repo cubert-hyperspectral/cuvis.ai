@@ -4,4 +4,5 @@ WORKDIR /app
 COPY cuvis_ai cuvis_ai/
 COPY entrypoint.sh entrypoint.sh
 COPY pyproject.toml pyproject.toml
+COPY docs docs/
 ENV CUVIS=/lib/cuvis

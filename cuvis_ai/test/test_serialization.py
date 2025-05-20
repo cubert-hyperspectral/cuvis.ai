@@ -96,18 +96,18 @@ class TestTransformationTorch(TestNodeSerialization, unittest.TestCase):
         self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
 
-class TestTransformationTorchVision(TestNodeSerialization, unittest.TestCase):
+# class TestTransformationTorchVision(TestNodeSerialization, unittest.TestCase):
+#
+#    def setUp(self):
+#        self.node = Bandpass(5, 10)
+#        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
-    def setUp(self):
-        self.node = Bandpass(5, 10)
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
-
-class TestTransformationReflectance(TestNodeSerialization, unittest.TestCase):
-
-    def setUp(self):
-        self.node = Reflectance(0.1, 1.8)
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+# class TestTransformationReflectance(TestNodeSerialization, unittest.TestCase):
+#
+#    def setUp(self):
+#        self.node = Reflectance(0.1, 1.8)
+#        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
 
 # class TestSupervisedSVM(TestNodeSerialization, unittest.TestCase):

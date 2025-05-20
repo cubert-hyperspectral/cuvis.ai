@@ -17,9 +17,9 @@ class SklearnWrapped:
     pass
 
 
-def _serialize_sklearn_model(obj, cls, data_dir: Path) -> dict:
+def _serialize_sklearn_model(obj, cls, data_dir: Path, initialized: bool) -> dict:
     data_independent = cls.get_params(obj)
-    if not obj.initialized:
+    if not initialized:
         return {'params': data_independent}
 
     def ignore_exceptions(obj, attr):
@@ -111,7 +111,7 @@ def _wrap_preprocessor_class(cls):
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            return _serialize_sklearn_model(self._wrapped, cls, data_dir)
+            return _serialize_sklearn_model(self._wrapped, cls, data_dir, self.initialized)
 
         def load(self, params: dict, data_dir: Path) -> None:
             return _load_sklearn_model(self._wrapped, cls, params, data_dir)
@@ -169,7 +169,7 @@ def _wrap_supervised_class(cls):
             return unflatten_batch_and_spatial(transformed_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            return _serialize_sklearn_model(self._wrapped, cls, data_dir)
+            return _serialize_sklearn_model(self._wrapped, cls, data_dir, self.initialized)
 
         def load(self, params: dict, data_dir: Path) -> None:
             return _load_sklearn_model(self._wrapped, cls, params, data_dir)
@@ -227,7 +227,7 @@ def _wrap_unsupervised_class(cls):
             return unflatten_batch_and_spatial(prediction_data, X.shape)
 
         def serialize(self, data_dir: Path) -> dict:
-            return _serialize_sklearn_model(self._wrapped, cls, data_dir)
+            return _serialize_sklearn_model(self._wrapped, cls, data_dir, self.initialized)
 
         def load(self, params: dict, data_dir: Path) -> None:
             return _load_sklearn_model(self._wrapped, cls, params, data_dir)

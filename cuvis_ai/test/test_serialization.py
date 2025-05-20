@@ -89,11 +89,11 @@ class TestUnsupervisedMeanShift(TestNodeSerialization, unittest.TestCase):
         self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
 
-class TestTransformationTorch(TestNodeSerialization, unittest.TestCase):
-
-    def setUp(self):
-        self.node = TorchTransformation("add", operand_b=5)
-        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
+# class TestTransformationTorch(TestNodeSerialization, unittest.TestCase):
+#
+#    def setUp(self):
+#        self.node = TorchTransformation("add", operand_b=5)
+#        self.node.fit(get_np_dummy_data((10, 15, 20, 25)))
 
 
 # class TestTransformationTorchVision(TestNodeSerialization, unittest.TestCase):

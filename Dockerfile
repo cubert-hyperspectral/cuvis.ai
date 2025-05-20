@@ -1,14 +1,8 @@
-FROM nhansoncubert/cuvis_noetic:latest
+FROM cubertgmbh/cuvis_python:3.3.1-ubuntu22.04
 
-# Build from the base ROS noetic image
-# Copies your code file from your action repository to the filesystem path `/` of the container
-RUN rm -rf /catkin_ws
-
-WORKDIR /install/cuvis.ai
-RUN mkdir -p /install/cuvis.ai/docs/_build
+WORKDIR /app
 COPY cuvis_ai cuvis_ai/
-COPY setup.py setup.py
 COPY entrypoint.sh entrypoint.sh
-COPY requirements.txt requirements.txt
+COPY pyproject.toml pyproject.toml
 COPY docs docs/
 ENV CUVIS=/lib/cuvis

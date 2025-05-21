@@ -1,4 +1,4 @@
-FROM cubertgmbh/cuvis_python:3.3.1-ubuntu22.04
+FROM cubertgmbh/cuvis_python:3.3.3-ubuntu22.04
 
 WORKDIR /app
 COPY cuvis_ai cuvis_ai/

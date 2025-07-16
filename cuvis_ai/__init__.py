@@ -2,6 +2,7 @@ import importlib
 
 
 _submodules = [
+    "anomaly"
     "data",
     "deciders",
     "distance",

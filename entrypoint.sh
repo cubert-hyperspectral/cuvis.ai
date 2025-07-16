@@ -3,7 +3,7 @@
 cd /app
 python3.10 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 python3.10 -m pip install .
-python3.10 -m pip install opencv-python-headless tzdata
+python3.10 -m pip install opencv-python-headless<4.12 tzdata
 echo "======================="
 echo "Test CUVIS.AI is importable"
 echo "======================="

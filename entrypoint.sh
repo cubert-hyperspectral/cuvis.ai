@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /app
-python3.12 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+python3.12 -m pip install torch torchvision matplotlib --index-url https://download.pytorch.org/whl/cpu
 python3.12 -m pip install .
 python3.12 -m pip install opencv-python-headless<4.12 tzdata
 echo "======================="

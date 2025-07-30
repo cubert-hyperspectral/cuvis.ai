@@ -31,7 +31,7 @@ dependencies = [
 "torchvision",
 "scikit-image",
 "gdown",
-"dataclass-wizard",
+"dataclass-wizard"
 ]
 
 classifiers = [
